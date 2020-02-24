@@ -1,0 +1,88 @@
+---
+title: "Process data from reproducibility service"
+author: "Lars Vilhuber"
+date: "2/24/2020"
+output: 
+  html_document: 
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source(here::here("programs","config.R"),echo=TRUE)
+global.libraries <- c("dplyr","stringr","tidyr","knitr")
+results <- sapply(as.list(global.libraries), pkgTest)
+```
+> Note: The PDF version of this document is transformed by manually printing from a browser.
+
+## Requirements
+This project requires
+- R (last run with R `r paste0(R.Version()$major,".",R.Version()$minor)`)
+  - package `here` (>=0.1)
+  
+Other packages might be installed automatically by the programs, as long as the requirements above are met.
+
+## Data 
+
+### Raw process data
+Raw process data is manually extracted from Jira, and saved as 
+- `jira-simple-export_MM-DD-YYYY.csv` (for collapsed information on issues)
+- `export_MM-DD-YYYY.csv` (for detailed transaction-level data)
+
+We currently only use the latter. The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence. 
+
+```{r listfiles,include=FALSE}
+listfiles <- as.data.frame(list.files(file.path(jirabase),pattern = "^export_")) 
+names(listfiles) <- c("filename")
+latest <- listfiles %>% 
+  separate(filename,c("base","extension"),sep = "([\\.])",remove = FALSE) %>%
+  separate(base,c("prefix","date"),sep="_") %>% select(-prefix)
+
+```
+
+At this time, the latest extract was made `r max(latest$date)`. 
+
+### Anonymized data
+We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `04_jira_anonymize.R`:
+
+```{r anonymize, echo = TRUE, eval = FALSE}
+source(file.path(programs,"04_jira_anonymize.R"),echo=TRUE)
+```
+
+
+## Describing the Data
+```{r read,include=FALSE}
+jira <- readRDS(file.path(jiraanon,"jira.anon.RDS"))
+```
+
+The anonymized data has `r length(names(jira))` columns. 
+
+### Variables
+
+```{r describe, include=TRUE, echo=FALSE,cache=FALSE,warning=FALSE}
+description <- read.csv(file.path(jirameta,"description_anon.csv"),sep = ";",stringsAsFactors = FALSE,header = TRUE)
+jira.tmp <- as.data.frame(names(jira),stringsAsFactors = FALSE) 
+names(jira.tmp) <- c("name")
+jira.tmp %>% left_join(description,by=c("name")) %>% 
+  mutate(description = if_else(description == "","No description available",description)) %>%
+  kable()
+```
+
+### Sample records
+
+```{r sample,echo=FALSE}
+kable(head(jira))
+```
+
+
+
+
+## Some Analysis
+
+```{r analysis,warning=FALSE,echo=FALSE,error=FALSE}
+Sys.Date()
+source(file.path(programs,"05_jira_stats_graphs.R"),echo=TRUE)
+```
+

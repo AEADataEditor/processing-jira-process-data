@@ -1,0 +1,8 @@
+name;description
+ticket;The tracking number within the system. May be project specific, is sequentially assigned upon receipt.
+date;Date of a transaction
+Journal;Journal associated with an issue and manuscript. Derived from the manuscript number, possibly updated by hand
+Status;Status associated with a ticket at any point in time. The schema for these has changed over time. 
+Changed.Fields;A transaction will change various fields. These are listed here.
+Change.Author.Anon;The author ID associated with a change of field values
+mc_number_anon;The (anonymized) number assigned by the editorial workflow system (Manuscript Central/ ScholarOne) to a manuscript. This is purged by a script of any revision suffixes, and is used to connect tickets over time when there are revisions.
