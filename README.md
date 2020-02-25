@@ -11,7 +11,23 @@ editor_options:
 ---
 
 
-> Note: The PDF version of this document is transformed by manually printing from a browser.
+> Note: The [PDF version](https://aeadataeditor.github.io/processing-jira-process-data/README.pdf) of this document is transformed by manually printing from a browser.
+
+## Citation
+
+> Vilhuber, Lars. 2020. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2020-02-24. [https://doi.org/10.3886/E117876V1](https://doi.org/10.3886/E117876V1)
+
+```
+@techreport{10.3886/e117876v1,
+  doi = {10.3886/E117876V1},
+  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V1/view},
+  author = {Vilhuber,  Lars},
+  title = {Process data for the AEA Pre-publication Verification Service},
+  institution = {American Economic Association [publisher]},
+  series = {ICPSR - Interuniversity Consortium for Political and Social Research},
+  year = {2020}
+}
+```
 
 ## Requirements
 This project requires
@@ -83,7 +99,7 @@ AEAREP-346   2019-11-26   AER:Insights   Open     Journal           Author 7    
 
 
 ```
-## [1] "2020-02-24"
+## [1] "2020-02-25"
 ```
 
 ```
