@@ -1,7 +1,7 @@
 ---
 title: "Process data from reproducibility service"
 author: "Lars Vilhuber"
-date: "2/24/2020"
+date: "2020-02-24"
 output: 
   html_document: 
     keep_md: yes
