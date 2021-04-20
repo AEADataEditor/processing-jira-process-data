@@ -22,12 +22,10 @@ setwd(basepath)
 
 
 # for Jira stuff
-jirabase <- file.path(basepath,"data","jira","confidential")
-jiraanon <- file.path(basepath,"data","jira","anon")
-manual   <- file.path(basepath,"data","manual")
+jirabase <- file.path(basepath,"data","confidential")
+jiraanon <- file.path(basepath,"data","anon")
+jirameta <- file.path(basepath,"data","metadata")
 
-# for openICPSR stuff
-icpsrbase <- file.path(basepath,"data","icpsr")
 
 # local
 images <- file.path(basepath, "images" )
@@ -35,10 +33,6 @@ tables <- file.path(basepath, "tables" )
 programs <- file.path(basepath,"programs")
 temp   <- file.path(basepath,"data","temp")
 
-
-# parameters
-latexnums.Rda <- file.path(tables,"latexnums.Rda")
-latexnums.tex <- file.path(tables,"latexnums.tex")
 
 for ( dir in list(images,tables,programs,temp)){
   if (file.exists(dir)){
@@ -78,32 +72,3 @@ pkgTest.github <- function(x,source)
   return("OK")
 }
 
-
-## Initialize a file that will be used at the end to write out LaTeX parameters for in-text 
-## reference
-
-pkgTest("tibble")
-if (file.exists(latexnums.Rda)) {
-  print(paste0("File for export to LaTeX found: ",latexnums.Rda))
-} else {
-  latexnums <- tibble(field="version",value=as.character(date()),updated=date())
-  saveRDS(latexnums,latexnums.Rda)
-}
-
-update_latexnums <- function(field,value) {
-  # should test if latexnums is in memory
-  latexnums <- readRDS(latexnums.Rda)
-  
-  # find out if a field exists
-  if ( any(latexnums$field == field) ) {
-    message("Updating existing field")
-    latexnums[which(latexnums$field == field), ]$value <- as.character(value)
-    latexnums[which(latexnums$field == field), ]$updated <- date()
-    #return(latexnums)
-  } else {
-    message("Adding new row")
-    latexnums <- latexnums %>% add_row(field=field,value=as.character(value),updated=date())
-    #return(latexnums)
-  }
-  saveRDS(latexnums,latexnums.Rda)
-}

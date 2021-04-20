@@ -1,45 +1,48 @@
 ---
 title: "Process data from reproducibility service"
 author: "Lars Vilhuber"
-date: "2020-02-24"
-output: 
-  html_document: 
+date: '2021-03-16'
+output:
+  pdf_document: 
+    toc: yes
+  html_document:
     keep_md: yes
     toc: yes
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 source(here::here("programs","config.R"),echo=TRUE)
-global.libraries <- c("dplyr","stringr","tidyr","knitr")
+global.libraries <- c("dplyr","stringr","tidyr","knitr","readr")
 results <- sapply(as.list(global.libraries), pkgTest)
 ```
 > Note: The [PDF version](https://aeadataeditor.github.io/processing-jira-process-data/README.pdf) of this document is transformed by manually printing from a browser.
 
 ## Citation
 
-> Vilhuber, Lars. 2020. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2020-02-24. [https://doi.org/10.3886/E117876V1](https://doi.org/10.3886/E117876V1)
+> Vilhuber, Lars. 2021. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2021-03-16. [https://doi.org/10.3886/E117876V2](https://doi.org/10.3886/E117876V2)
 
 ```
-@techreport{10.3886/e117876v1,
-  doi = {10.3886/E117876V1},
-  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V1/view},
+@techreport{10.3886/e117876v2,
+  doi = {10.3886/E117876V2},
+  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V2/view},
   author = {Vilhuber,  Lars},
   title = {Process data for the AEA Pre-publication Verification Service},
   institution = {American Economic Association [publisher]},
   series = {ICPSR - Interuniversity Consortium for Political and Social Research},
-  year = {2020}
+  year = {2021}
 }
 ```
 
 ## Requirements
 This project requires
+
 - R (last run with R `r paste0(R.Version()$major,".",R.Version()$minor)`)
   - package `here` (>=0.1)
   
-Other packages might be installed automatically by the programs, as long as the requirements above are met.
+Other packages might be installed automatically by the programs, as long as the requirements above are met, see [Session Info](#r-session-info).
 
 ## Data 
 
@@ -48,11 +51,12 @@ Other packages might be installed automatically by the programs, as long as the 
 ![Workflow stages](images/AEADataEditorWorkflow-20191028.png)
 
 ### Raw process data
+
 Raw process data is manually extracted from Jira, and saved as 
-- `jira-simple-export_MM-DD-YYYY.csv` (for collapsed information on issues)
+
 - `export_MM-DD-YYYY.csv` (for detailed transaction-level data)
 
-We currently only use the latter. The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence. 
+The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence. 
 
 ```{r listfiles,include=FALSE}
 listfiles <- as.data.frame(list.files(file.path(jirabase),pattern = "^export_")) 
@@ -66,10 +70,28 @@ latest <- listfiles %>%
 At this time, the latest extract was made `r max(latest$date)`. 
 
 ### Anonymized data
-We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `04_jira_anonymize.R`:
+
+We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`:
 
 ```{r anonymize, echo = TRUE, eval = FALSE}
-source(file.path(programs,"04_jira_anonymize.R"),echo=TRUE)
+source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
+```
+
+### Publishing data
+
+Some additional cleaning and matching, and then we write out the file
+
+```{r publish, echo = TRUE, eval = FALSE}
+source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
+```
+
+### Preserving some minimal data for internal purposes
+
+For analytics, we preserve the unmodified manuscript number. This file is produced here, but not published.
+
+
+```{r manuscript, echo = TRUE, eval = FALSE}
+source(file.path(programs,"03_jira_manuscript.R"),echo=TRUE)
 ```
 
 
@@ -82,12 +104,12 @@ The anonymized data has `r length(names(jira))` columns.
 
 ### Variables
 
-```{r describe, include=TRUE, echo=FALSE,cache=FALSE,warning=FALSE}
-description <- read.csv(file.path(jirameta,"description_anon.csv"),sep = ";",stringsAsFactors = FALSE,header = TRUE)
+```{r describe, echo=FALSE,cache=FALSE,warning=FALSE}
+description <- read_csv("data/metadata/description_anon.csv")
+
 jira.tmp <- as.data.frame(names(jira),stringsAsFactors = FALSE) 
 names(jira.tmp) <- c("name")
 jira.tmp %>% left_join(description,by=c("name")) %>% 
-  mutate(description = if_else(description == "","No description available",description)) %>%
   kable()
 ```
 
@@ -97,13 +119,10 @@ jira.tmp %>% left_join(description,by=c("name")) %>%
 kable(head(jira))
 ```
 
+### R session info
 
-
-
-## Some Analysis
-
-```{r analysis,warning=FALSE,echo=FALSE,error=FALSE}
-Sys.Date()
-source(file.path(programs,"05_jira_stats_graphs.R"),echo=TRUE)
+```{r sessionInfo}
+sessionInfo()
 ```
+
 

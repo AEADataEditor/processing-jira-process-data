@@ -5,21 +5,19 @@
 ## Inputs: file.path(jirbase,"temp.jira.conf.RDS"), 
 ## Outputs: 
 ### file.path(jirabase,"jira.conf.RDS") and file.path(jirabase,"jira.conf.csv")
-### file.path(jiraanon,"jira.anon.RDS") and file.path(jiraanon,"jira.anon.csv")
 
 ### Cleans working environment.
 
 ### Load libraries 
 ### Requirements: have library *here*
 source(here::here("programs","config.R"),echo=TRUE)
-global.libraries <- c("dplyr","tidyr","splitstackshape","codebook")
+global.libraries <- c("dplyr","tidyr","splitstackshape")
 results <- sapply(as.list(global.libraries), pkgTest)
 
 # double-check
 
 # Read in data extracted from Jira
 #base <- here::here()
-jira.manuscripts <- readRDS(file.path(jirabase,"temp.mc.number.RDS"))
 
 jira.anon.raw <- readRDS(file.path(jiraanon,"temp.jira.anon.RDS")) %>%
   rename(reason.failure=Reason.for.Failure.to.Fully.Replicate) %>%
@@ -65,33 +63,3 @@ jira.anon <- jira.anon.raw %>%
 saveRDS(jira.anon,file=file.path(jiraanon,"jira.anon.RDS"))
 write.csv(jira.anon,file=file.path(jiraanon,"jira.anon.csv"))
 
-## Now merge the MC number
-jira.conf <- jira.anon %>% 
-  left_join(jira.manuscripts,by="mc_number_anon")
-
-saveRDS(jira.conf,file=file.path(jirabase,"jira.conf.RDS"))
-write.csv(jira.conf,file=file.path(jirabase,"jira.conf.csv"))
-
-## Create codebook
-var_label(jira.anon) <- list(
-  ticket	="The tracking number within the system. Project specific. Sequentially assigned upon receipt.",
-  date_created=	"Date of a receipt",
-  date_updated=	"Date of a transaction",
-  Journal=	"Journal associated with an issue and manuscript. Derived from the manuscript number. Possibly updated by hand",
-  Status=	"Status associated with a ticket at any point in time. The schema for these has changed over time. ",
-  Changed.Fields=	"A transaction will change various fields. These are listed here.",
-  Software.used=	"A list of software used to replicate the issue.",
-  received=	"An indicator for whether the issue is just created and has not been assigned to a replicator yet.",
-  external=	"An indicator for whether the issue required the external validation.",
-  subtask=	"An indicator for whether the issue is a subtask of another task.",
-  Resolution=	"Resolution associated with a ticket at the end of the replication process.",
-  reason.failure=	"A list of reasons for failure to fully replicate.",
-  MCRecommendation=	"Decision status when the issue is Revise and Resubmit.",
-  MCRecommendationV2=	"Decision status when the issue is conditionally accepted.",
-  mc_number_anon=	"The (anonymized) number assigned by the editorial workflow system (Manuscript Central/ ScholarOne) to a manuscript. This is purged by a script of any revision suffixes."
-)
-
-codebook <- codebook_table(jira.anon) %>%
-  select(name, label)
-
-write.csv(codebook,file=file.path(basepath,"data","jira","metadata","description_anon.csv"))
