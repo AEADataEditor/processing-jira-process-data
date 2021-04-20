@@ -1,8 +1,16 @@
-name;description
-ticket;The tracking number within the system. May be project specific, is sequentially assigned upon receipt.
-date;Date of a transaction
-Journal;Journal associated with an issue and manuscript. Derived from the manuscript number, possibly updated by hand
-Status;Status associated with a ticket at any point in time. The schema for these has changed over time. 
-Changed.Fields;A transaction will change various fields. These are listed here.
-Change.Author.Anon;The author ID associated with a change of field values
-mc_number_anon;The (anonymized) number assigned by the editorial workflow system (Manuscript Central/ ScholarOne) to a manuscript. This is purged by a script of any revision suffixes, and is used to connect tickets over time when there are revisions.
+"","name","label"
+"1","ticket","The tracking number within the system. Project specific. Sequentially assigned upon receipt."
+"2","date_created","Date of a receipt"
+"3","date_updated","Date of a transaction"
+"4","mc_number_anon","The (anonymized) number assigned by the editorial workflow system (Manuscript Central/ ScholarOne) to a manuscript. This is purged by a script of any revision suffixes."
+"5","Journal","Journal associated with an issue and manuscript. Derived from the manuscript number. Possibly updated by hand"
+"6","Status","Status associated with a ticket at any point in time. The schema for these has changed over time. "
+"7","Software.used","A list of software used to replicate the issue."
+"8","received","An indicator for whether the issue is just created and has not been assigned to a replicator yet."
+"9","Changed.Fields","A transaction will change various fields. These are listed here."
+"10","external","An indicator for whether the issue required the external validation."
+"11","subtask","An indicator for whether the issue is a subtask of another task."
+"12","Resolution","Resolution associated with a ticket at the end of the replication process."
+"13","reason.failure","A list of reasons for failure to fully replicate."
+"14","MCRecommendation","Decision status when the issue is Revise and Resubmit."
+"15","MCRecommendationV2","Decision status when the issue is conditionally accepted."
