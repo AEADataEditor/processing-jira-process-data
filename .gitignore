@@ -5,3 +5,4 @@
 data/ignore
 data/anon/temp*
 data/confidential
+confidential-config.R

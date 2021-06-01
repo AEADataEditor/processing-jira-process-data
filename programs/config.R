@@ -6,6 +6,10 @@
 process_raw <- TRUE
 download_raw <- TRUE
 
+## This pins the date of the to-be-processed file
+
+extractday <- "05-20-2021"
+
 ## These define the start (and end) dates for processing of data
 firstday <- "2019-12-01"
 lastday  <- "2020-11-30"
@@ -22,7 +26,7 @@ setwd(basepath)
 
 
 # for Jira stuff
-jirabase <- file.path(basepath,"data","confidential")
+jiraconf <- file.path(basepath,"data","confidential")
 jiraanon <- file.path(basepath,"data","anon")
 jirameta <- file.path(basepath,"data","metadata")
 
@@ -41,7 +45,6 @@ for ( dir in list(images,tables,programs,temp)){
   }
 }
 
-set.seed(20201201)
 
 
 ####################################

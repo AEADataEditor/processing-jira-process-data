@@ -71,7 +71,7 @@ At this time, the latest extract was made `r max(latest$date)`.
 
 ### Anonymized data
 
-We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`:
+We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version. 
 
 ```{r anonymize, echo = TRUE, eval = FALSE}
 source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
@@ -85,14 +85,6 @@ Some additional cleaning and matching, and then we write out the file
 source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
 ```
 
-### Preserving some minimal data for internal purposes
-
-For analytics, we preserve the unmodified manuscript number. This file is produced here, but not published.
-
-
-```{r manuscript, echo = TRUE, eval = FALSE}
-source(file.path(programs,"03_jira_manuscript.R"),echo=TRUE)
-```
 
 
 ## Describing the Data
