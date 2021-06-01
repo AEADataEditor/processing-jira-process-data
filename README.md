@@ -6,7 +6,7 @@ output:
   html_document:
     keep_md: yes
     toc: yes
-  pdf_document:
+  pdf_document: 
     toc: yes
 editor_options:
   chunk_output_type: console
@@ -34,7 +34,7 @@ editor_options:
 ## Requirements
 This project requires
 
-- R (last run with R 4.0.4)
+- R (last run with R 4.0.5)
   - package `here` (>=0.1)
   
 Other packages might be installed automatically by the programs, as long as the requirements above are met, see [Session Info](#r-session-info).
@@ -55,11 +55,11 @@ The data is not made available outside of the organization, as it contains names
 
 
 
-At this time, the latest extract was made 12-22-2020. 
+At this time, the latest extract was made 05-31-2021. 
 
 ### Anonymized data
 
-We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`:
+We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version. 
 
 
 ```r
@@ -75,15 +75,6 @@ Some additional cleaning and matching, and then we write out the file
 source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
 ```
 
-### Preserving some minimal data for internal purposes
-
-For analytics, we preserve the unmodified manuscript number. This file is produced here, but not published.
-
-
-
-```r
-source(file.path(programs,"03_jira_manuscript.R"),echo=TRUE)
-```
 
 
 ## Describing the Data
@@ -96,7 +87,7 @@ The anonymized data has 15 columns.
 
 ```
 ## 
-## ── Column specification ────────────────────────────────────────────────────────
+## -- Column specification --------------------------------------------------------
 ## cols(
 ##   name = col_character(),
 ##   label = col_character()
@@ -126,14 +117,14 @@ The anonymized data has 15 columns.
 ### Sample records
 
 
-|ticket      |date_created |date_updated | mc_number_anon|Journal   |Status |Software.used |received |Changed.Fields                |external |subtask |Resolution |reason.failure |MCRecommendation |MCRecommendationV2 |
-|:-----------|:------------|:------------|--------------:|:---------|:------|:-------------|:--------|:-----------------------------|:--------|:-------|:----------|:--------------|:----------------|:------------------|
-|AEAREP-1676 |2020-12-21   |2020-12-21   |            481|AEJ:Micro |Open   |              |No       |Journal                       |No       |NA      |           |               |                 |                   |
-|AEAREP-1676 |2020-12-21   |2020-12-21   |            481|          |Open   |              |No       |Manuscript Central identifier |No       |NA      |           |               |                 |                   |
-|AEAREP-1676 |2020-12-21   |2020-12-21   |            481|          |Open   |              |Yes      |                              |No       |NA      |           |               |                 |                   |
-|AEAREP-1674 |2020-12-18   |2020-12-21   |            480|AER       |Open   |              |No       |openICPSR Project Number      |No       |NA      |           |               |                 |                   |
-|AEAREP-1674 |2020-12-18   |2020-12-18   |            480|AER       |Open   |              |No       |Journal                       |No       |NA      |           |               |                 |                   |
-|AEAREP-1674 |2020-12-18   |2020-12-18   |            480|          |Open   |              |No       |Manuscript Central identifier |No       |NA      |           |               |                 |                   |
+|ticket      |date_created |date_updated | mc_number_anon|Journal               |Status   |Software.used |received |Changed.Fields                |external |subtask |Resolution |reason.failure |MCRecommendation |MCRecommendationV2 |
+|:-----------|:------------|:------------|--------------:|:---------------------|:--------|:-------------|:--------|:-----------------------------|:--------|:-------|:----------|:--------------|:----------------|:------------------|
+|AEAREP-2260 |2021-05-28   |2021-05-31   |            804|AEJ:Applied Economics |Open     |              |NA       |                              |No       |NA      |           |               |                 |                   |
+|AEAREP-2260 |2021-05-28   |2021-05-28   |            804|AEJ:Applied Economics |Open     |              |NA       |Journal                       |No       |NA      |           |               |                 |                   |
+|AEAREP-2260 |2021-05-28   |2021-05-28   |            804|                      |Open     |              |NA       |Manuscript Central identifier |No       |NA      |           |               |                 |                   |
+|AEAREP-2260 |2021-05-28   |2021-05-28   |            804|                      |Open     |              |NA       |                              |No       |NA      |           |               |                 |                   |
+|AEAREP-2259 |2021-05-27   |2021-05-31   |            190|AER                   |Assigned |              |No       |                              |No       |NA      |           |               |                 |                   |
+|AEAREP-2259 |2021-05-27   |2021-05-27   |            190|AER                   |Assigned |              |No       |Assignee,Status               |No       |NA      |           |               |                 |                   |
 
 ### R session info
 
@@ -143,36 +134,34 @@ sessionInfo()
 ```
 
 ```
-## R version 4.0.4 (2021-02-15)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04 LTS
+## R version 4.0.5 (2021-03-31)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 19042)
 ## 
 ## Matrix products: default
-## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
 ## 
 ## locale:
-##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
-##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+## [1] LC_COLLATE=English_United States.1252 
+## [2] LC_CTYPE=English_United States.1252   
+## [3] LC_MONETARY=English_United States.1252
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.1252    
 ## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] readr_1.4.0   knitr_1.31    tidyr_1.1.2   stringr_1.4.0 dplyr_1.0.4  
+## [1] readr_1.4.0   knitr_1.30    tidyr_1.1.2   stringr_1.4.0 dplyr_1.0.2  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] rstudioapi_0.13   magrittr_2.0.1    hms_1.0.0         tidyselect_1.1.0 
-##  [5] here_1.0.1        R6_2.5.0          rlang_0.4.10      highr_0.8        
-##  [9] tools_4.0.4       xfun_0.21         cli_2.3.0         DBI_1.1.1        
-## [13] htmltools_0.5.1.1 ellipsis_0.3.1    yaml_2.2.1        rprojroot_2.0.2  
-## [17] digest_0.6.27     assertthat_0.2.1  tibble_3.0.6      lifecycle_1.0.0  
-## [21] crayon_1.4.1      purrr_0.3.4       vctrs_0.3.6       glue_1.4.2       
-## [25] evaluate_0.14     rmarkdown_2.6     stringi_1.5.3     compiler_4.0.4   
-## [29] pillar_1.4.7      generics_0.1.0    pkgconfig_2.0.3
+##  [1] rstudioapi_0.13  magrittr_2.0.1   hms_1.0.0        tidyselect_1.1.0
+##  [5] here_1.0.0       R6_2.5.0         rlang_0.4.10     fansi_0.4.2     
+##  [9] highr_0.8        tools_4.0.5      xfun_0.22        utf8_1.1.4      
+## [13] cli_2.3.1        htmltools_0.5.0  ellipsis_0.3.1   assertthat_0.2.1
+## [17] yaml_2.2.1       rprojroot_2.0.2  digest_0.6.27    tibble_3.0.6    
+## [21] lifecycle_1.0.0  crayon_1.4.1     purrr_0.3.4      vctrs_0.3.6     
+## [25] glue_1.4.2       evaluate_0.14    rmarkdown_2.5    stringi_1.5.3   
+## [29] compiler_4.0.5   pillar_1.5.0     generics_0.1.0   pkgconfig_2.0.3
 ```
 
 

@@ -29,7 +29,7 @@ jira.anon.raw <- readRDS(file.path(jiraanon,"temp.jira.anon.RDS")) %>%
   mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y"),
          date_resolved = as.Date(substr(Resolved, 1,10), "%m/%d/%Y"),
          date_updated = as.Date(substr(As.Of.Date, 1,10), "%m/%d/%Y")) %>%
-  mutate(received = ifelse(Status=="Open"&Change.Author=="","Yes","No")) %>%
+  mutate(received = ifelse(Status=="Open"&change.author.anon=="","Yes","No")) %>%
   mutate(has_subtask=ifelse(subtask!="","Yes","No")) %>%
   filter(! date_updated=="2020-12-22") %>% #export is counted as an action, drop
   filter(ticket!="AEAREP-365") %>% # duplicate with aearep-364

@@ -32,7 +32,8 @@ if ( process_raw == TRUE ) {
   #base <- here::here()
   
   jira.conf.raw <- read.csv(file.path(jiraconf,exportfile), stringsAsFactors = FALSE) %>%
-    rename(ticket=Key) %>%
+    # the first field name can be iffy. It is the Key (sic)...
+    rename(ticket=1) %>%
     mutate(mc_number = sub('\\..*', '', Manuscript.Central.identifier)) 
   
   # anonymize mc_number

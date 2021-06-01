@@ -3,10 +3,10 @@ title: "Process data from reproducibility service"
 author: "Lars Vilhuber"
 date: '2021-03-16'
 output:
-  pdf_document: 
-    toc: yes
   html_document:
     keep_md: yes
+    toc: yes
+  pdf_document: 
     toc: yes
 editor_options:
   chunk_output_type: console
@@ -59,7 +59,7 @@ Raw process data is manually extracted from Jira, and saved as
 The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence. 
 
 ```{r listfiles,include=FALSE}
-listfiles <- as.data.frame(list.files(file.path(jirabase),pattern = "^export_")) 
+listfiles <- as.data.frame(list.files(file.path(jiraconf),pattern = "^export_")) 
 names(listfiles) <- c("filename")
 latest <- listfiles %>% 
   separate(filename,c("base","extension"),sep = "([\\.])",remove = FALSE) %>%

@@ -8,7 +8,7 @@ download_raw <- TRUE
 
 ## This pins the date of the to-be-processed file
 
-extractday <- "05-20-2021"
+extractday <- "05-31-2021"
 
 ## These define the start (and end) dates for processing of data
 firstday <- "2019-12-01"
