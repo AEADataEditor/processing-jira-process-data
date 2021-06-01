@@ -55,7 +55,7 @@ The data is not made available outside of the organization, as it contains names
 
 
 
-At this time, the latest extract was made 05-31-2021. 
+At this time, the latest extract was made 06-01-2021. 
 
 ### Anonymized data
 
@@ -119,11 +119,11 @@ The anonymized data has 15 columns.
 
 |ticket      |date_created |date_updated | mc_number_anon|Journal               |Status   |Software.used |received |Changed.Fields                |external |subtask |Resolution |reason.failure |MCRecommendation |MCRecommendationV2 |
 |:-----------|:------------|:------------|--------------:|:---------------------|:--------|:-------------|:--------|:-----------------------------|:--------|:-------|:----------|:--------------|:----------------|:------------------|
-|AEAREP-2260 |2021-05-28   |2021-05-31   |            804|AEJ:Applied Economics |Open     |              |NA       |                              |No       |NA      |           |               |                 |                   |
+|AEAREP-2260 |2021-05-28   |2021-06-01   |            804|AEJ:Applied Economics |Open     |              |NA       |                              |No       |NA      |           |               |                 |                   |
 |AEAREP-2260 |2021-05-28   |2021-05-28   |            804|AEJ:Applied Economics |Open     |              |NA       |Journal                       |No       |NA      |           |               |                 |                   |
 |AEAREP-2260 |2021-05-28   |2021-05-28   |            804|                      |Open     |              |NA       |Manuscript Central identifier |No       |NA      |           |               |                 |                   |
 |AEAREP-2260 |2021-05-28   |2021-05-28   |            804|                      |Open     |              |NA       |                              |No       |NA      |           |               |                 |                   |
-|AEAREP-2259 |2021-05-27   |2021-05-31   |            190|AER                   |Assigned |              |No       |                              |No       |NA      |           |               |                 |                   |
+|AEAREP-2259 |2021-05-27   |2021-06-01   |            190|AER                   |Assigned |              |No       |                              |No       |NA      |           |               |                 |                   |
 |AEAREP-2259 |2021-05-27   |2021-05-27   |            190|AER                   |Assigned |              |No       |Assignee,Status               |No       |NA      |           |               |                 |                   |
 
 ### R session info
