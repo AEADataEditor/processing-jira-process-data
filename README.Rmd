@@ -74,7 +74,7 @@ At this time, the latest extract was made `r max(latest$date)`.
 
 We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version. 
 
-```{r anonymize, echo = TRUE, eval = FALSE}
+```{r anonymize, echo = TRUE, eval = TRUE}
 source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
 ```
 
@@ -82,7 +82,7 @@ source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
 
 Some additional cleaning and matching, and then we write out the file
 
-```{r publish, echo = TRUE, eval = FALSE}
+```{r publish, echo = TRUE, eval = TRUE}
 source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
 ```
 
