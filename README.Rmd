@@ -1,7 +1,7 @@
 ---
 title: "Process data from reproducibility service"
 author: "Lars Vilhuber"
-date: '2021-03-16'
+date: '`r Sys.Date()`'
 output:
   html_document:
     keep_md: yes
@@ -63,7 +63,8 @@ listfiles <- as.data.frame(list.files(file.path(jiraconf),pattern = "^export_"))
 names(listfiles) <- c("filename")
 latest <- listfiles %>% 
   separate(filename,c("base","extension"),sep = "([\\.])",remove = FALSE) %>%
-  separate(base,c("prefix","date"),sep="_") %>% select(-prefix)
+  separate(base,c("prefix","date_str"),sep="_") %>% 
+  mutate(date = as.Date(date_str, format = "%m-%d-%Y")) %>% select(-prefix)
 
 ```
 
