@@ -72,8 +72,8 @@ source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
 ## 
 ## > gc()
 ##           used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells  722094 38.6    1187678 63.5  1187678 63.5
-## Vcells 1351305 10.4    8388608 64.0  2174618 16.6
+## Ncells  722127 38.6    1209221 64.6  1209221 64.6
+## Vcells 1351474 10.4    8388608 64.0  1938374 14.8
 ## 
 ## > source(here::here("programs", "config.R"), echo = TRUE)
 ## 
@@ -302,6 +302,97 @@ The anonymized data has 15 columns.
 |AEAREP-2812 |2021-12-08   |2021-12-08   |            979|AEJ:Applied Economics |Open        |              |No       |DCAF_Access_Restrictions      |No       |NA      |           |               |                 |                   |
 |AEAREP-2812 |2021-12-08   |2021-12-08   |            979|AEJ:Applied Economics |Open        |              |NA       |Journal                       |No       |NA      |           |               |                 |                   |
 |AEAREP-2812 |2021-12-08   |2021-12-08   |            979|                      |Open        |              |NA       |Manuscript Central identifier |No       |NA      |           |               |                 |                   |
+
+### Lab members during this period
+
+We list the lab members active at some point during this period.
+
+
+```r
+source(file.path(programs,"lab_members.R"),echo=TRUE)
+```
+
+```
+## 
+## > rm(list = ls())
+## 
+## > gc()
+##           used (Mb) gc trigger  (Mb) max used  (Mb)
+## Ncells  856638 45.8    1491065  79.7  1491065  79.7
+## Vcells 1699284 13.0   17175092 131.1 21455074 163.7
+## 
+## > source(here::here("programs", "config.R"), echo = TRUE)
+## 
+## > process_raw <- TRUE
+## 
+## > download_raw <- TRUE
+## 
+## > extractday <- "12-09-2021"
+## 
+## > firstday <- "2020-12-01"
+## 
+## > lastday <- "2021-11-30"
+## 
+## > basepath <- here::here()
+## 
+## > setwd(basepath)
+## 
+## > jiraconf <- file.path(basepath, "data", "confidential")
+## 
+## > if (Sys.getenv("HOSTNAME") == "zotique3") {
+## +     jirconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"), "/gvfs/dav:host=dav.box.com,ssl=true/dav/Office o ..." ... [TRUNCATED] 
+## 
+## > jiraanon <- file.path(basepath, "data", "anon")
+## 
+## > jirameta <- file.path(basepath, "data", "metadata")
+## 
+## > images <- file.path(basepath, "images")
+## 
+## > tables <- file.path(basepath, "tables")
+## 
+## > programs <- file.path(basepath, "programs")
+## 
+## > temp <- file.path(basepath, "data", "temp")
+## 
+## > for (dir in list(images, tables, programs, temp)) {
+## +     if (file.exists(dir)) {
+## +     }
+## +     else {
+## +         dir.create(file.path(dir))
+## +     }
+##  .... [TRUNCATED] 
+## 
+## > mran.date <- "2021-01-01"
+## 
+## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
+## +     mran.date, "/"))
+## 
+## > pkgTest <- function(x) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install.packages(x, dep = TRUE)
+## +         if (!require(x, charact .... [TRUNCATED] 
+## 
+## > pkgTest.github <- function(x, source) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install_github(paste(source, x, sep = "/"))
+## +      .... [TRUNCATED] 
+## 
+## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
+## 
+## > results <- sapply(as.list(global.libraries), pkgTest)
+## 
+## > jira.conf.plus <- readRDS(file = file.path(jiraconf, 
+## +     "jira.conf.plus.RDS"))
+## 
+## > lab.member <- jira.conf.plus %>% filter(Change.Author != 
+## +     "" & Change.Author != "Automation for Jira" & Change.Author != 
+## +     "LV (Data Edit ..." ... [TRUNCATED] 
+## 
+## > write.table(lab.member, file = file.path(basepath, 
+## +     "data", "replicationlab_members.txt"), sep = "\t", row.names = FALSE)
+```
+
+There were a total of 47 lab members over the course of the 12 month period.
 
 ### R session info
 

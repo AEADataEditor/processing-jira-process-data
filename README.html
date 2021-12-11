@@ -210,6 +210,7 @@ summary {
 <ul>
 <li><a href="#variables">Variables</a></li>
 <li><a href="#sample-records">Sample records</a></li>
+<li><a href="#lab-members-during-this-period">Lab members during this period</a></li>
 <li><a href="#r-session-info">R session info</a></li>
 </ul></li>
 </ul>
@@ -271,8 +272,8 @@ summary {
 ## 
 ## &gt; gc()
 ##           used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells  722094 38.6    1187678 63.5  1187678 63.5
-## Vcells 1351305 10.4    8388608 64.0  2174618 16.6
+## Ncells  722127 38.6    1209221 64.6  1209221 64.6
+## Vcells 1351474 10.4    8388608 64.0  1938374 14.8
 ## 
 ## &gt; source(here::here(&quot;programs&quot;, &quot;config.R&quot;), echo = TRUE)
 ## 
@@ -662,6 +663,89 @@ summary {
 </tr>
 </tbody>
 </table>
+</div>
+<div id="lab-members-during-this-period" class="section level3">
+<h3>Lab members during this period</h3>
+<p>We list the lab members active at some point during this period.</p>
+<pre class="r"><code>source(file.path(programs,&quot;lab_members.R&quot;),echo=TRUE)</code></pre>
+<pre><code>## 
+## &gt; rm(list = ls())
+## 
+## &gt; gc()
+##           used (Mb) gc trigger  (Mb) max used  (Mb)
+## Ncells  856638 45.8    1491065  79.7  1491065  79.7
+## Vcells 1699284 13.0   17175092 131.1 21455074 163.7
+## 
+## &gt; source(here::here(&quot;programs&quot;, &quot;config.R&quot;), echo = TRUE)
+## 
+## &gt; process_raw &lt;- TRUE
+## 
+## &gt; download_raw &lt;- TRUE
+## 
+## &gt; extractday &lt;- &quot;12-09-2021&quot;
+## 
+## &gt; firstday &lt;- &quot;2020-12-01&quot;
+## 
+## &gt; lastday &lt;- &quot;2021-11-30&quot;
+## 
+## &gt; basepath &lt;- here::here()
+## 
+## &gt; setwd(basepath)
+## 
+## &gt; jiraconf &lt;- file.path(basepath, &quot;data&quot;, &quot;confidential&quot;)
+## 
+## &gt; if (Sys.getenv(&quot;HOSTNAME&quot;) == &quot;zotique3&quot;) {
+## +     jirconf &lt;- paste0(Sys.getenv(&quot;XDG_RUNTIME_DIR&quot;), &quot;/gvfs/dav:host=dav.box.com,ssl=true/dav/Office o ...&quot; ... [TRUNCATED] 
+## 
+## &gt; jiraanon &lt;- file.path(basepath, &quot;data&quot;, &quot;anon&quot;)
+## 
+## &gt; jirameta &lt;- file.path(basepath, &quot;data&quot;, &quot;metadata&quot;)
+## 
+## &gt; images &lt;- file.path(basepath, &quot;images&quot;)
+## 
+## &gt; tables &lt;- file.path(basepath, &quot;tables&quot;)
+## 
+## &gt; programs &lt;- file.path(basepath, &quot;programs&quot;)
+## 
+## &gt; temp &lt;- file.path(basepath, &quot;data&quot;, &quot;temp&quot;)
+## 
+## &gt; for (dir in list(images, tables, programs, temp)) {
+## +     if (file.exists(dir)) {
+## +     }
+## +     else {
+## +         dir.create(file.path(dir))
+## +     }
+##  .... [TRUNCATED] 
+## 
+## &gt; mran.date &lt;- &quot;2021-01-01&quot;
+## 
+## &gt; options(repos = paste0(&quot;https://cran.microsoft.com/snapshot/&quot;, 
+## +     mran.date, &quot;/&quot;))
+## 
+## &gt; pkgTest &lt;- function(x) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install.packages(x, dep = TRUE)
+## +         if (!require(x, charact .... [TRUNCATED] 
+## 
+## &gt; pkgTest.github &lt;- function(x, source) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install_github(paste(source, x, sep = &quot;/&quot;))
+## +      .... [TRUNCATED] 
+## 
+## &gt; global.libraries &lt;- c(&quot;dplyr&quot;, &quot;tidyr&quot;, &quot;splitstackshape&quot;)
+## 
+## &gt; results &lt;- sapply(as.list(global.libraries), pkgTest)
+## 
+## &gt; jira.conf.plus &lt;- readRDS(file = file.path(jiraconf, 
+## +     &quot;jira.conf.plus.RDS&quot;))
+## 
+## &gt; lab.member &lt;- jira.conf.plus %&gt;% filter(Change.Author != 
+## +     &quot;&quot; &amp; Change.Author != &quot;Automation for Jira&quot; &amp; Change.Author != 
+## +     &quot;LV (Data Edit ...&quot; ... [TRUNCATED] 
+## 
+## &gt; write.table(lab.member, file = file.path(basepath, 
+## +     &quot;data&quot;, &quot;replicationlab_members.txt&quot;), sep = &quot;\t&quot;, row.names = FALSE)</code></pre>
+<p>There were a total of 47 lab members over the course of the 12 month period.</p>
 </div>
 <div id="r-session-info" class="section level3">
 <h3>R session info</h3>

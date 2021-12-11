@@ -112,6 +112,16 @@ jira.tmp %>% left_join(description,by=c("name")) %>%
 kable(head(jira))
 ```
 
+### Lab members during this period
+
+We list the lab members active at some point during this period.
+
+```{r lab}
+source(file.path(programs,"lab_members.R"),echo=TRUE)
+```
+
+There were a total of `r nrow(lab.member)` lab members over the course of the 12 month period.
+
 ### R session info
 
 ```{r sessionInfo}
