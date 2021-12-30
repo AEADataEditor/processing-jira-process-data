@@ -3,7 +3,7 @@ PWD=$(pwd)
 repo=${PWD##*/}
 space=larsvilhuber
 case $USER in
-  vilhuber)
+  vilhuber|larsvilhuber)
   WORKSPACE=$HOME/Workspace/git
   ;;
   codespace)
