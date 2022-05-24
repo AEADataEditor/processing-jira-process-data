@@ -13,6 +13,7 @@ then
 	git lfs pull
 
 	zip -rp ../${repo}-$(date +%F).zip README.md 
+	zip -rp ../${repo}-$(date +%F).zip LICENSE.txt
 	zip -rp ../${repo}-$(date +%F).zip README.pdf 
 	zip -rp ../${repo}-$(date +%F).zip programs/
 	zip -rp ../${repo}-$(date +%F).zip images/
