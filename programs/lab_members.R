@@ -25,7 +25,7 @@ lab.member <- jira.conf.plus %>%
   mutate(name=Change.Author) %>%
   cSplit("Change.Author"," ")  %>%
   filter(ifelse(is.na(Change.Author_2),1,0)==0) %>%
-  filter(!name %in% c("Lars Vilhuber","Michael Darisse")) %>%
+  filter(!name %in% c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion")) %>%
   distinct(name) 
 
 write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
