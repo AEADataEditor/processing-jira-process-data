@@ -56,7 +56,7 @@ for ( dir in list(images,tables,programs,temp)){
 # global libraries used everywhere #
 ####################################
 
-mran.date <- "2021-01-01"
+mran.date <- "2022-04-22"
 options(repos=paste0("https://cran.microsoft.com/snapshot/",mran.date,"/"))
 
 
