@@ -30,3 +30,15 @@ lab.member <- jira.conf.plus %>%
 
 write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
             row.names = FALSE)
+
+### Repeat process for external replicators
+out.member <- jira.conf.plus %>%
+  filter(External.party.name!=""&External.party.name!="IAB,cascad"&External.party.name!="cascad,IAB"&External.party.name!="BPLIM,cascad"&External.party.name!="cascad,BPLIM"&External.party.name!="Institute,Upjohn") %>%
+  mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y")) %>%
+  filter(date_created >= firstday, date_created < lastday) %>%
+  mutate(name=External.party.name) %>%
+  cSplit("External.party.name"," ")  %>%
+  distinct(name) 
+
+write.table(out.member, file = file.path(basepath,"data","external_replicators.txt"), sep = "\t",
+            row.names = FALSE)
