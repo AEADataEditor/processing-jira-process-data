@@ -25,20 +25,20 @@ lab.member <- jira.conf.plus %>%
   mutate(name=Change.Author) %>%
   cSplit("Change.Author"," ")  %>%
   filter(ifelse(is.na(Change.Author_2),1,0)==0) %>%
-  filter(!name %in% c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion")) %>%
+  filter(!name %in% c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang")) %>%
   distinct(name) 
 
 write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
             row.names = FALSE)
 
 ### Repeat process for external replicators
-out.member <- jira.conf.plus %>%
-  filter(External.party.name!=""&External.party.name!="IAB,cascad"&External.party.name!="cascad,IAB"&External.party.name!="BPLIM,cascad"&External.party.name!="cascad,BPLIM"&External.party.name!="Institute,Upjohn") %>%
+external.member <- jira.conf.plus %>%
+  filter(External.party.name!="") %>%
   mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y")) %>%
   filter(date_created >= firstday, date_created < lastday) %>%
-  mutate(name=External.party.name) %>%
-  cSplit("External.party.name"," ")  %>%
-  distinct(name) 
+  mutate(name_external=External.party.name) %>%
+  cSplit("name_external",",",direction="long")  %>%
+  distinct(name_external) 
 
-write.table(out.member, file = file.path(basepath,"data","external_replicators.txt"), sep = "\t",
+write.table(external.member, file = file.path(basepath,"data","external_replicators.txt"), sep = "\t",
             row.names = FALSE)
