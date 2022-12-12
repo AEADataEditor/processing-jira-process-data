@@ -30,7 +30,7 @@ jiraconf <- file.path(basepath,"data","confidential")
 
 # for local processing
 if ( Sys.getenv("HOSTNAME") == "zotique3" ) {
-  jirconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"),"/gvfs/dav:host=dav.box.com,ssl=true/dav/Office of AEA Data Editor/InternalData")
+  jiraconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"),"/gvfs/dav:host=dav.box.com,ssl=true/dav/Office of AEA Data Editor/InternalData")
 }
 jiraanon <- file.path(basepath,"data","anon")
 jirameta <- file.path(basepath,"data","metadata")
