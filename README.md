@@ -1,7 +1,7 @@
 ---
 title: "Process data from reproducibility service"
 author: "Lars Vilhuber"
-date: '2021-12-11'
+date: '2023-04-22'
 output:
   html_document:
     keep_md: yes
@@ -34,7 +34,7 @@ editor_options:
 ## Requirements
 This project requires
 
-- R (last run with R 4.0.4)
+- R (last run with R 4.2.0)
   - package `here` (>=0.1)
   
 Other packages might be installed automatically by the programs, as long as the requirements above are met, see [Session Info](#r-session-info).
@@ -55,7 +55,7 @@ The data is not made available outside of the organization, as it contains names
 
 
 
-At this time, the latest extract was made 2021-12-09. 
+At this time, the latest extract was made 2022-12-12. 
 
 ### Anonymized data
 
@@ -67,189 +67,133 @@ source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
 ```
 
 ```
-## 
-## > rm(list = ls())
-## 
-## > gc()
-##           used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells  722127 38.6    1209221 64.6  1209221 64.6
-## Vcells 1351474 10.4    8388608 64.0  1938374 14.8
-## 
-## > source(here::here("programs", "config.R"), echo = TRUE)
-## 
-## > process_raw <- TRUE
-## 
-## > download_raw <- TRUE
-## 
-## > extractday <- "12-09-2021"
-## 
-## > firstday <- "2020-12-01"
-## 
-## > lastday <- "2021-11-30"
-## 
-## > basepath <- here::here()
-## 
-## > setwd(basepath)
-## 
-## > jiraconf <- file.path(basepath, "data", "confidential")
-## 
-## > if (Sys.getenv("HOSTNAME") == "zotique3") {
-## +     jirconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"), "/gvfs/dav:host=dav.box.com,ssl=true/dav/Office o ..." ... [TRUNCATED] 
-## 
-## > jiraanon <- file.path(basepath, "data", "anon")
-## 
-## > jirameta <- file.path(basepath, "data", "metadata")
-## 
-## > images <- file.path(basepath, "images")
-## 
-## > tables <- file.path(basepath, "tables")
-## 
-## > programs <- file.path(basepath, "programs")
-## 
-## > temp <- file.path(basepath, "data", "temp")
-## 
-## > for (dir in list(images, tables, programs, temp)) {
-## +     if (file.exists(dir)) {
-## +     }
-## +     else {
-## +         dir.create(file.path(dir))
-## +     }
-##  .... [TRUNCATED] 
-## 
-## > mran.date <- "2021-01-01"
-## 
-## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
-## +     mran.date, "/"))
-## 
-## > pkgTest <- function(x) {
-## +     if (!require(x, character.only = TRUE)) {
-## +         install.packages(x, dep = TRUE)
-## +         if (!require(x, charact .... [TRUNCATED] 
-## 
-## > pkgTest.github <- function(x, source) {
-## +     if (!require(x, character.only = TRUE)) {
-## +         install_github(paste(source, x, sep = "/"))
-## +      .... [TRUNCATED] 
-## 
-## > if (file.exists(here::here("programs", "confidential-config.R"))) {
-## +     source(here::here("programs", "confidential-config.R"))
-## + }
-## 
-## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
-## 
-## > results <- sapply(as.list(global.libraries), pkgTest)
-```
+> # Anonymize JIRA process files and construct variables
+> # Harry Son, Lars Vilhuber
+> # 2021-05-20
+> 
+> ## Inputs: export_(extractday).csv
+> ## Outp .... [TRUNCATED] 
 
-```
-## Loading required package: splitstackshape
-```
+> gc()
+          used (Mb) gc trigger (Mb) max used (Mb)
+Ncells  640603 34.3    1248601 66.7  1248601 66.7
+Vcells 1638994 12.6    8388608 64.0  2011357 15.4
 
-```
-## 
-## > exportfile <- paste0("export_", extractday, ".csv")
-## 
-## > if (!file.exists(file.path(jiraconf, exportfile))) {
-## +     process_raw = FALSE
-## +     print("Input file for anonymization not found - setting global  ..." ... [TRUNCATED] 
-## 
-## > if (process_raw == TRUE) {
-## +     jira.conf.raw <- read.csv(file.path(jiraconf, exportfile), 
-## +         stringsAsFactors = FALSE) %>% rename(ticket = .... [TRUNCATED]
-```
+> ### Load libraries 
+> ### Requirements: have library *here*
+> source(here::here("programs","config.R"),echo=TRUE)
 
-### Publishing data
+> # ###########################
+> # CONFIG: parameters affecting processing
+> # ###########################
+> 
+> ## These control whether the external .... [TRUNCATED] 
 
-Some additional cleaning and matching, and then we write out the file
+> download_raw <- TRUE
 
+> ## This pins the date of the to-be-processed file
+> 
+> extractday <- "12-12-2022"
 
-```r
-source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
-```
+> ## These define the start (and end) dates for processing of data
+> firstday <- "2021-12-01"
 
-```
-## 
-## > source(here::here("programs", "config.R"), echo = TRUE)
-## 
-## > process_raw <- TRUE
-## 
-## > download_raw <- TRUE
-## 
-## > extractday <- "12-09-2021"
-## 
-## > firstday <- "2020-12-01"
-## 
-## > lastday <- "2021-11-30"
-## 
-## > basepath <- here::here()
-## 
-## > setwd(basepath)
-## 
-## > jiraconf <- file.path(basepath, "data", "confidential")
-## 
-## > if (Sys.getenv("HOSTNAME") == "zotique3") {
-## +     jirconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"), "/gvfs/dav:host=dav.box.com,ssl=true/dav/Office o ..." ... [TRUNCATED] 
-## 
-## > jiraanon <- file.path(basepath, "data", "anon")
-## 
-## > jirameta <- file.path(basepath, "data", "metadata")
-## 
-## > images <- file.path(basepath, "images")
-## 
-## > tables <- file.path(basepath, "tables")
-## 
-## > programs <- file.path(basepath, "programs")
-## 
-## > temp <- file.path(basepath, "data", "temp")
-## 
-## > for (dir in list(images, tables, programs, temp)) {
-## +     if (file.exists(dir)) {
-## +     }
-## +     else {
-## +         dir.create(file.path(dir))
-## +     }
-##  .... [TRUNCATED] 
-## 
-## > mran.date <- "2021-01-01"
-## 
-## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
-## +     mran.date, "/"))
-## 
-## > pkgTest <- function(x) {
-## +     if (!require(x, character.only = TRUE)) {
-## +         install.packages(x, dep = TRUE)
-## +         if (!require(x, charact .... [TRUNCATED] 
-## 
-## > pkgTest.github <- function(x, source) {
-## +     if (!require(x, character.only = TRUE)) {
-## +         install_github(paste(source, x, sep = "/"))
-## +      .... [TRUNCATED] 
-## 
-## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
-## 
-## > results <- sapply(as.list(global.libraries), pkgTest)
-## 
-## > jira.anon.raw <- readRDS(file.path(jiraanon, "temp.jira.anon.RDS")) %>% 
-## +     rename(reason.failure = Reason.for.Failure.to.Fully.Replicate) %>% 
-## + .... [TRUNCATED] 
-## 
-## > jira.conf.subtask <- jira.anon.raw %>% select(ticket, 
-## +     subtask) %>% cSplit("subtask", ",") %>% distinct() %>% pivot_longer(!ticket, 
-## +     nam .... [TRUNCATED] 
-## 
-## > jira.anon <- jira.anon.raw %>% select(ticket, mc_number_anon) %>% 
-## +     distinct(ticket, .keep_all = TRUE) %>% filter(mc_number_anon != 
-## +     is.n .... [TRUNCATED]
-```
+> lastday  <- "2022-11-30"
 
-```
-## Joining, by = "ticket"
-```
+> # ###########################
+> # CONFIG: define paths and filenames for later reference
+> # ###########################
+> 
+> # Change the basepath  .... [TRUNCATED] 
 
-```
-## 
-## > saveRDS(jira.anon, file = file.path(jiraanon, "jira.anon.RDS"))
-## 
-## > write.csv(jira.anon, file = file.path(jiraanon, "jira.anon.csv"))
+> setwd(basepath)
+
+> # for Jira stuff
+> jiraconf <- file.path(basepath,"data","confidential")
+
+> # for local processing
+> if ( Sys.getenv("HOSTNAME") == "zotique3" ) {
++   jiraconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"),"/gvfs/dav:host=dav.box. ..." ... [TRUNCATED] 
+
+> jiraanon <- file.path(basepath,"data","anon")
+
+> jirameta <- file.path(basepath,"data","metadata")
+
+> # local
+> images <- file.path(basepath, "images" )
+
+> tables <- file.path(basepath, "tables" )
+
+> programs <- file.path(basepath,"programs")
+
+> temp   <- file.path(basepath,"data","temp")
+
+> for ( dir in list(images,tables,programs,temp)){
++   if (file.exists(dir)){
++   } else {
++     dir.create(file.path(dir))
++   }
++ }
+
+> ####################################
+> # global libraries used everywhere #
+> ####################################
+> 
+> mran.date <- "2022-04-22"
+
+> options(repos=paste0("https://cran.microsoft.com/snapshot/",mran.date,"/"))
+
+> pkgTest <- function(x)
++ {
++   if (!require(x,character.only = TRUE))
++   {
++     install.packages(x,dep=TRUE)
++     if(!require(x,character.only =  .... [TRUNCATED] 
+
+> pkgTest.github <- function(x,source)
++ {
++   if (!require(x,character.only = TRUE))
++   {
++     install_github(paste(source,x,sep="/"))
++     if(!re .... [TRUNCATED] 
+
+> if ( file.exists(here::here("programs","confidential-config.R"))) {
++   source(here::here("programs","confidential-config.R"))
++   # if not sourced, .... [TRUNCATED] 
+
+> global.libraries <- c("dplyr","tidyr","splitstackshape")
+
+> results <- sapply(as.list(global.libraries), pkgTest)
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: tidyr
+Loading required package: splitstackshape
+
+> # double-check
+> exportfile <- paste0("export_",extractday,".csv")
+
+> if (! file.exists(file.path(jiraconf,exportfile))) {
++   process_raw = FALSE
++   print("Input file for anonymization not found - setting global para ..." ... [TRUNCATED] 
+
+> if ( process_raw == TRUE ) {
++   # Read in data extracted from Jira
++   #base <- here::here()
++   
++   jira.conf.raw <- read.csv(file.path(jiraconf, .... [TRUNCATED] 
+Warning messages:
+1: package ‘dplyr’ was built under R version 4.2.1 
+2: package ‘tidyr’ was built under R version 4.2.1 
 ```
 
 
@@ -303,96 +247,138 @@ The anonymized data has 15 columns.
 |AEAREP-2812 |2021-12-08   |2021-12-08   |            979|AEJ:Applied Economics |Open        |              |NA       |Journal                       |No       |NA      |           |               |                 |                   |
 |AEAREP-2812 |2021-12-08   |2021-12-08   |            979|                      |Open        |              |NA       |Manuscript Central identifier |No       |NA      |           |               |                 |                   |
 
-### Lab members during this period
+### Lab members and external replicators during this period
 
-We list the lab members active at some point during this period.
+We list the lab members and external replicators active at some point during this period.
 
 
 ```r
-source(file.path(programs,"lab_members.R"),echo=TRUE)
+source(file.path(programs,"03_lab_members.R"),echo=TRUE)
 ```
 
 ```
-## 
-## > rm(list = ls())
-## 
-## > gc()
-##           used (Mb) gc trigger  (Mb) max used  (Mb)
-## Ncells  856638 45.8    1491065  79.7  1491065  79.7
-## Vcells 1699284 13.0   17175092 131.1 21455074 163.7
-## 
-## > source(here::here("programs", "config.R"), echo = TRUE)
-## 
-## > process_raw <- TRUE
-## 
-## > download_raw <- TRUE
-## 
-## > extractday <- "12-09-2021"
-## 
-## > firstday <- "2020-12-01"
-## 
-## > lastday <- "2021-11-30"
-## 
-## > basepath <- here::here()
-## 
-## > setwd(basepath)
-## 
-## > jiraconf <- file.path(basepath, "data", "confidential")
-## 
-## > if (Sys.getenv("HOSTNAME") == "zotique3") {
-## +     jirconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"), "/gvfs/dav:host=dav.box.com,ssl=true/dav/Office o ..." ... [TRUNCATED] 
-## 
-## > jiraanon <- file.path(basepath, "data", "anon")
-## 
-## > jirameta <- file.path(basepath, "data", "metadata")
-## 
-## > images <- file.path(basepath, "images")
-## 
-## > tables <- file.path(basepath, "tables")
-## 
-## > programs <- file.path(basepath, "programs")
-## 
-## > temp <- file.path(basepath, "data", "temp")
-## 
-## > for (dir in list(images, tables, programs, temp)) {
-## +     if (file.exists(dir)) {
-## +     }
-## +     else {
-## +         dir.create(file.path(dir))
-## +     }
-##  .... [TRUNCATED] 
-## 
-## > mran.date <- "2021-01-01"
-## 
-## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
-## +     mran.date, "/"))
-## 
-## > pkgTest <- function(x) {
-## +     if (!require(x, character.only = TRUE)) {
-## +         install.packages(x, dep = TRUE)
-## +         if (!require(x, charact .... [TRUNCATED] 
-## 
-## > pkgTest.github <- function(x, source) {
-## +     if (!require(x, character.only = TRUE)) {
-## +         install_github(paste(source, x, sep = "/"))
-## +      .... [TRUNCATED] 
-## 
-## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
-## 
-## > results <- sapply(as.list(global.libraries), pkgTest)
-## 
-## > jira.conf.plus <- readRDS(file = file.path(jiraconf, 
-## +     "jira.conf.plus.RDS"))
-## 
-## > lab.member <- jira.conf.plus %>% filter(Change.Author != 
-## +     "" & Change.Author != "Automation for Jira" & Change.Author != 
-## +     "LV (Data Edit ..." ... [TRUNCATED] 
-## 
-## > write.table(lab.member, file = file.path(basepath, 
-## +     "data", "replicationlab_members.txt"), sep = "\t", row.names = FALSE)
+> # Export lab members worked during the designated period.
+> # Harry Son
+> # 2021-03-14
+> 
+> ## Inputs: export_12-22-2020.csv
+> ## Outputs: file.path .... [TRUNCATED] 
+
+> gc()
+          used (Mb) gc trigger  (Mb) max used  (Mb)
+Ncells 1057473 56.5    2044040 109.2  1626032  86.9
+Vcells 3022854 23.1   26132076 199.4 32665094 249.3
+
+> ### Load libraries 
+> ### Requirements: have library *here*
+> source(here::here("programs","config.R"),echo=TRUE)
+
+> # ###########################
+> # CONFIG: parameters affecting processing
+> # ###########################
+> 
+> ## These control whether the external .... [TRUNCATED] 
+
+> download_raw <- TRUE
+
+> ## This pins the date of the to-be-processed file
+> 
+> extractday <- "12-12-2022"
+
+> ## These define the start (and end) dates for processing of data
+> firstday <- "2021-12-01"
+
+> lastday  <- "2022-11-30"
+
+> # ###########################
+> # CONFIG: define paths and filenames for later reference
+> # ###########################
+> 
+> # Change the basepath  .... [TRUNCATED] 
+
+> setwd(basepath)
+
+> # for Jira stuff
+> jiraconf <- file.path(basepath,"data","confidential")
+
+> # for local processing
+> if ( Sys.getenv("HOSTNAME") == "zotique3" ) {
++   jiraconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"),"/gvfs/dav:host=dav.box. ..." ... [TRUNCATED] 
+
+> jiraanon <- file.path(basepath,"data","anon")
+
+> jirameta <- file.path(basepath,"data","metadata")
+
+> # local
+> images <- file.path(basepath, "images" )
+
+> tables <- file.path(basepath, "tables" )
+
+> programs <- file.path(basepath,"programs")
+
+> temp   <- file.path(basepath,"data","temp")
+
+> for ( dir in list(images,tables,programs,temp)){
++   if (file.exists(dir)){
++   } else {
++     dir.create(file.path(dir))
++   }
++ }
+
+> ####################################
+> # global libraries used everywhere #
+> ####################################
+> 
+> mran.date <- "2022-04-22"
+
+> options(repos=paste0("https://cran.microsoft.com/snapshot/",mran.date,"/"))
+
+> pkgTest <- function(x)
++ {
++   if (!require(x,character.only = TRUE))
++   {
++     install.packages(x,dep=TRUE)
++     if(!require(x,character.only =  .... [TRUNCATED] 
+
+> pkgTest.github <- function(x,source)
++ {
++   if (!require(x,character.only = TRUE))
++   {
++     install_github(paste(source,x,sep="/"))
++     if(!re .... [TRUNCATED] 
+
+> global.libraries <- c("dplyr","tidyr","splitstackshape")
+
+> results <- sapply(as.list(global.libraries), pkgTest)
+
+> jira.conf.plus <- readRDS(file=file.path(jiraconf,"jira.conf.plus.RDS"))
+
+> lab.member <- jira.conf.plus %>%
++   filter(Change.Author!=""&Change.Author!="Automation for Jira"&Change.Author!="LV (Data Editor)") %>%
++   mutate .... [TRUNCATED] 
+
+> write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
++             row.names = FALSE)
+
+> ### Repeat process for external replicators
+> external.member <- jira.conf.plus %>%
++   filter(External.party.name!="") %>%
++   mutate(date_created  .... [TRUNCATED] 
+
+> write.table(external.member, file = file.path(basepath,"data","external_replicators.txt"), sep = "\t",
++             row.names = FALSE)
+Warning messages:
+1: In type.convert.default(X[[i]], ...) :
+  'as.is' should be specified by the caller; using TRUE
+2: In type.convert.default(X[[i]], ...) :
+  'as.is' should be specified by the caller; using TRUE
+3: In type.convert.default(X[[i]], ...) :
+  'as.is' should be specified by the caller; using TRUE
+4: In type.convert.default(unlist(x, use.names = FALSE)) :
+  'as.is' should be specified by the caller; using TRUE
 ```
 
-There were a total of 47 lab members over the course of the 12 month period.
+There were a total of 42 lab members and 6 external replicators over the course of the 12 month period.
 
 ### R session info
 
@@ -402,37 +388,27 @@ sessionInfo()
 ```
 
 ```
-## R version 4.0.4 (2021-02-15)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 20.04.3 LTS
-## 
-## Matrix products: default
-## BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
-## 
-## locale:
-##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
-##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-## 
-## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
-## 
-## other attached packages:
-## [1] splitstackshape_1.4.8 readr_1.4.0           knitr_1.31           
-## [4] tidyr_1.1.2           stringr_1.4.0         dplyr_1.0.4          
-## 
-## loaded via a namespace (and not attached):
-##  [1] rstudioapi_0.13   magrittr_2.0.1    hms_1.0.0         tidyselect_1.1.0 
-##  [5] here_1.0.1        R6_2.5.0          rlang_0.4.10      highr_0.8        
-##  [9] tools_4.0.4       data.table_1.13.6 xfun_0.21         cli_2.3.0        
-## [13] DBI_1.1.1         htmltools_0.5.1.1 ellipsis_0.3.1    yaml_2.2.1       
-## [17] rprojroot_2.0.2   digest_0.6.27     assertthat_0.2.1  tibble_3.0.6     
-## [21] lifecycle_1.0.0   crayon_1.4.1      purrr_0.3.4       vctrs_0.3.6      
-## [25] glue_1.4.2        evaluate_0.14     rmarkdown_2.6     stringi_1.5.3    
-## [29] compiler_4.0.4    pillar_1.4.7      generics_0.1.0    pkgconfig_2.0.3
+R version 4.2.0 (2022-04-22 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows Server x64 (build 20348)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.utf8  LC_CTYPE=English_United States.utf8    LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                           LC_TIME=English_United States.utf8    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] splitstackshape_1.4.8 tidyr_1.2.0           dplyr_1.0.9          
+
+loaded via a namespace (and not attached):
+ [1] here_1.0.1        fansi_1.0.4       assertthat_0.2.1  utf8_1.2.3        rprojroot_2.0.2   R6_2.5.1         
+ [7] DBI_1.1.1         lifecycle_1.0.3   magrittr_2.0.3    pillar_1.8.1      rlang_1.0.6       cli_3.3.0        
+[13] data.table_1.14.2 rstudioapi_0.13   ellipsis_0.3.2    vctrs_0.5.2       generics_0.1.0    tools_4.2.0      
+[19] glue_1.6.2        purrr_0.3.4       compiler_4.2.0    pkgconfig_2.0.3   tidyselect_1.1.2  tibble_3.1.8 
 ```
 
 
