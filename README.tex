@@ -6,8 +6,8 @@
 ]{article}
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
@@ -33,14 +33,6 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\hypersetup{
-  pdftitle={Process data from reproducibility service},
-  pdfauthor={Lars Vilhuber},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
 \usepackage{color}
 \usepackage{fancyvrb}
@@ -109,13 +101,21 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
-\ifluatex
+\ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Process data from reproducibility service},
+  pdfauthor={Lars Vilhuber},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
 
 \title{Process data from reproducibility service}
 \author{Lars Vilhuber}
-\date{2021-03-16}
+\date{2023-05-24}
 
 \begin{document}
 \maketitle
@@ -135,22 +135,22 @@ browser.
 \subsection{Citation}\label{citation}}
 
 \begin{quote}
-Vilhuber, Lars. 2021. ``Process data for the AEA Pre-publication
+Vilhuber, Lars. 2023. ``Process data for the AEA Pre-publication
 Verification Service.'' \emph{American Economic Association
 {[}publisher{]}}. Ann Arbor, MI: Inter-university Consortium for
-Political and Social Research {[}distributor{]}, 2021-03-16.
-\url{https://doi.org/10.3886/E117876V2}
+Political and Social Research {[}distributor{]}, 2023-05-24.
+\href{https://doi.org/10.3886/E117876V4}{https://doi.org/10.3886/E117876V3}
 \end{quote}
 
 \begin{verbatim}
-@techreport{10.3886/e117876v2,
-  doi = {10.3886/E117876V2},
-  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V2/view},
+@techreport{10.3886/e117876v4,
+  doi = {10.3886/E117876V4},
+  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V4/view},
   author = {Vilhuber,  Lars},
   title = {Process data for the AEA Pre-publication Verification Service},
   institution = {American Economic Association [publisher]},
   series = {ICPSR - Interuniversity Consortium for Political and Social Research},
-  year = {2021}
+  year = {2023}
 }
 \end{verbatim}
 
@@ -162,7 +162,7 @@ This project requires
 \begin{itemize}
 \tightlist
 \item
-  R (last run with R 4.0.5)
+  R (last run with R 4.2.2)
 
   \begin{itemize}
   \tightlist
@@ -202,7 +202,7 @@ The data is not made available outside of the organization, as it
 contains names of replicators, manuscript numbers, and verbatim email
 correspondence.
 
-At this time, the latest extract was made 05-31-2021.
+At this time, the latest extract was made 2022-12-08.
 
 \hypertarget{anonymized-data}{%
 \subsubsection{Anonymized data}\label{anonymized-data}}
@@ -218,6 +218,99 @@ version and the anonymized version.
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+## 
+## > rm(list = ls())
+## 
+## > gc()
+##           used (Mb) gc trigger (Mb) max used (Mb)
+## Ncells  825495 44.1    1412927 75.5  1412927 75.5
+## Vcells 1498145 11.5    8388608 64.0  2372351 18.1
+## 
+## > source(here::here("programs", "config.R"), echo = TRUE)
+## 
+## > process_raw <- TRUE
+## 
+## > download_raw <- TRUE
+## 
+## > extractday <- "12-12-2022"
+## 
+## > firstday <- "2021-12-01"
+## 
+## > lastday <- "2022-11-30"
+## 
+## > basepath <- here::here()
+## 
+## > setwd(basepath)
+## 
+## > jiraconf <- file.path(basepath, "data", "confidential")
+## 
+## > if (Sys.getenv("HOSTNAME") == "zotique3") {
+## +     jiraconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"), "/gvfs/dav:host=dav.box.com,ssl=true/dav/Office  ..." ... [TRUNCATED] 
+## 
+## > jiraanon <- file.path(basepath, "data", "anon")
+## 
+## > jirameta <- file.path(basepath, "data", "metadata")
+## 
+## > images <- file.path(basepath, "images")
+## 
+## > tables <- file.path(basepath, "tables")
+## 
+## > programs <- file.path(basepath, "programs")
+## 
+## > temp <- file.path(basepath, "data", "temp")
+## 
+## > for (dir in list(images, tables, programs, temp)) {
+## +     if (file.exists(dir)) {
+## +     }
+## +     else {
+## +         dir.create(file.path(dir))
+## +     }
+##  .... [TRUNCATED] 
+## 
+## > mran.date <- "2022-04-22"
+## 
+## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
+## +     mran.date, "/"))
+## 
+## > pkgTest <- function(x) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install.packages(x, dep = TRUE)
+## +         if (!require(x, charact .... [TRUNCATED] 
+## 
+## > pkgTest.github <- function(x, source) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install_github(paste(source, x, sep = "/"))
+## +      .... [TRUNCATED] 
+## 
+## > if (file.exists(here::here("programs", "confidential-config.R"))) {
+## +     source(here::here("programs", "confidential-config.R"))
+## + }
+## 
+## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
+## 
+## > results <- sapply(as.list(global.libraries), pkgTest)
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: splitstackshape
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## > exportfile <- paste0("export_", extractday, ".csv")
+## 
+## > if (!file.exists(file.path(jiraconf, exportfile))) {
+## +     process_raw = FALSE
+## +     print("Input file for anonymization not found - setting global  ..." ... [TRUNCATED] 
+## [1] "Input file for anonymization not found - setting global parameter to FALSE"
+## 
+## > if (process_raw == TRUE) {
+## +     jira.conf.raw <- read.csv(file.path(jiraconf, exportfile), 
+## +         stringsAsFactors = FALSE) %>% rename(ticket = .... [TRUNCATED] 
+## [1] "Not processing anonymization due to global parameter."
+\end{verbatim}
+
 \hypertarget{publishing-data}{%
 \subsubsection{Publishing data}\label{publishing-data}}
 
@@ -229,6 +322,92 @@ Some additional cleaning and matching, and then we write out the file
 \end{Highlighting}
 \end{Shaded}
 
+\begin{verbatim}
+## 
+## > source(here::here("programs", "config.R"), echo = TRUE)
+## 
+## > process_raw <- TRUE
+## 
+## > download_raw <- TRUE
+## 
+## > extractday <- "12-12-2022"
+## 
+## > firstday <- "2021-12-01"
+## 
+## > lastday <- "2022-11-30"
+## 
+## > basepath <- here::here()
+## 
+## > setwd(basepath)
+## 
+## > jiraconf <- file.path(basepath, "data", "confidential")
+## 
+## > if (Sys.getenv("HOSTNAME") == "zotique3") {
+## +     jiraconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"), "/gvfs/dav:host=dav.box.com,ssl=true/dav/Office  ..." ... [TRUNCATED] 
+## 
+## > jiraanon <- file.path(basepath, "data", "anon")
+## 
+## > jirameta <- file.path(basepath, "data", "metadata")
+## 
+## > images <- file.path(basepath, "images")
+## 
+## > tables <- file.path(basepath, "tables")
+## 
+## > programs <- file.path(basepath, "programs")
+## 
+## > temp <- file.path(basepath, "data", "temp")
+## 
+## > for (dir in list(images, tables, programs, temp)) {
+## +     if (file.exists(dir)) {
+## +     }
+## +     else {
+## +         dir.create(file.path(dir))
+## +     }
+##  .... [TRUNCATED] 
+## 
+## > mran.date <- "2022-04-22"
+## 
+## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
+## +     mran.date, "/"))
+## 
+## > pkgTest <- function(x) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install.packages(x, dep = TRUE)
+## +         if (!require(x, charact .... [TRUNCATED] 
+## 
+## > pkgTest.github <- function(x, source) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install_github(paste(source, x, sep = "/"))
+## +      .... [TRUNCATED] 
+## 
+## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
+## 
+## > results <- sapply(as.list(global.libraries), pkgTest)
+## 
+## > jira.anon.raw <- readRDS(file.path(jiraanon, "temp.jira.anon.RDS")) %>% 
+## +     rename(reason.failure = Reason.for.Failure.to.Fully.Replicate) %>% 
+## + .... [TRUNCATED] 
+## 
+## > jira.conf.subtask <- jira.anon.raw %>% select(ticket, 
+## +     subtask) %>% cSplit("subtask", ",") %>% distinct() %>% pivot_longer(!ticket, 
+## +     nam .... [TRUNCATED] 
+## 
+## > jira.anon <- jira.anon.raw %>% select(ticket, mc_number_anon) %>% 
+## +     distinct(ticket, .keep_all = TRUE) %>% filter(mc_number_anon != 
+## +     is.n .... [TRUNCATED]
+\end{verbatim}
+
+\begin{verbatim}
+## Joining, by = "ticket"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## > saveRDS(jira.anon, file = file.path(jiraanon, "jira.anon.RDS"))
+## 
+## > write.csv(jira.anon, file = file.path(jiraanon, "jira.anon.csv"))
+\end{verbatim}
+
 \hypertarget{describing-the-data}{%
 \subsection{Describing the Data}\label{describing-the-data}}
 
@@ -238,20 +417,25 @@ The anonymized data has 15 columns.
 \subsubsection{Variables}\label{variables}}
 
 \begin{verbatim}
-## 
+## Rows: 15 Columns: 2
 ## -- Column specification --------------------------------------------------------
-## cols(
-##   name = col_character(),
-##   label = col_character()
-## )
+## Delimiter: ","
+## chr (2): name, label
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 \end{verbatim}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.10}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.90}}@{}}
-\toprule
-name & label \\
-\midrule
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.1011}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.8989}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+label
+\end{minipage} \\
+\midrule()
 \endhead
 ticket & The tracking number within the system. Project specific.
 Sequentially assigned upon receipt. \\
@@ -280,48 +464,178 @@ MCRecommendation & Decision status when the issue is Revise and
 Resubmit. \\
 MCRecommendationV2 & Decision status when the issue is conditionally
 accepted. \\
-\bottomrule
+\bottomrule()
 \end{longtable}
 
 \hypertarget{sample-records}{%
 \subsubsection{Sample records}\label{sample-records}}
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.06}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.06}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.06}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.07}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.05}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.03}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.07}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.04}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.15}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.04}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.04}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.05}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.07}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.08}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.09}}@{}}
-\toprule
-ticket & date\_created & date\_updated & mc\_number\_anon & Journal &
-Status & Software.used & received & Changed.Fields & external & subtask
-& Resolution & reason.failure & MCRecommendation & MCRecommendationV2 \\
-\midrule
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0553}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0599}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0599}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0691}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0922}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0323}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0645}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0415}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.1382}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0415}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0369}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0737}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0691}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0783}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 28\tabcolsep) * \real{0.0876}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+ticket
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+date\_created
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+date\_updated
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+mc\_number\_anon
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Journal
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Status
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Software.used
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+received
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Changed.Fields
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+external
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+subtask
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Resolution
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+reason.failure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+MCRecommendation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+MCRecommendationV2
+\end{minipage} \\
+\midrule()
 \endhead
-AEAREP-1676 & 2020-12-21 & 2020-12-21 & 481 & AEJ:Micro & Open & & No &
-Journal & No & NA & & & & \\
-AEAREP-1676 & 2020-12-21 & 2020-12-21 & 481 & & Open & & No & Manuscript
-Central identifier & No & NA & & & & \\
-AEAREP-1676 & 2020-12-21 & 2020-12-21 & 481 & & Open & & Yes & & No & NA
+AEAREP-3787 & 2022-12-08 & 2022-12-08 & 1316 & AEJ:Economic Policy &
+Open & Stata,R & No & Software used & No & NA & & & & \\
+AEAREP-3787 & 2022-12-08 & 2022-12-08 & 1316 & AEJ:Economic Policy &
+Open & & No & openICPSR Project Number & No & NA & & & & \\
+AEAREP-3787 & 2022-12-08 & 2022-12-08 & 1316 & AEJ:Economic Policy &
+Open & & NA & Manuscript Central identifier & No & NA & & & & \\
+AEAREP-3787 & 2022-12-08 & 2022-12-08 & 1316 & AEJ:Economic Policy &
+Open & & NA & Journal & No & NA & & & & \\
+AEAREP-3787 & 2022-12-08 & 2022-12-08 & 1316 & & Open & & NA & & No & NA
 & & & & \\
-AEAREP-1674 & 2020-12-18 & 2020-12-21 & 480 & AER & Open & & No &
-openICPSR Project Number & No & NA & & & & \\
-AEAREP-1674 & 2020-12-18 & 2020-12-18 & 480 & AER & Open & & No &
-Journal & No & NA & & & & \\
-AEAREP-1674 & 2020-12-18 & 2020-12-18 & 480 & & Open & & No & Manuscript
-Central identifier & No & NA & & & & \\
-\bottomrule
+AEAREP-3786 & 2022-12-07 & 2022-12-07 & 316 & AER & Done & & No & Status
+& No & NA & Evaluation only & & & \\
+\bottomrule()
 \end{longtable}
+
+\hypertarget{lab-members-during-this-period}{%
+\subsubsection{Lab members during this
+period}\label{lab-members-during-this-period}}
+
+We list the lab members active at some point during this period.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{source}\NormalTok{(}\FunctionTok{file.path}\NormalTok{(programs,}\StringTok{"03\_lab\_members.R"}\NormalTok{),}\AttributeTok{echo=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## > rm(list = ls())
+## 
+## > gc()
+##           used (Mb) gc trigger  (Mb) max used  (Mb)
+## Ncells  988576 52.8    1866287  99.7  1866287  99.7
+## Vcells 1897560 14.5   24597022 187.7 30746277 234.6
+## 
+## > source(here::here("programs", "config.R"), echo = TRUE)
+## 
+## > process_raw <- TRUE
+## 
+## > download_raw <- TRUE
+## 
+## > extractday <- "12-12-2022"
+## 
+## > firstday <- "2021-12-01"
+## 
+## > lastday <- "2022-11-30"
+## 
+## > basepath <- here::here()
+## 
+## > setwd(basepath)
+## 
+## > jiraconf <- file.path(basepath, "data", "confidential")
+## 
+## > if (Sys.getenv("HOSTNAME") == "zotique3") {
+## +     jiraconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"), "/gvfs/dav:host=dav.box.com,ssl=true/dav/Office  ..." ... [TRUNCATED] 
+## 
+## > jiraanon <- file.path(basepath, "data", "anon")
+## 
+## > jirameta <- file.path(basepath, "data", "metadata")
+## 
+## > images <- file.path(basepath, "images")
+## 
+## > tables <- file.path(basepath, "tables")
+## 
+## > programs <- file.path(basepath, "programs")
+## 
+## > temp <- file.path(basepath, "data", "temp")
+## 
+## > for (dir in list(images, tables, programs, temp)) {
+## +     if (file.exists(dir)) {
+## +     }
+## +     else {
+## +         dir.create(file.path(dir))
+## +     }
+##  .... [TRUNCATED] 
+## 
+## > mran.date <- "2022-04-22"
+## 
+## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
+## +     mran.date, "/"))
+## 
+## > pkgTest <- function(x) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install.packages(x, dep = TRUE)
+## +         if (!require(x, charact .... [TRUNCATED] 
+## 
+## > pkgTest.github <- function(x, source) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install_github(paste(source, x, sep = "/"))
+## +      .... [TRUNCATED] 
+## 
+## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
+## 
+## > results <- sapply(as.list(global.libraries), pkgTest)
+## 
+## > jira.conf.plus <- readRDS(file = file.path(jiraconf, 
+## +     "jira.conf.plus.RDS"))
+## 
+## > lab.member <- jira.conf.plus %>% filter(Change.Author != 
+## +     "" & Change.Author != "Automation for Jira" & Change.Author != 
+## +     "LV (Data Edit ..." ... [TRUNCATED] 
+## 
+## > write.table(lab.member, file = file.path(basepath, 
+## +     "data", "replicationlab_members.txt"), sep = "\t", row.names = FALSE)
+## 
+## > external.member <- jira.conf.plus %>% filter(External.party.name != 
+## +     "") %>% mutate(date_created = as.Date(substr(Created, 1, 
+## +     10), "%m/ ..." ... [TRUNCATED] 
+## 
+## > write.table(external.member, file = file.path(basepath, 
+## +     "data", "external_replicators.txt"), sep = "\t", row.names = FALSE)
+\end{verbatim}
+
+There were a total of 42 lab members over the course of the 12 month
+period.
 
 \hypertarget{r-session-info}{%
 \subsubsection{R session info}\label{r-session-info}}
@@ -333,34 +647,41 @@ Central identifier & No & NA & & & & \\
 \end{Shaded}
 
 \begin{verbatim}
-## R version 4.0.5 (2021-03-31)
-## Platform: x86_64-w64-mingw32/x64 (64-bit)
-## Running under: Windows 10 x64 (build 19042)
+## R version 4.2.2 (2022-10-31)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 22.04.1 LTS
 ## 
 ## Matrix products: default
+## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so
 ## 
 ## locale:
-## [1] LC_COLLATE=English_United States.1252 
-## [2] LC_CTYPE=English_United States.1252   
-## [3] LC_MONETARY=English_United States.1252
-## [4] LC_NUMERIC=C                          
-## [5] LC_TIME=English_United States.1252    
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] readr_1.4.0   knitr_1.30    tidyr_1.1.2   stringr_1.4.0 dplyr_1.0.2  
+## [1] splitstackshape_1.4.8 readr_2.1.3           knitr_1.41           
+## [4] tidyr_1.2.1           stringr_1.5.0         dplyr_1.0.10         
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] rstudioapi_0.13  magrittr_2.0.1   hms_1.0.0        tidyselect_1.1.0
-##  [5] here_1.0.0       R6_2.5.0         rlang_0.4.10     fansi_0.4.2     
-##  [9] highr_0.8        tools_4.0.5      xfun_0.22        utf8_1.1.4      
-## [13] cli_2.3.1        htmltools_0.5.0  ellipsis_0.3.1   assertthat_0.2.1
-## [17] yaml_2.2.1       rprojroot_2.0.2  digest_0.6.27    tibble_3.0.6    
-## [21] lifecycle_1.0.0  crayon_1.4.1     purrr_0.3.4      vctrs_0.3.6     
-## [25] glue_1.4.2       evaluate_0.14    rmarkdown_2.5    stringi_1.5.3   
-## [29] compiler_4.0.5   pillar_1.5.0     generics_0.1.0   pkgconfig_2.0.3
+##  [1] highr_0.9         pillar_1.8.1      compiler_4.2.2    tools_4.2.2      
+##  [5] bit_4.0.5         digest_0.6.30     evaluate_0.18     lifecycle_1.0.3  
+##  [9] tibble_3.1.8      pkgconfig_2.0.3   rlang_1.0.6       cli_3.4.1        
+## [13] DBI_1.1.3         rstudioapi_0.14   parallel_4.2.2    yaml_2.3.6       
+## [17] xfun_0.39         fastmap_1.1.0     withr_2.5.0       generics_0.1.3   
+## [21] vctrs_0.5.1       hms_1.1.2         bit64_4.0.5       rprojroot_2.0.3  
+## [25] tidyselect_1.2.0  glue_1.6.2        data.table_1.14.6 here_1.0.1       
+## [29] R6_2.5.1          fansi_1.0.3       vroom_1.6.0       rmarkdown_2.18   
+## [33] purrr_0.3.5       tzdb_0.3.0        magrittr_2.0.3    htmltools_0.5.4  
+## [37] ellipsis_0.3.2    assertthat_0.2.1  utf8_1.2.2        stringi_1.7.8    
+## [41] crayon_1.5.2
 \end{verbatim}
 
 \end{document}
