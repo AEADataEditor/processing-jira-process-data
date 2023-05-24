@@ -17,21 +17,22 @@ editor_options:
 
 ## Citation
 
-> Vilhuber, Lars. 2022. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2022-05-16. [https://doi.org/10.3886/E117876V3](https://doi.org/10.3886/E117876V3)
+> Vilhuber, Lars. 2023. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2023-05-16. [https://doi.org/10.3886/E117876V3](https://doi.org/10.3886/E117876V4)
 
 ```
-@techreport{10.3886/e117876v3,
-  doi = {10.3886/E117876V3},
-  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V3/view},
+@techreport{10.3886/e117876v4,
+  doi = {10.3886/E117876V4},
+  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V4/view},
   author = {Vilhuber,  Lars},
   title = {Process data for the AEA Pre-publication Verification Service},
   institution = {American Economic Association [publisher]},
   series = {ICPSR - Interuniversity Consortium for Political and Social Research},
-  year = {2022}
+  year = {2023}
 }
 ```
 
 ## Requirements
+
 This project requires
 
 - R (last run with R 4.2.0)
