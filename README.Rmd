@@ -53,19 +53,21 @@ Other packages might be installed automatically by the programs, as long as the 
 
 ### Raw process data
 
-Raw process data is manually extracted from Jira, and saved as 
+Raw process data is extracted from Jira using the Jira API. An API key is needed. See [README-JIRA.md](README-JIRA.md) for details.
 
-- `export_MM-DD-YYYY.csv` (for detailed transaction-level data)
+- `issue_history_YYYY-MM-DD.csv` (for detailed transaction-level data)
 
 The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence. 
 
+To obtain, run `programs/01_download_issues.py`. This will use the fields as specified in `data/metadata/jira-fields.xlsx`. If fields need to be updated (they are keyed on names), run `programs/00_jira_fields.py` to obtain a new Excel file, and mark the to-be-included fields with "True"
+
 ```{r listfiles,include=FALSE}
-listfiles <- as.data.frame(list.files(file.path(jiraconf),pattern = "^export_")) 
+listfiles <- as.data.frame(list.files(file.path(jiraconf),pattern = "^issue_history_")) 
 names(listfiles) <- c("filename")
 latest <- listfiles %>% 
   separate(filename,c("base","extension"),sep = "([\\.])",remove = FALSE) %>%
   separate(base,c("prefix","date_str"),sep="_") %>% 
-  mutate(date = as.Date(date_str, format = "%m-%d-%Y")) %>% select(-prefix)
+  mutate(date = as.Date(date_str, format = "%Y-%m-%d")) %>% select(-prefix)
 
 ```
 

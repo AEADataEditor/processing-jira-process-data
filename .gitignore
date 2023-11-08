@@ -8,3 +8,6 @@ data/ignore
 data/anon/temp*
 data/confidential
 confidential-config.R
+.env
+processing
+.bash_history
