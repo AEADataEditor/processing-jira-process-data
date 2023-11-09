@@ -1,29 +1,32 @@
 #!/bin/bash
-PWD=$(pwd)
 
+if [[ "$1" == "-h" ]]
+then
+cat << EOF
+$0 (tag)
+
+will start interactive environment for tag (TAG)
+EOF
+exit 0
+fi
+
+PWD=$(pwd)
 . ${PWD}/.myconfig.sh
+tag=${1:-2023-11-08}
+case $USER in
+  codespace)
+  WORKSPACE=/workspaces
+  ;;
+  *vilhuber|*herbert)
+  WORKSPACE=$PWD
+  ;;
+  *)
+  WORKSPACE=$PWD
+esac
   
 # build the docker if necessary
 
-BUILD=yes
-arg1=$1
+docker pull $space/$repo:$tag
 
-docker pull $space/$repo 
-if [[ $? == 1 ]]
-then
-  ## maybe it's local only
-  docker image inspect $space/$repo > /dev/null
-  [[ $? == 0 ]] && BUILD=no
-else
-  BUILD=NO
-fi
-# override
-[[ "$arg1" == "force" ]] && BUILD=yes
 
-if [[ "$BUILD" == "yes" ]]; then
-docker build . -t $space/$repo
-nohup docker push $space/$repo &
-fi
-
-docker run -e DISABLE_AUTH=true \
- -v $WORKSPACE:/home/rstudio --rm -p 8787:8787 $space/$repo
+docker run -e DISABLE_AUTH=true -v "$WORKSPACE":/home/rstudio --rm -p 8787:8787 $space/$repo:$tag
