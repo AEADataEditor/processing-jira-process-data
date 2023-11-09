@@ -16,25 +16,31 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 source(here::here("global-libraries.R"),echo=TRUE)
 source(here::here("programs","config.R"),echo=TRUE)
-global.libraries <- c("dplyr","stringr","tidyr","knitr","readr")
-results <- sapply(as.list(global.libraries), pkgTest)
+
+VERSION = "V5"
+YEAR = "2024"
+ICPSR_PROJECT = "117876"
+ICPSR_DOI = paste0("https://doi.org/10.3886/E",ICPSR_PROJECT,VERSION)
 ```
 > Note: The [PDF version](https://aeadataeditor.github.io/processing-jira-process-data/README.pdf) of this document is transformed by manually printing from a browser.
 
 ## Citation
 
-> Vilhuber, Lars. 2023. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], `r Sys.Date()`. [https://doi.org/10.3886/E117876V3](https://doi.org/10.3886/E117876V4)
+> Vilhuber, Lars. `r YEAR`. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], `r Sys.Date()`. [`r ICPSR_DOI`](`r ICPSR_DOI`)
 
-```
-@techreport{10.3886/e117876v4,
-  doi = {10.3886/E117876V4},
-  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V4/view},
+```{r, results='asis', echo=FALSE}
+cat("```")
+cat(paste0("@techreport{10.3886/e117876",VERSION,","))
+cat(paste0("  doi = {10.3886/E117876",VERSION,"},"))
+cat(paste0("  url = {",ICPSR_DOI,"},"))
+cat("
   author = {Vilhuber,  Lars},
   title = {Process data for the AEA Pre-publication Verification Service},
   institution = {American Economic Association [publisher]},
-  series = {ICPSR - Interuniversity Consortium for Political and Social Research},
-  year = {2023}
-}
+  series = {ICPSR - Interuniversity Consortium for Political and Social Research},")
+cat(paste0("  year = {",YEAR,"}"))
+cat("}")
+cat("```")
 ```
 
 ## Requirements
@@ -60,14 +66,22 @@ Raw process data is extracted from Jira using the Jira API. An API key is needed
 
 The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence. 
 
-To obtain, run `programs/01_download_issues.py`. This will use the fields as specified in `data/metadata/jira-fields.xlsx`. If fields need to be updated (they are keyed on names), run `programs/00_jira_fields.py` to obtain a new Excel file, and mark the to-be-included fields with "True"
+To obtain, run `programs/01_download_issues.py`. This will use the fields as specified in `data/metadata/jira-fields.xlsx`. If fields need to be updated (they are keyed on names), run `programs/00_jira_fields.py` to obtain a new Excel file, and mark the to-be-included fields with "True".
+
+A full download of JIRA issues as of `r YEAR` took 
+
+```
+real    30m29.182s
+user    0m37.513s
+sys     0m4.056s
+```
 
 ```{r listfiles,include=FALSE}
 listfiles <- as.data.frame(list.files(file.path(jiraconf),pattern = "^issue_history_")) 
 names(listfiles) <- c("filename")
 latest <- listfiles %>% 
   separate(filename,c("base","extension"),sep = "([\\.])",remove = FALSE) %>%
-  separate(base,c("prefix","date_str"),sep="_") %>% 
+  separate(base,c("prefix","prefix2","date_str"),sep="_") %>% 
   mutate(date = as.Date(date_str, format = "%Y-%m-%d")) %>% select(-prefix)
 
 ```
