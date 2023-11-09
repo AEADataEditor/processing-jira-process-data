@@ -51,32 +51,3 @@ for ( dir in list(images,tables,programs,temp)){
 }
 
 
-
-####################################
-# global libraries used everywhere #
-####################################
-
-mran.date <- "2022-04-22"
-options(repos=paste0("https://cran.microsoft.com/snapshot/",mran.date,"/"))
-
-
-pkgTest <- function(x)
-{
-  if (!require(x,character.only = TRUE))
-  {
-    install.packages(x,dep=TRUE)
-    if(!require(x,character.only = TRUE)) stop("Package not found")
-  }
-  return("OK")
-}
-
-pkgTest.github <- function(x,source)
-{
-  if (!require(x,character.only = TRUE))
-  {
-    install_github(paste(source,x,sep="/"))
-    if(!require(x,character.only = TRUE)) stop(paste("Package ",x,"not found"))
-  }
-  return("OK")
-}
-

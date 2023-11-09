@@ -14,6 +14,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+source(here::here("global-libraries.R"),echo=TRUE)
 source(here::here("programs","config.R"),echo=TRUE)
 global.libraries <- c("dplyr","stringr","tidyr","knitr","readr")
 results <- sapply(as.list(global.libraries), pkgTest)
@@ -78,7 +79,7 @@ At this time, the latest extract was made `r max(latest$date)`.
 We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version. 
 
 ```{r anonymize, echo = TRUE, eval = TRUE, warning=FALSE}
-source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
+source(file.path(programs,"02_jira_anonymize.R"),echo=TRUE)
 ```
 
 ### Publishing data
@@ -86,7 +87,7 @@ source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
 Some additional cleaning and matching, and then we write out the file
 
 ```{r publish, echo = TRUE, eval = TRUE, warning=FALSE}
-source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
+source(file.path(programs,"10_jira_anon_publish.R"),echo=TRUE)
 ```
 
 
@@ -117,7 +118,7 @@ kable(head(jira))
 
 ### Lab members during this period
 
-We list the lab members active at some point during this period.
+We list the lab members active at some point during this period. This still requires confidential data as an input.
 
 ```{r lab, warning=FALSE}
 source(file.path(programs,"03_lab_members.R"),echo=TRUE)
