@@ -14,11 +14,14 @@ def jira_username():
         try:
             load_dotenv()
             username = os.environ.get("JIRA_USERNAME")
+            type_input = False
         except FileNotFoundError:
             print("Warning: .env file not found")
             username = False
+            type_input = True
 
-    if not username:
+    #if not username:
+    if type_input:
         username = input("Enter Jira username: ")
     return username
 
@@ -30,11 +33,15 @@ def get_api_key():
         try:
             load_dotenv()
             key = os.environ.get("JIRA_API_KEY")
+            type_input = False
         except FileNotFoundError:
             print("Warning: .env file not found")
             key = False
+            type_input = True
 
-    if not key:
+
+    #if not key:
+    if type_input:
         key = input("Enter Jira API key: ")
     return key
 
