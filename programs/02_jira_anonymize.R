@@ -20,7 +20,8 @@ global.libraries <- c("dplyr","tidyr","splitstackshape")
 results <- sapply(as.list(global.libraries), pkgTest)
 
 # double-check
-exportfile <- paste0("export_",extractday,".csv")
+#exportfile <- paste0("export_",extractday,".csv")
+exportfile <- paste0("/issue_history_",extractday,".csv")
 
 if (! file.exists(file.path(jiraconf,exportfile))) {
   process_raw = FALSE

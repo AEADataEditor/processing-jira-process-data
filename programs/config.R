@@ -8,11 +8,11 @@ download_raw <- TRUE
 
 ## This pins the date of the to-be-processed file
 
-extractday <- "12-12-2022"
+extractday <- "2023-11-13"
 
 ## These define the start (and end) dates for processing of data
-firstday <- "2021-12-01"
-lastday  <- "2022-11-30"
+firstday <- "2022-12-01"
+lastday  <- "2023-11-13"
 
 # ###########################
 # CONFIG: define paths and filenames for later reference

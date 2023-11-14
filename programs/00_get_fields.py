@@ -12,16 +12,14 @@ def jira_username():
     username = os.environ.get('JIRA_USERNAME')
     if not username:
         try:
-            load_dotenv()
+            #load_dotenv()
+            load_dotenv("C:/AEAWorkspace/Annual Report/processing-jira-process-data/programs/linda.env")
             username = os.environ.get("JIRA_USERNAME")
-            type_input = False
         except FileNotFoundError:
             print("Warning: .env file not found")
             username = False
-            type_input = True
 
-    #if not username:
-    if type_input:
+    if not username:
         username = input("Enter Jira username: ")
     return username
 
@@ -31,17 +29,15 @@ def get_api_key():
     key = os.environ.get('JIRA_API_KEY')
     if not key:
         try:
-            load_dotenv()
+            #load_dotenv()
+            load_dotenv("C:/AEAWorkspace/Annual Report/processing-jira-process-data/programs/linda.env")
             key = os.environ.get("JIRA_API_KEY")
-            type_input = False
         except FileNotFoundError:
             print("Warning: .env file not found")
             key = False
-            type_input = True
 
 
-    #if not key:
-    if type_input:
+    if not key:
         key = input("Enter Jira API key: ")
     return key
 
