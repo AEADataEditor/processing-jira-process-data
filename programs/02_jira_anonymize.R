@@ -58,11 +58,12 @@ if ( process_raw == TRUE ) {
   jira.assignees1 <- jira.conf.raw %>%
     select(Assignee) %>%
     filter(Assignee!="") 
-  jira.assignees2 <- jira.conf.raw %>%
-    select(Assignee=Change.Author) %>%
-    filter(Assignee!="") 
+  #jira.assignees2 <- jira.conf.raw %>%
+    #select(Assignee=Change.Author) %>%
+    #filter(Assignee!="") 
   
-  jira.assignees <- bind_rows(jira.assignees2,jira.assignees1)%>%
+  #jira.assignees <- bind_rows(jira.assignees2,jira.assignees1)%>%
+  jira.assignees <- jira.assignees1 %>%
     filter(Assignee!="Automation for Jira") %>%
     filter(Assignee!="LV (Data Editor)") %>%
     distinct() 
@@ -84,8 +85,9 @@ if ( process_raw == TRUE ) {
   # Now merge the anonymized data on
   jira.conf.plus <- jira.conf.raw %>% 
     left_join(jira.manuscripts,by="mc_number") %>%
-    left_join(jira.assignees,by="Assignee") %>%
-    left_join(jira.assignees %>% rename(change.author.anon=assignee_anon),by=c("Change.Author"="Assignee"))
+    #left_join(jira.assignees,by="Assignee") %>%
+    left_join(jira.assignees,by="Assignee")
+    #left_join(jira.assignees %>% rename(change.author.anon=assignee_anon),by=c("Change.Author"="Assignee"))
   
   # save anonymized and confidential data
   
@@ -93,7 +95,8 @@ if ( process_raw == TRUE ) {
           file=file.path(jiraconf,"jira.conf.plus.RDS"))
   
   
-  saveRDS(jira.conf.plus %>% select(-mc_number,-Assignee,-Change.Author),
+  #saveRDS(jira.conf.plus %>% select(-mc_number,-Assignee,-Change.Author),
+  saveRDS(jira.conf.plus %>% select(-mc_number,-Assignee),
     file=file.path(jiraanon,"temp.jira.anon.RDS"))
   
 } else { 
