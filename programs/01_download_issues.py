@@ -113,8 +113,11 @@ def get_issue_history(jira, issue_key,fields):
         state['issue_key'] = issue_key
         state['created'] = h.created
         for item in h.items:
-            if item.field in fields:
+            if item.field == 'assignee':
+                state['Assignee'] = item.toString
+            if item.field in fields:              
                 state[item.field] = item.toString
+
         # Add the state to the list
         all_states.append(state)
     
