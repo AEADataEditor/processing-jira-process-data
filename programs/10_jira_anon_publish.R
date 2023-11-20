@@ -11,16 +11,10 @@
 ### Load libraries 
 ### Requirements: have library *here*
 source(here::here("programs","config.R"),echo=TRUE)
-global.libraries <- c("dplyr","tidyr","splitstackshape")
-results <- sapply(as.list(global.libraries), pkgTest)
-
-# double-check
-
-# Read in data extracted from Jira
-#base <- here::here()
+source(here::here("global-libraries.R"),echo=TRUE)
 
 jira.anon.raw <- readRDS(file.path(jiraanon,"temp.jira.anon.RDS")) %>%
-  rename(reason.failure=Reason.for.Failure.to.Fully.Replicate) %>%
+  rename(reason.failure=Reason.for.Failure.to.be.Fully.Reproducible) %>%
   rename(external=External.validation) %>%
   rename(subtask=Sub.tasks) %>%
   mutate(training = grepl("TRAINING", ticket, fixed = TRUE)) %>%
@@ -60,6 +54,6 @@ jira.anon <- jira.anon.raw %>%
          MCRecommendation,MCRecommendationV2)
 
 ## export it as a csv file
-saveRDS(jira.anon,file=file.path(jiraanon,"jira.anon.RDS"))
-write.csv(jira.anon,file=file.path(jiraanon,"jira.anon.csv"))
+saveRDS(jira.anon,jira.anon.rds)
+write.csv(jira.anon,jira.anon.csv)
 
