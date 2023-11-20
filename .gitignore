@@ -11,3 +11,4 @@ confidential-config.R
 .env
 processing
 .bash_history
+*_config.json

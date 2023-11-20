@@ -12,23 +12,21 @@ gc()
 ### Load libraries 
 ### Requirements: have library *here*
 source(here::here("programs","config.R"),echo=TRUE)
-global.libraries <- c("dplyr","tidyr","splitstackshape")
-results <- sapply(as.list(global.libraries), pkgTest)
+source(here::here("global-libraries.R"),echo=TRUE)
 
 
-jira.conf.plus <- readRDS(file=file.path(jiraconf,"jira.conf.plus.RDS"))
+name.exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang","Automation for Jira","LV (Data Editor)")
+
+jira.conf.plus <- readRDS(file=jira.conf.plus.rds)
 
 lab.member <- jira.conf.plus %>%
-  filter(Change.Author!=""&Change.Author!="Automation for Jira"&Change.Author!="LV (Data Editor)") %>%
-  mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y")) %>%
+  filter(! Assignee %in% name.exclusions ) %>%
   filter(date_created >= firstday, date_created < lastday) %>%
-  mutate(name=Change.Author) %>%
-  cSplit("Change.Author"," ")  %>%
-  filter(ifelse(is.na(Change.Author_2),1,0)==0) %>%
-  filter(!name %in% c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang")) %>%
-  distinct(name) 
+  cSplit("Assignee"," ")  %>%
+  filter(ifelse(is.na(Assignee_2),1,0)==0) %>%
+  distinct(Assignee) 
 
-write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
+write.table(lab.member, file = members.txt, sep = "\t",
             row.names = FALSE)
 
 ### Repeat process for external replicators
