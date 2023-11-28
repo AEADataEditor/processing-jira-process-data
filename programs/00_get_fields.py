@@ -6,6 +6,18 @@ import os
 import argparse
 from dotenv import load_dotenv
 
+# find root directory based on either git or something elseroot_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def get_rootdir():
+    """Get root directory of project"""
+
+    cwd = os.getcwd()
+    while cwd != os.path.dirname(cwd):
+        if os.path.exists(os.path.join(cwd, '.git')):
+            repo_root = cwd
+            break
+        cwd = os.path.dirname(cwd)
+    return repo_root
+
 def jira_username():
     """Retrieve Jira username securely from env or prompt"""
     
@@ -89,6 +101,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     filename = args.filename
+    filenamedir = os.path.join(get_rootdir(), "data","metadata")
+    filename = os.path.join(filenamedir, filename)
     jiradomain = args.domain
     overwrite_file = args.overwrite
 
