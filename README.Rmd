@@ -49,8 +49,12 @@ This project requires
 
 - R (last run with R `r paste0(R.Version()$major,".",R.Version()$minor)`)
   - package `here` (>=0.1)
+- Python
+  - module `venv`
   
 Other packages might be installed automatically by the programs, as long as the requirements above are met, see [Session Info](#r-session-info).
+
+These requirements are satisfied in the Docker image created by `Dockerfile`, see [README-docker](README-docker.md)
 
 ## Data 
 

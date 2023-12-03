@@ -17,14 +17,12 @@ case $USER in
   codespace)
   WORKSPACE=/workspaces
   ;;
-  *vilhuber|*herbert)
-  WORKSPACE=$PWD
-  ;;
   *)
   WORKSPACE=$PWD
+  ;;
 esac
   
-# build the docker if necessary
+# pull the docker if necessary
 
 docker pull $space/$repo:$tag
 
