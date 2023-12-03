@@ -108,6 +108,7 @@ def get_issue_history(jira, issue_key,fields):
     # Initialize state 
     all_states = []
     state = {f: None for f in fields}
+    state['Resolved'] = issue.fields.resolutiondate
     # now walk through histories and compile the state at each point in time.
     for h in issue.changelog.histories:
         state['issue_key'] = issue_key
@@ -115,6 +116,8 @@ def get_issue_history(jira, issue_key,fields):
         for item in h.items:
             if item.field == 'assignee':
                 state['Assignee'] = item.toString
+            if item.field == "issuetype":
+                state["Issue Type"] = item.toString
             if item.field in fields:              
                 state[item.field] = item.toString
 
@@ -130,7 +133,7 @@ def output_to_files(all_states,fulloutfile):
 
     flat_states = [item for sublist in all_states for item in sublist]
   
-    with open(fulloutfile, 'w') as f:
+    with open(fulloutfile, 'w', encoding="utf-8") as f:
 
         writer = csv.DictWriter(f, fieldnames=fields)  
         writer.writeheader()
