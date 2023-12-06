@@ -122,7 +122,7 @@ def get_issue_history(jira, issue_key,fields):
                 state[item.field] = item.toString
 
         # Add the state to the list
-        all_states.append(state)
+        all_states.append(state.copy())
     
     return all_states
         
