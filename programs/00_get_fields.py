@@ -6,18 +6,6 @@ import os
 import argparse
 from dotenv import load_dotenv
 
-# find root directory based on either git or something elseroot_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-def get_rootdir():
-    """Get root directory of project"""
-
-    cwd = os.getcwd()
-    while cwd != os.path.dirname(cwd):
-        if os.path.exists(os.path.join(cwd, '.git')):
-            repo_root = cwd
-            break
-        cwd = os.path.dirname(cwd)
-    return repo_root
-
 def jira_username():
     """Retrieve Jira username securely from env or prompt"""
     
@@ -33,6 +21,19 @@ def jira_username():
     if not username:
         username = input("Enter Jira username: ")
     return username
+
+# find root directory based on either git or something elseroot_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def get_rootdir():
+    """Get root directory of project"""
+
+    cwd = os.getcwd()
+    while cwd != os.path.dirname(cwd):
+        if os.path.exists(os.path.join(cwd, '.git')):
+            repo_root = cwd
+            break
+        cwd = os.path.dirname(cwd)
+    return repo_root
+
 
 def get_api_key():
     """Retrieve API key securely from env or prompt"""
@@ -74,12 +75,13 @@ def export_fields(field_data, filename):
     df['Include'] = True
 
     # Export to Excel   
-    # Check if file exists
+    print('Check if file exists')
     file_exists = os.path.isfile(filename)
 
     if file_exists and not overwrite_file:
         print('File already exists, not overwriting.')
     else:
+        print('Writing to ' + filename)
         df.to_excel(filename, index=False)
 
 
@@ -101,18 +103,19 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     filename = args.filename
-    filenamedir = os.path.join(get_rootdir(), "data","metadata")
-    filename = os.path.join(filenamedir, filename)
     jiradomain = args.domain
     overwrite_file = args.overwrite
 
+    fieldfiledir = os.path.join(get_rootdir(), "data","metadata")
+    fieldfile = os.path.join(fieldfiledir, filename)
+
     
     # summarize
-    print_summary(filename, jiradomain)
+    print_summary(fieldfile, jiradomain)
   
     confirm = input("Proceed? (y/N): ")
     if confirm.lower() != "y":
         exit()
 
     data = get_fields(jira_username(),get_api_key(),jiradomain)
-    export_fields(data, filename)
+    export_fields(data, fieldfile)
