@@ -223,3 +223,8 @@ if __name__ == "__main__":
         histories = get_issue_history(jira, key,fields)
         all_states.append(histories)
     output_to_files(all_states,fulloutfile)
+    # confirm file is there
+    if not os.path.exists(fulloutfile):
+        print(f"Error: {fulloutfile} not found.")
+    else:
+        print(f"Output written to {fulloutfile}")
