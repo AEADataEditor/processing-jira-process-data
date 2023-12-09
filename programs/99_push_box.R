@@ -27,7 +27,7 @@ box_auth_service(json.config.file)
 box_setwd(client_folder)
 
 
-issue_history.csv <- file.path(jiraconf,paste0(issue_history.prefix,extractday,".csv"))
+issue_history.csv <- file.path(jiraconf,paste0("export_",extractday,".csv"))
 
 
 box_ul(file=issue_history.csv)

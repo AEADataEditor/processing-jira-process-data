@@ -8,11 +8,11 @@ download_raw <- TRUE
 
 ## This pins the date of the to-be-processed file
 
-extractday <- "12-12-2022"
+extractday <- "12-09-2023"
 
 ## These define the start (and end) dates for processing of data
-firstday <- "2021-12-01"
-lastday  <- "2022-11-30"
+firstday <- "2022-12-01"
+lastday  <- "2023-11-30"
 
 # ###########################
 # CONFIG: define paths and filenames for later reference
@@ -50,33 +50,9 @@ for ( dir in list(images,tables,programs,temp)){
   }
 }
 
+# Files
 
-
-####################################
-# global libraries used everywhere #
-####################################
-
-mran.date <- "2022-04-22"
-options(repos=paste0("https://cran.microsoft.com/snapshot/",mran.date,"/"))
-
-
-pkgTest <- function(x)
-{
-  if (!require(x,character.only = TRUE))
-  {
-    install.packages(x,dep=TRUE)
-    if(!require(x,character.only = TRUE)) stop("Package not found")
-  }
-  return("OK")
-}
-
-pkgTest.github <- function(x,source)
-{
-  if (!require(x,character.only = TRUE))
-  {
-    install_github(paste(source,x,sep="/"))
-    if(!require(x,character.only = TRUE)) stop(paste("Package ",x,"not found"))
-  }
-  return("OK")
-}
+jira.conf.plus.rds <- file.path(jiraconf,"jira.conf.plus.RDS")
+assignee.lookup.rds <- file.path(jiraconf,"assignee-lookup.RDS")
+mc.lookup.rds       <- file.path(jiraconf,"mc-lookup.RDS")
 

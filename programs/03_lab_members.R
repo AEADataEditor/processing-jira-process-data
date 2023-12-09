@@ -2,31 +2,31 @@
 # Harry Son
 # 2021-03-14
 
-## Inputs: export_12-22-2020.csv
+## Inputs: jira.conf.plus.RDS
 ## Outputs: file.path(basepath,"data","replicationlab_members.txt")
 
-### Cleans working environment.
-rm(list = ls())
-gc()
-
-### Load libraries 
-### Requirements: have library *here*
 source(here::here("programs","config.R"),echo=TRUE)
-global.libraries <- c("dplyr","tidyr","splitstackshape")
-results <- sapply(as.list(global.libraries), pkgTest)
+if ( file.exists(here::here("programs","confidential-config.R"))) {
+  source(here::here("programs","confidential-config.R"))
+  # if not sourced, randomness will ensue
+}
+source(here::here("global-libraries.R"),echo=TRUE)
 
+exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
+                "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
+                "LV (Data Editor)")
 
-jira.conf.plus <- readRDS(file=file.path(jiraconf,"jira.conf.plus.RDS"))
+lookup <- read_csv(file.path(jirameta,"lookup.csv"))
+
+jira.conf.plus <- readRDS(jira.conf.plus.rds)
 
 lab.member <- jira.conf.plus %>%
-  filter(Change.Author!=""&Change.Author!="Automation for Jira"&Change.Author!="LV (Data Editor)") %>%
-  mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y")) %>%
   filter(date_created >= firstday, date_created < lastday) %>%
-  mutate(name=Change.Author) %>%
-  cSplit("Change.Author"," ")  %>%
-  filter(ifelse(is.na(Change.Author_2),1,0)==0) %>%
-  filter(!name %in% c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang")) %>%
-  distinct(name) 
+  filter(Assignee != "") %>%
+  filter(!Assignee %in% exclusions) %>%
+  left_join(lookup) %>%
+  mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
+  distinct(Assignee) 
 
 write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
             row.names = FALSE)
@@ -36,8 +36,7 @@ external.member <- jira.conf.plus %>%
   filter(External.party.name!="") %>%
   mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y")) %>%
   filter(date_created >= firstday, date_created < lastday) %>%
-  mutate(name_external=External.party.name) %>%
-  cSplit("name_external",",",direction="long")  %>%
+  mutate(name_external=str_replace(External.party.name,"-"," ")) %>%
   distinct(name_external) 
 
 write.table(external.member, file = file.path(basepath,"data","external_replicators.txt"), sep = "\t",
