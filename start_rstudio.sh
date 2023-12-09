@@ -1,29 +1,47 @@
 #!/bin/bash
+
+
 PWD=$(pwd)
-
 . ${PWD}/.myconfig.sh
-  
-# build the docker if necessary
 
-BUILD=yes
-arg1=$1
-
-docker pull $space/$repo 
-if [[ $? == 1 ]]
+if [[ "$1" == "-h" ]]
 then
-  ## maybe it's local only
-  docker image inspect $space/$repo > /dev/null
-  [[ $? == 0 ]] && BUILD=no
-else
-  BUILD=NO
-fi
-# override
-[[ "$arg1" == "force" ]] && BUILD=yes
+cat << EOF
+$0 (tag)
 
-if [[ "$BUILD" == "yes" ]]; then
-docker build . -t $space/$repo
-nohup docker push $space/$repo &
+will start interactive environment for tag (TAG)
+EOF
+exit 0
 fi
 
-docker run -e DISABLE_AUTH=true \
- -v $WORKSPACE:/home/rstudio --rm -p 8787:8787 $space/$repo
+if [[ ! -z "$1" ]]
+then
+  tag=${1}
+fi
+
+echo "Using tag = $tag"
+
+case $USER in
+  codespace)
+  WORKSPACE=/workspaces
+  ;;
+  *)
+  WORKSPACE=$PWD
+  ;;
+esac
+  
+# pull the docker if necessary
+set -ev
+
+tag_present=$(docker images | grep $space/$repo | awk ' { print $2 } ' | grep $tag)
+
+if [[ -z "$tag_present" ]]
+then
+  echo "Pulling $space/$repo:$tag"
+  docker pull $space/$repo:$tag
+else  
+  echo "Found $space/$repo:$tag"
+fi
+
+
+docker run -e DISABLE_AUTH=true -v "$WORKSPACE":/home/rstudio --rm -p 8787:8787 $space/$repo:$tag
