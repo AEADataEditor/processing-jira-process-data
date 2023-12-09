@@ -13,3 +13,6 @@ processing
 .bash_history
 *_config.json
 .env-*
+.boxr*
+.python_history
+.lesshst
