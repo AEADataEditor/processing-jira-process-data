@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+PWD=$(pwd)
+. ${PWD}/.myconfig.sh
+
 if [[ "$1" == "-h" ]]
 then
 cat << EOF
@@ -10,9 +14,13 @@ EOF
 exit 0
 fi
 
-PWD=$(pwd)
-. ${PWD}/.myconfig.sh
-tag=${1:-2023-11-08}
+if [[ ! -z "$1" ]]
+then
+  tag=${1}
+fi
+
+echo "Using tag = $tag"
+
 case $USER in
   codespace)
   WORKSPACE=/workspaces
@@ -23,8 +31,17 @@ case $USER in
 esac
   
 # pull the docker if necessary
+set -ev
 
-docker pull $space/$repo:$tag
+tag_present=$(docker images | grep $space/$repo | awk ' { print $2 } ' | grep $tag)
+
+if [[ -z "$tag_present" ]]
+then
+  echo "Pulling $space/$repo:$tag"
+  docker pull $space/$repo:$tag
+else  
+  echo "Found $space/$repo:$tag"
+fi
 
 
 docker run -e DISABLE_AUTH=true -v "$WORKSPACE":/home/rstudio --rm -p 8787:8787 $space/$repo:$tag
