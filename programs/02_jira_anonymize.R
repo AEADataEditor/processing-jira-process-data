@@ -16,9 +16,12 @@ if ( file.exists(here::here("programs","confidential-config.R"))) {
 source(here::here("global-libraries.R"),echo=TRUE)
 
 
+issue_history.csv <- file.path(jiraconf,paste0(issue_history.prefix,extractday,".csv"))
+
+
 # double-check for existence of issue history file.
 
-if (! file.exists(issues.file.csv)) {
+if (! file.exists(issue_history.csv)) {
   process_raw = FALSE
   print("Input file for anonymization not found - setting global parameter to FALSE")
 }
@@ -26,11 +29,20 @@ if (! file.exists(issues.file.csv)) {
 if ( process_raw == TRUE ) {
   # Read in data extracted from Jira
 
-  jira.conf.raw <- read.csv(issues.file.csv, stringsAsFactors = FALSE) %>%
+  jira.conf.raw <- read.csv(issue_history.csv, stringsAsFactors = FALSE) %>%
     # the first field name can be iffy. It is the Key (sic)...
     rename(ticket=issue_key) %>%
     mutate(mc_number = sub('\\..*', '', Manuscript.Central.identifier)) 
+  
+  # Write out names as currently captured to TEMP
+  names(jira.conf.raw) %>% as.data.frame() -> tmp
+  names(tmp) <- c("Name")
+  write_excel_csv(tmp,file=file.path(temp,jira.conf.names.csv),col_names = TRUE)
 
+  warning(paste0("If you need to edit the names to be included,\n",
+                 "edit the file ",file.path(temp,jira.conf.names.csv),"\n",
+                 "save it in ",jirameta, "with the same name, ran run again."))
+  
   # anonymize mc_number
   jira.tmp <- jira.conf.raw %>% 
     select(mc_number) %>% 

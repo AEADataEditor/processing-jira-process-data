@@ -49,8 +49,7 @@ for ( dir in list(images,tables,programs,temp)){
 
 # filenames
 
-issue_history.csv <- file.path(jiraconf,paste0("issue_history_",extractday,".csv"))
-
+issue_history.prefix <- "issue_history_"
 manuscript.lookup     <- "mc-lookup"
 manuscript.lookup.rds <- file.path(jiraconf,paste0(manuscript.lookup,".RDS"))
 
@@ -61,6 +60,8 @@ assignee.lookup.rds   <- file.path(jiraconf,paste0(assignee.lookup,".RDS"))
 
 jira.conf.plus.base   <- "jira.conf.plus"
 jira.conf.plus.rds    <- file.path(jiraconf,paste0(jira.conf.plus.base,".RDS"))
+
+jira.conf.names.csv   <- "jira_conf_names.csv"
 
 # public files
 

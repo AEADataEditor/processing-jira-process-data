@@ -52,7 +52,26 @@ This project requires
 - Python
   - module `venv`
   
-Other packages might be installed automatically by the programs, as long as the requirements above are met, see [Session Info](#r-session-info).
+Other packages will be installed automatically by the programs, as long as the requirements above are met, see [Session Info](#r-session-info).
+
+### R packages
+
+```{r libs, echo=FALSE}
+
+left_join(as.data.frame(global.libraries) %>% select(Package=global.libraries),
+          as.data.frame(installed.packages())) %>%
+  select(Package,Version) %>% kable()
+```
+
+### Python packages
+
+```{r pylibs,echo=FALSE}
+
+read_csv("requirements.txt",col_names = c("Modules")) %>% kable()
+```
+
+
+### Docker
 
 These requirements are satisfied in the Docker image created by `Dockerfile`, see [README-docker](README-docker.md)
 
@@ -68,16 +87,30 @@ Raw process data is extracted from Jira using the Jira API. An API key is needed
 
 - `issue_history_YYYY-MM-DD.csv` (for detailed transaction-level data)
 
-The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence. 
+The data is not made available outside of the organization, as it contains names of replicators associated with each  manuscript and verbatim email correspondence. 
 
 To obtain, run `programs/01_download_issues.py`. This will use the fields as specified in `data/metadata/jira-fields.xlsx`. If fields need to be updated (they are keyed on names), run `programs/00_jira_fields.py` to obtain a new Excel file, and mark the to-be-included fields with "True".
 
-A full download of JIRA issues as of `r YEAR` took 
+A full download of JIRA issues as of `r YEAR` would be
 
 ```
-real    30m29.182s
-user    0m37.513s
-sys     0m4.056s
+> python3 01_download_issues.py -s 2018-01-01 -e 2023-11-30
+Summary:
+- Start Date: 2018-01-01
+- End Date: 2023-11-30
+
+ About to extract all issue history between these dates from https://aeadataeditors.atlassian.net.
+ The output will be written to /home/rstudio/data/confidential/issue_history_2023-12-07.csv.
+
+```
+
+and took 
+
+
+```
+real    35m13.466s
+user    0m38.907s
+sys     0m5.758s
 ```
 
 ```{r listfiles,include=FALSE}
@@ -94,7 +127,7 @@ At this time, the latest extract was made `r max(latest$date)`.
 
 ### Anonymized data
 
-We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version. 
+We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `02_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version. 
 
 ```{r anonymize, echo = TRUE, eval = TRUE, warning=FALSE}
 source(file.path(programs,"02_jira_anonymize.R"),echo=TRUE)

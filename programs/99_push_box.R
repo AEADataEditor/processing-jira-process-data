@@ -26,6 +26,10 @@ box_auth_service(json.config.file)
 #files <- box_ls(client_folder)
 box_setwd(client_folder)
 
+
+issue_history.csv <- file.path(jiraconf,paste0(issue_history.prefix,extractday,".csv"))
+
+
 box_ul(file=issue_history.csv)
 box_ul(file=jira.conf.plus.rds)
 box_ul(file=assignee.lookup.rds)
