@@ -117,6 +117,7 @@ Loading required package: here
 here() starts at /home/rstudio
 Loading required package: splitstackshape
 Loading required package: boxr
+boxr: see `vignette("boxr")` on how to authorize to your Box account.
 Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
@@ -151,7 +152,7 @@ Linking to: OpenSSL 3.0.2 15 Mar 2022
 +   filter(!is.na(mc_number_anon)) %>%
 +   anti_join(jira.conf.subtask) %>%
 +   select(ticket,date_created,date_updated,mc_number_anon,Journal,Status,
-+          Software.used,received,Changed.Fields,external,Resolution,reason.failure,
++          Software.used,received,Changed.Fields,external,Resolution,reason.failure,MCStatus,
 +          MCRecommendation,MCRecommendationV2)
 Joining with `by = join_by(ticket)`
 > 
@@ -162,4 +163,4 @@ Joining with `by = join_by(ticket)`
 > 
 > proc.time()
    user  system elapsed 
-  2.220   1.553   2.209 
+  2.365   1.457   2.320 

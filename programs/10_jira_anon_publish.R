@@ -44,7 +44,7 @@ jira.anon <- jira.anon.raw %>%
   filter(!is.na(mc_number_anon)) %>%
   anti_join(jira.conf.subtask) %>%
   select(ticket,date_created,date_updated,mc_number_anon,Journal,Status,
-         Software.used,received,Changed.Fields,external,Resolution,reason.failure,
+         Software.used,received,Changed.Fields,external,Resolution,reason.failure,MCStatus,
          MCRecommendation,MCRecommendationV2)
 
 ## export it as a csv file
