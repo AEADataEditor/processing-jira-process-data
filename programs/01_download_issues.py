@@ -154,21 +154,23 @@ def get_issue_history_2(jira, issue_key, fields):
 
     # Iterate over the reversed histories
     for history in histories:
+        temp_state = state.copy()
         # For each history, iterate over its items
-        state['issue_key'] = issue_key
+        #state['issue_key'] = issue_key
+        temp_state['issue_key'] = issue_key
         for item in history.items:
-            if item.field == 'IssueParentAssociation' or item.field == 'Link':
-                continue # To avoid error due to certain fields not being in the expanded jira-fields.xlsx.
-            # If the item's field is in the state, update the state with item.FromValue
-            if item.field in state:
-                state[item.field] = item.fromString
-            # If the item's field is not in the state, add it to the state with its current value
-            else:
-                state[item.field] = item.toString
+            # If the item's field is in the state, update the state
+            #if item.field in state and item.fromString is not None:
+            #if item.field in state:
+            #if item.field in temp_state:
+            # If the item's field is in the temp_state and the field changed in the history, update the temp_state with item.toString
+            if item.field in temp_state and item.fromString != item.toString:
+                #state[item.field] = item.toString
+                temp_state[item.field] = item.toString
 
         # After updating the state based on the items of a history, append a copy of the state to all_states
-        all_states.append(state.copy())
-        #print(all_states)    
+        #all_states.append(state.copy())
+        all_states.append(temp_state.copy())    
 
 
     return all_states
