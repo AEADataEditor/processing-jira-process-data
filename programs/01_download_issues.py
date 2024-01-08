@@ -157,9 +157,14 @@ def get_issue_history_2(jira, issue_key, fields):
         # For each history, iterate over its items
         state['issue_key'] = issue_key
         for item in history.items:
+            if item.field == 'IssueParentAssociation' or item.field == 'Link':
+                continue # To avoid error due to certain fields not being in the expanded jira-fields.xlsx.
             # If the item's field is in the state, update the state with item.FromValue
             if item.field in state:
                 state[item.field] = item.fromString
+            # If the item's field is not in the state, add it to the state with its current value
+            else:
+                state[item.field] = item.toString
 
         # After updating the state based on the items of a history, append a copy of the state to all_states
         all_states.append(state.copy())
