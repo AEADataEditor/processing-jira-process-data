@@ -150,28 +150,26 @@ def get_issue_history_2(jira, issue_key, fields):
     all_states = [state.copy()]
     
     # Get the changelog histories and reverse the order
+    #histories = sorted(issue.changelog.histories, key=lambda h: h.created) # Sort the changelog histories by their 'created' field
     histories = list(reversed(issue.changelog.histories))
 
     # Iterate over the reversed histories
     for history in histories:
-        temp_state = state.copy()
-        # For each history, iterate over its items
-        #state['issue_key'] = issue_key
-        temp_state['issue_key'] = issue_key
+        # Create a new state for the current history
+        new_state = all_states[-1].copy()
+        new_state['issue_key'] = issue_key
+
+        # For each item in the history, update the new state
         for item in history.items:
-            # If the item's field is in the state, update the state
-            #if item.field in state and item.fromString is not None:
-            #if item.field in state:
-            #if item.field in temp_state:
-            # If the item's field is in the temp_state and the field changed in the history, update the temp_state with item.toString
-            if item.field in temp_state and item.fromString != item.toString:
-                #state[item.field] = item.toString
-                temp_state[item.field] = item.toString
+            # If the item's field is in the state and the field changed in the history, update the state with item.toString
+            if item.field in new_state and item.fromString != item.toString:
+                new_state[item.field] = item.toString
 
         # After updating the state based on the items of a history, append a copy of the state to all_states
-        #all_states.append(state.copy())
-        all_states.append(temp_state.copy())    
+        all_states.append(new_state)  
 
+    # Remove the initial state from all_states
+    all_states.pop(0)
 
     return all_states
      
