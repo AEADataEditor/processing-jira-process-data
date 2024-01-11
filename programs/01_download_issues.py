@@ -30,14 +30,14 @@ def get_fields(fieldfile):
     df = pd.read_excel(fieldfile)  
 
     # Filter to only include fields set to True
-    #included_fields = df.loc[df['Include'] == True, 'Name'].tolist()
+    
     included_fields = df.loc[df['Include'] == True, 'Id'].tolist()
     # Create a list of the "Name" values
     names = df.loc[df['Include'] == True, 'Name'].tolist()
 
     # Add required system fields    
-    included_fields.extend(['issue_key'])
-    names.extend(['issue_key'])
+    included_fields.extend(['issue_key', 'ae_timeToNextChange', 'ae_changedFields', 'ae_changeAuthor'])
+    names.extend(['issue_key', 'As of Date', 'Time In This State', 'Changed Fields', 'Change Author'])
     print(f"Fields to extract: {included_fields}")
 
     # Create a dictionary where the keys are the "Id" and the values are the "Name"
@@ -107,57 +107,33 @@ def get_issues(jira, start_date, end_date):
     print(f"Total issues fetched: {len(issue_keys)}")
     return issue_keys
 
-def get_issue_history(jira, issue_key,fields):
+def get_issue_history(jira, issue_key, fields):
     """Get full changelog for issue"""
 
-    issue = jira.issue(issue_key, expand='changelog') 
-
-    # Initialize state 
-    all_states = []
-    state = {f: None for f in fields}
-    state['Resolved'] = issue.fields.resolutiondate
-    # now walk through histories and compile the state at each point in time.
-    for h in issue.changelog.histories:
-        state['issue_key'] = issue_key
-        state['created'] = h.created
-        for item in h.items:
-            if item.field == 'assignee':
-                state['Assignee'] = item.toString
-            if item.field == "issuetype":
-                state["Issue Type"] = item.toString
-            if item.field in fields:              
-                state[item.field] = item.toString
-
-        # Add the state to the list
-        all_states.append(state.copy())
-    
-    return all_states
-
-def get_issue_history_2(jira, issue_key, fields):
-    """Get full changelog for issue"""
-
-    # Start from the complete state of the JIRA ticket
-    # Then walk backwards in the history, using the "item.FromValue" to undo the changes.
-    # Record the "as-of-date" as you do so.
+    # Start from the complete state of the JIRA ticket, then walk backwards in the 'changelog' when recording changes.
 
     issue = jira.issue(issue_key, expand='changelog')
 
     # Initialize state with most recent values
-    # Note that the 0th index is the most recent state
     state = {f: getattr(issue.fields, f) if hasattr(issue.fields, f) else None for f in fields}
     state['Resolved'] = issue.fields.resolutiondate
 
     all_states = [state.copy()]
-    
-    # Get the changelog histories and reverse the order
-    #histories = sorted(issue.changelog.histories, key=lambda h: h.created) # Sort the changelog histories by their 'created' field
-    histories = list(reversed(issue.changelog.histories))
+
+    histories = list(issue.changelog.histories)
 
     # Iterate over the reversed histories
     for history in histories:
+
         # Create a new state for the current history
+        # Note that we will update the most recent state with the changes from the current iteration of 'history'.
+        # However, if a history does not contain any changes at all (i.e. all item.fromString are equal to item.toString for all items in the history),
+        # then the updated 'new_state' will be the same as the most recent state, and a duplicate state will be apended to all_states.
         new_state = all_states[-1].copy()
         new_state['issue_key'] = issue_key
+
+        # Update the 'created' field in the new state
+        new_state['created'] = history.created
 
         # For each item in the history, update the new state
         for item in history.items:
@@ -167,9 +143,6 @@ def get_issue_history_2(jira, issue_key, fields):
 
         # After updating the state based on the items of a history, append a copy of the state to all_states
         all_states.append(new_state)  
-
-    # Remove the initial state from all_states
-    all_states.pop(0)
 
     return all_states
      
@@ -264,13 +237,12 @@ if __name__ == "__main__":
     jira = JIRA(options, basic_auth=(jira_username(), get_api_key()))
 
     issue_keys = get_issues(jira, start_date, end_date)
-    #issue_keys = "AEAREP-4834"
+
     all_states = []
 
     for key in issue_keys:
         print(f"Fetching history for {key}")
-        #histories = get_issue_history(jira, key,fields)
-        histories = get_issue_history_2(jira, key,fields)
+        histories = get_issue_history(jira, key,fields)
         all_states.append(histories)
     for i in range(len(all_states)):
         for j in range(len(all_states[i])):

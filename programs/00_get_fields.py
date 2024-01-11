@@ -68,11 +68,21 @@ def get_fields(username,api_token,jiradomain):
 
     return field_data
 
-def export_fields(field_data, filename):
+def export_fields(field_data, filename, include_fields="all"):
+    # If include_fields is None or an empty list, print an error message and return
+    if not include_fields:
+        print("Error: No fields have been included.")
+        return
+    
     # Convert to DataFrame    
     df = pd.DataFrame(field_data, columns=['Name', 'Id'])
-    # make Include true everwhere
-    df['Include'] = True
+
+    # If include_fields is "all", make 'Include' true for all fields
+    if include_fields == "all":
+        df['Include'] = True
+    # If include_fields is not "all", make 'Include' true only for the fields in include_fields
+    else:
+        df['Include'] = df['Name'].isin(include_fields)
 
     # Export to Excel   
     print('Check if file exists')
@@ -108,6 +118,13 @@ if __name__ == "__main__":
 
     fieldfiledir = os.path.join(get_rootdir(), "data","metadata")
     fieldfile = os.path.join(fieldfiledir, filename)
+    include_fields = ["RepositoryDOI", "openICPSRversion", "Resolution", "MCStatus", "MCRecommendationV2", 
+                      "Reason for Failure to be Fully Reproducible", "External validation", "External party name", 
+                      "Candidate for Best Package", "Assignee", "Status", "DataAvailabilityAccess", "MCRecommendation", 
+                      "Sub-tasks", "openICPSR Project Number", "RCT?", "RCT number", "Issue Type", "Manuscript Central identifier", 
+                      "Journal", "Software used", "Start date", "Non-compliant", "Restricted openICPSR project number",
+                      "Restricted openICPSR access type", "Restricted data DOI or URL", "[CHART] Time in Status", "Resolved", 
+                      "Status Category Changed"]
 
     
     # summarize
@@ -118,4 +135,4 @@ if __name__ == "__main__":
         exit()
 
     data = get_fields(jira_username(),get_api_key(),jiradomain)
-    export_fields(data, fieldfile)
+    export_fields(data, fieldfile) # Temporarily leave included_fields at "all" for debugging
