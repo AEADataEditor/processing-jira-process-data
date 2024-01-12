@@ -36,8 +36,8 @@ def get_fields(fieldfile):
     names = df.loc[df['Include'] == True, 'Name'].tolist()
 
     # Add required system fields    
-    included_fields.extend(['issue_key', 'ae_timeToNextChange', 'ae_changedFields', 'ae_changeAuthor'])
-    names.extend(['issue_key', 'As of Date', 'Time In This State', 'Changed Fields', 'Change Author'])
+    included_fields.extend(['issue_key', 'As of Date', 'Changed Fields'])
+    names.extend(['issue_key', 'As of Date', 'Changed Fields'])
     print(f"Fields to extract: {included_fields}")
 
     # Create a dictionary where the keys are the "Id" and the values are the "Name"
@@ -122,6 +122,12 @@ def get_issue_history(jira, issue_key, fields):
 
     histories = list(issue.changelog.histories)
 
+    # Store the original creation date of the issue
+    original_created_date = issue.fields.created
+
+    # Keep a record of the last toString value for each field
+    last_toString_values = {}
+
     # Iterate over the reversed histories
     for history in histories:
 
@@ -132,14 +138,38 @@ def get_issue_history(jira, issue_key, fields):
         new_state = all_states[-1].copy()
         new_state['issue_key'] = issue_key
 
-        # Update the 'created' field in the new state
-        new_state['created'] = history.created
+        # Update the 'created' field in the new state and rename it to 'As of Date'
+        new_state['As of Date'] = history.created
 
-        # For each item in the history, update the new state
+        # Add a new 'created' object that stores the creation date of the original issue
+        new_state['created'] = original_created_date
+
+        # List to keep track of the fields that change in this history
+        changed_fields = []
+
+        ## For each item in the history, update the new state
+        #for item in history.items:
+        #    # If the item's field is in the state and the field changed in the history, update the state with item.toString
+        #    if item.field in new_state and item.fromString != item.toString:
+        #        new_state[item.field] = item.toString
+
         for item in history.items:
-            # If the item's field is in the state and the field changed in the history, update the state with item.toString
+            print(f"Field: {item.field}, fromString: {item.fromString}, toString: {item.toString}")  # Debug print statement
             if item.field in new_state and item.fromString != item.toString:
-                new_state[item.field] = item.toString
+                # If fromString matches the last toString value, use toString to update the field
+                if item.fromString == last_toString_values.get(item.field):
+                    new_state[item.field] = item.toString
+                else:
+                    new_state[item.field] = item.fromString
+
+                # Update the last toString value for the field
+                last_toString_values[item.field] = item.toString      
+
+                # Add the field to the list of changed fields
+                changed_fields.append(item.field)
+
+        # Join the list of changed fields into a string separated by commas and add it to new_state
+        new_state['Changed Fields'] = ', '.join(changed_fields)
 
         # After updating the state based on the items of a history, append a copy of the state to all_states
         all_states.append(new_state)  
