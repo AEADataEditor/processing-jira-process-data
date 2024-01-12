@@ -147,15 +147,28 @@ def get_issue_history(jira, issue_key, fields):
         # List to keep track of the fields that change in this history
         changed_fields = []
 
-        ## For each item in the history, update the new state
         #for item in history.items:
-        #    # If the item's field is in the state and the field changed in the history, update the state with item.toString
+        #    print(f"Field: {item.field}, fromString: {item.fromString}, toString: {item.toString}")  # Debug print statement
         #    if item.field in new_state and item.fromString != item.toString:
-        #        new_state[item.field] = item.toString
+        #        # If fromString matches the last toString value, use toString to update the field
+        #        if item.fromString == last_toString_values.get(item.field):
+        #            new_state[item.field] = item.toString
+        #        else:
+        #            new_state[item.field] = item.fromString
+
+        #        # Update the last toString value for the field
+        #        last_toString_values[item.field] = item.toString      
+
+        #        # Add the field to the list of changed fields
+        #        changed_fields.append(item.field)
 
         for item in history.items:
             print(f"Field: {item.field}, fromString: {item.fromString}, toString: {item.toString}")  # Debug print statement
-            if item.field in new_state and item.fromString != item.toString:
+            if item.fromString != item.toString:
+                # If the field is not in new_state, add it
+                if item.field not in new_state:
+                    new_state[item.field] = None
+
                 # If fromString matches the last toString value, use toString to update the field
                 if item.fromString == last_toString_values.get(item.field):
                     new_state[item.field] = item.toString
@@ -188,7 +201,11 @@ def output_to_files(all_states,fulloutfile):
         writer = csv.DictWriter(f, fieldnames=names)
 
         writer.writeheader()
-        writer.writerows(flat_states)
+        #writer.writerows(flat_states)
+        for state in flat_states:
+            # Only keep keys that are in fieldnames
+            filtered_state = {k: v for k, v in state.items() if k in names}
+            writer.writerow(filtered_state)        
 
         
 def print_summary(start_date, end_date, jiradomain, fulloutfile):
