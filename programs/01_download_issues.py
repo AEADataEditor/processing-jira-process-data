@@ -30,14 +30,13 @@ def get_fields(fieldfile):
     df = pd.read_excel(fieldfile)  
 
     # Filter to only include fields set to True
-    
     included_fields = df.loc[df['Include'] == True, 'Id'].tolist()
     # Create a list of the "Name" values
     names = df.loc[df['Include'] == True, 'Name'].tolist()
 
     # Add required system fields    
-    included_fields.extend(['issue_key', 'As of Date', 'Changed Fields'])
-    names.extend(['issue_key', 'As of Date', 'Changed Fields'])
+    included_fields.extend(['issue_key', 'As Of Date', 'Changed Fields'])
+    names.extend(['Key', 'As Of Date', 'Changed Fields'])
     print(f"Fields to extract: {included_fields}")
 
     # Create a dictionary where the keys are the "Id" and the values are the "Name"
@@ -115,56 +114,74 @@ def get_issue_history(jira, issue_key, fields):
     issue = jira.issue(issue_key, expand='changelog')
 
     # Initialize state with most recent values
+        
     state = {f: getattr(issue.fields, f) if hasattr(issue.fields, f) else None for f in fields}
+    
     state['Resolved'] = issue.fields.resolutiondate
+    
+    state['Key'] = issue_key
 
-    all_states = [state.copy()]
-
-    histories = list(issue.changelog.histories)
-
-    # Store the original creation date of the issue
-    original_created_date = issue.fields.created
+    # Change the formatting of the 'subtasks' field (to more easily work with R code)
+    subtasks = getattr(issue.fields, 'subtasks')
+    # Extract the keys of the sub-tasks that begin with 'AEAREP-'
+    subtask_keys = [subtask.key for subtask in subtasks if subtask.key.startswith('AEAREP-')]
+    # Convert subtask_keys to a string to remove brackets
+    subtask_keys = ', '.join(subtask_keys)
+    # Initialize the 'subtasks' field with the new string
+    state['subtasks'] = subtask_keys 
 
     # Keep a record of the last toString value for each field
-    last_toString_values = {}
+    last_toString_values = {} 
+
+    histories = list(issue.changelog.histories)
+    
+    # Store the original creation date of the issue to prepare for split between the 'created' and 'As Of Date' fields
+    original_created_date = histories[-1].created
+    
+    state['created'] = original_created_date
+
+    state['As Of Date'] = histories[0].created
+
+    # Initialize 'Changed Fields'
+    first_items = histories[0].items
+    first_changes = [item.field for item in first_items]
+    state['Changed Fields'] = ', '.join(first_changes)
+
+    # Initialize custom (i.e.'Start Date', 'Non-compliant', and 'Candidate for Best Package') fields
+    state['customfield_10016'] = getattr(issue.fields, 'customfield_10016', None)
+    state['customfield_10090'] = getattr(issue.fields, 'customfield_10090', None)
+    state['customfield_10069'] = getattr(issue.fields, 'customfield_10069', None)
+
+    all_states = [state.copy()]
 
     # Iterate over the reversed histories
     for history in histories:
 
         # Create a new state for the current history
-        # Note that we will update the most recent state with the changes from the current iteration of 'history'.
-        # However, if a history does not contain any changes at all (i.e. all item.fromString are equal to item.toString for all items in the history),
-        # then the updated 'new_state' will be the same as the most recent state, and a duplicate state will be apended to all_states.
         new_state = all_states[-1].copy()
-        new_state['issue_key'] = issue_key
+        
+        new_state['Key'] = issue_key
 
-        # Update the 'created' field in the new state and rename it to 'As of Date'
-        new_state['As of Date'] = history.created
+        # Update 'As Of Date' with the original 'created' field
+        new_state['As Of Date'] = history.created
 
-        # Add a new 'created' object that stores the creation date of the original issue
+        # Add a new 'created' object that stores only the creation date of the original issue
         new_state['created'] = original_created_date
+
+        new_state['subtasks'] = subtask_keys
+
+        # Add custom fields to the new state
+        new_state['customfield_10016'] = getattr(issue.fields, 'customfield_10016', None)
+        new_state['customfield_10090'] = getattr(issue.fields, 'customfield_10090', None)
+        new_state['customfield_10069'] = getattr(issue.fields, 'customfield_10069', None)
 
         # List to keep track of the fields that change in this history
         changed_fields = []
 
-        #for item in history.items:
-        #    print(f"Field: {item.field}, fromString: {item.fromString}, toString: {item.toString}")  # Debug print statement
-        #    if item.field in new_state and item.fromString != item.toString:
-        #        # If fromString matches the last toString value, use toString to update the field
-        #        if item.fromString == last_toString_values.get(item.field):
-        #            new_state[item.field] = item.toString
-        #        else:
-        #            new_state[item.field] = item.fromString
-
-        #        # Update the last toString value for the field
-        #        last_toString_values[item.field] = item.toString      
-
-        #        # Add the field to the list of changed fields
-        #        changed_fields.append(item.field)
-
         for item in history.items:
-            print(f"Field: {item.field}, fromString: {item.fromString}, toString: {item.toString}")  # Debug print statement
+
             if item.fromString != item.toString:
+
                 # If the field is not in new_state, add it
                 if item.field not in new_state:
                     new_state[item.field] = None
@@ -197,11 +214,9 @@ def output_to_files(all_states,fulloutfile):
   
     with open(fulloutfile, 'w', encoding="utf-8") as f:
 
-        #writer = csv.DictWriter(f, fieldnames=fields)
         writer = csv.DictWriter(f, fieldnames=names)
 
         writer.writeheader()
-        #writer.writerows(flat_states)
         for state in flat_states:
             # Only keep keys that are in fieldnames
             filtered_state = {k: v for k, v in state.items() if k in names}

@@ -118,13 +118,12 @@ if __name__ == "__main__":
 
     fieldfiledir = os.path.join(get_rootdir(), "data","metadata")
     fieldfile = os.path.join(fieldfiledir, filename)
+    # Select fields based on past submissions
     include_fields = ["RepositoryDOI", "openICPSRversion", "Resolution", "MCStatus", "MCRecommendationV2", 
                       "Reason for Failure to be Fully Reproducible", "External validation", "External party name", 
                       "Candidate for Best Package", "Assignee", "Status", "DataAvailabilityAccess", "MCRecommendation", 
                       "Sub-tasks", "openICPSR Project Number", "RCT?", "RCT number", "Issue Type", "Manuscript Central identifier", 
-                      "Journal", "Software used", "Start date", "Non-compliant", "Restricted openICPSR project number",
-                      "Restricted openICPSR access type", "Restricted data DOI or URL", "[CHART] Time in Status", "Resolved", 
-                      "Status Category Changed"]
+                      "Journal", "Software used", "Start date", "Non-compliant", "Resolved", "Status Category Changed", "Created"]
 
     
     # summarize
@@ -135,4 +134,5 @@ if __name__ == "__main__":
         exit()
 
     data = get_fields(jira_username(),get_api_key(),jiradomain)
-    export_fields(data, fieldfile) # Temporarily leave included_fields at "all" for debugging
+    # If all (rather than only past submissions') fields are needed, remove the argument 'include_fields')
+    export_fields(data, fieldfile, include_fields)
