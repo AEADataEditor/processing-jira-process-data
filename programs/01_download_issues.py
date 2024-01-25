@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 import os
-from jira import JIRA
 import csv
 import json
-from dotenv import load_dotenv
 import argparse 
 from datetime import datetime
 from datetime import timedelta
 import pandas as pd
+from dotenv import load_dotenv
+from jira import JIRA
+
 
 # find root directory based on either git or something elseroot_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def get_rootdir():
