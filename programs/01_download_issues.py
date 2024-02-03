@@ -128,7 +128,26 @@ def get_issue_history(jira, issue_key, fields):
     # Convert subtask_keys to a string to remove brackets
     subtask_keys = ', '.join(subtask_keys)
     # Initialize the 'subtasks' field with the new string
-    state['subtasks'] = subtask_keys 
+    state['subtasks'] = subtask_keys
+
+    # Change the formatting of the 'MCStatus' field (to more easily work with R code)
+    mcstatuses = getattr(issue.fields, 'customfield_10061')
+    # Check if mcstatuses is a list
+    if isinstance(mcstatuses, list):
+        # Check if the first element in mcstatuses is a string that contains "JIRA CustomFieldOption"
+        if mcstatuses and "JIRA CustomFieldOption" in str(mcstatuses[0]):
+            # Extract the value from each string in mcstatuses using a regular expression
+            mcstatuses = [re.search("value='(.*?)'", str(mcstatus)).group(1) for mcstatus in mcstatuses if mcstatus is not None]
+        else:
+            # If the first element in mcstatuses does not contain "JIRA CustomFieldOption", use the list as is
+            mcstatuses = [str(mcstatus) for mcstatus in mcstatuses if mcstatus is not None]
+    else:
+        # If mcstatuses is not a list, convert it to a list with a single element
+        mcstatuses = [str(mcstatuses)] if mcstatuses is not None else []
+    # Convert mcstatuses to a string, without brackets
+    mcstatuses = ', '.join(mcstatuses)
+    # Initialize the 'MCStatus' field with the new string
+    state['customfield_10061'] = mcstatuses
 
     # Keep a record of the last toString value for each field
     last_toString_values = {} 
