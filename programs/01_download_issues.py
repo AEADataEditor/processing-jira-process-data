@@ -198,16 +198,18 @@ def get_issue_history(jira, issue_key, fields):
         # List to keep track of the fields that change in this history
         changed_fields = []
 
-        for item in history.items:
+        for item in history.items:  
 
             if item.fromString != item.toString:
+
+                changed_fields.append(item.field)
 
                 # If the field is not in new_state, add it
                 if item.field not in new_state:
                     new_state[item.field] = None
 
                 # If fromString matches the last toString value, use toString to update the field
-                if item.fromString == last_toString_values.get(item.field):
+                if item.field not in changed_fields and item.fromString == last_toString_values.get(item.field):
                     new_state[item.field] = item.toString
                 else:
                     new_state[item.field] = item.fromString
@@ -215,14 +217,11 @@ def get_issue_history(jira, issue_key, fields):
                 # Update the last toString value for the field
                 last_toString_values[item.field] = item.toString      
 
-                # Add the field to the list of changed fields
-                changed_fields.append(item.field)
-
         # Join the list of changed fields into a string separated by commas and add it to new_state
         new_state['Changed Fields'] = ', '.join(changed_fields)
 
         # After updating the state based on the items of a history, append a copy of the state to all_states
-        all_states.append(new_state)  
+        all_states.append(new_state.copy())
 
     return all_states
      
