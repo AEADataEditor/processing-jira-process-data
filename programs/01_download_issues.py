@@ -150,9 +150,6 @@ def get_issue_history(jira, issue_key, fields):
     # Initialize the 'MCStatus' field with the new string
     state['customfield_10061'] = mcstatuses
 
-    # Keep a record of the last toString value for each field
-    last_toString_values = {} 
-
     histories = list(issue.changelog.histories)
     
     # Store the original creation date of the issue to prepare for split between the 'created' and 'As Of Date' fields
@@ -174,8 +171,10 @@ def get_issue_history(jira, issue_key, fields):
 
     all_states = [state.copy()]
 
-    # Iterate over the reversed histories
-    for history in histories:
+    changed_fields_list = []
+
+    # Iterate over the histories
+    for i, history in enumerate(histories):
 
         # Create a new state for the current history
         new_state = all_states[-1].copy()
@@ -207,21 +206,18 @@ def get_issue_history(jira, issue_key, fields):
                 # If the field is not in new_state, add it
                 if item.field not in new_state:
                     new_state[item.field] = None
-
-                # If fromString matches the last toString value, use toString to update the field
-                if item.field not in changed_fields and item.fromString == last_toString_values.get(item.field):
-                    new_state[item.field] = item.toString
-                else:
-                    new_state[item.field] = item.fromString
-
-                # Update the last toString value for the field
-                last_toString_values[item.field] = item.toString      
-
-        # Join the list of changed fields into a string separated by commas and add it to new_state
-        new_state['Changed Fields'] = ', '.join(changed_fields)
+                
+                new_state[item.field] = item.fromString
+                
+        # Store the 'Changed Fields' for this history
+        changed_fields_list.append(changed_fields)
 
         # After updating the state based on the items of a history, append a copy of the state to all_states
         all_states.append(new_state.copy())
+
+        # If this is not the first history, add the 'Changed Fields' to the previous state
+        if i > 0:
+            all_states[-2]['Changed Fields'] = ', '.join(changed_fields_list[-1])
 
     return all_states
      
