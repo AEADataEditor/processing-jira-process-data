@@ -11,7 +11,7 @@
 
 <meta name="author" content="Lars Vilhuber" />
 
-<meta name="date" content="2023-05-24" />
+<meta name="date" content="2024-04-29" />
 
 <title>Process data from reproducibility service</title>
 
@@ -353,7 +353,7 @@ display: none;
 <h1 class="title toc-ignore">Process data from reproducibility
 service</h1>
 <h4 class="author">Lars Vilhuber</h4>
-<h4 class="date">2023-05-24</h4>
+<h4 class="date">2024-04-29</h4>
 
 </div>
 
@@ -392,26 +392,24 @@ browser.</p>
 <div id="citation" class="section level2">
 <h2>Citation</h2>
 <blockquote>
-<p>Vilhuber, Lars. 2023. “Process data for the AEA Pre-publication
+<p>Vilhuber, Lars. 2024. “Process data for the AEA Pre-publication
 Verification Service.” <em>American Economic Association
 [publisher]</em>. Ann Arbor, MI: Inter-university Consortium for
-Political and Social Research [distributor], 2023-05-24. <a href="https://doi.org/10.3886/E117876V4">https://doi.org/10.3886/E117876V3</a></p>
+Political and Social Research [distributor], 2024-04-29. <a href="https://doi.org/10.3886/E117876V5">https://doi.org/10.3886/E117876V5</a></p>
 </blockquote>
-<pre><code>@techreport{10.3886/e117876v4,
-  doi = {10.3886/E117876V4},
-  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V4/view},
+<pre class="@techreport{10.3886/e117876v5,"><code>  doi = {10.3886/E117876V5},
+  url = {https://doi.org/10.3886/E117876V5},
   author = {Vilhuber,  Lars},
   title = {Process data for the AEA Pre-publication Verification Service},
   institution = {American Economic Association [publisher]},
   series = {ICPSR - Interuniversity Consortium for Political and Social Research},
-  year = {2023}
-}</code></pre>
+  year = {2024}}</code></pre>
 </div>
 <div id="requirements" class="section level2">
 <h2>Requirements</h2>
 <p>This project requires</p>
 <ul>
-<li>R (last run with R 4.2.2)
+<li>R (last run with R 4.2.3)
 <ul>
 <li>package <code>here</code> (&gt;=0.1)</li>
 </ul></li>
@@ -438,34 +436,27 @@ data)</li>
 <p>The data is not made available outside of the organization, as it
 contains names of replicators, manuscript numbers, and verbatim email
 correspondence.</p>
-<p>At this time, the latest extract was made 2022-12-08.</p>
+<p>At this time, the latest extract was made 2023-12-09.</p>
 </div>
 <div id="anonymized-data" class="section level3">
 <h3>Anonymized data</h3>
 <p>We subset the raw data to variables of interest, and substitute
 random numbers for sensitive strings. This is done by running
-<code>01_jira_anonymize.R</code>. The programs saves both the
+<code>02_jira_anonymize.R</code>. The programs saves both the
 confidential version and the anonymized version.</p>
-<pre class="r"><code>source(file.path(programs,&quot;01_jira_anonymize.R&quot;),echo=TRUE)</code></pre>
+<pre class="r"><code>source(file.path(programs,&quot;02_jira_anonymize.R&quot;),echo=TRUE)</code></pre>
 <pre><code>## 
-## &gt; rm(list = ls())
-## 
-## &gt; gc()
-##           used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells  866198 46.3    1362272 72.8  1362272 72.8
-## Vcells 1557484 11.9    8388608 64.0  2312509 17.7
-## 
 ## &gt; source(here::here(&quot;programs&quot;, &quot;config.R&quot;), echo = TRUE)
 ## 
 ## &gt; process_raw &lt;- TRUE
 ## 
 ## &gt; download_raw &lt;- TRUE
 ## 
-## &gt; extractday &lt;- &quot;12-12-2022&quot;
+## &gt; extractday &lt;- &quot;12-09-2023&quot;
 ## 
-## &gt; firstday &lt;- &quot;2021-12-01&quot;
+## &gt; firstday &lt;- &quot;2022-12-01&quot;
 ## 
-## &gt; lastday &lt;- &quot;2022-11-30&quot;
+## &gt; lastday &lt;- &quot;2023-11-30&quot;
 ## 
 ## &gt; basepath &lt;- here::here()
 ## 
@@ -496,47 +487,54 @@ confidential version and the anonymized version.</p>
 ## +     }
 ##  .... [TRUNCATED] 
 ## 
-## &gt; mran.date &lt;- &quot;2022-04-22&quot;
+## &gt; jira.conf.plus.rds &lt;- file.path(jiraconf, &quot;jira.conf.plus.RDS&quot;)
 ## 
-## &gt; options(repos = paste0(&quot;https://cran.microsoft.com/snapshot/&quot;, 
-## +     mran.date, &quot;/&quot;))
+## &gt; assignee.lookup.rds &lt;- file.path(jiraconf, &quot;assignee-lookup.RDS&quot;)
 ## 
-## &gt; pkgTest &lt;- function(x) {
-## +     if (!require(x, character.only = TRUE)) {
-## +         install.packages(x, dep = TRUE)
-## +         if (!require(x, charact .... [TRUNCATED] 
-## 
-## &gt; pkgTest.github &lt;- function(x, source) {
-## +     if (!require(x, character.only = TRUE)) {
-## +         install_github(paste(source, x, sep = &quot;/&quot;))
-## +      .... [TRUNCATED] 
+## &gt; mc.lookup.rds &lt;- file.path(jiraconf, &quot;mc-lookup.RDS&quot;)
 ## 
 ## &gt; if (file.exists(here::here(&quot;programs&quot;, &quot;confidential-config.R&quot;))) {
 ## +     source(here::here(&quot;programs&quot;, &quot;confidential-config.R&quot;))
 ## + }
 ## 
-## &gt; global.libraries &lt;- c(&quot;dplyr&quot;, &quot;tidyr&quot;, &quot;splitstackshape&quot;)
+## &gt; source(here::here(&quot;global-libraries.R&quot;), echo = TRUE)
 ## 
-## &gt; results &lt;- sapply(as.list(global.libraries), pkgTest)</code></pre>
-<pre><code>## Loading required package: splitstackshape</code></pre>
-<pre><code>## 
+## &gt; ppm.date &lt;- &quot;2023-11-01&quot;
+## 
+## &gt; options(repos = paste0(&quot;https://packagemanager.posit.co/cran/&quot;, 
+## +     ppm.date, &quot;/&quot;))
+## 
+## &gt; global.libraries &lt;- c(&quot;dplyr&quot;, &quot;stringr&quot;, &quot;tidyr&quot;, 
+## +     &quot;knitr&quot;, &quot;readr&quot;, &quot;here&quot;, &quot;splitstackshape&quot;, &quot;boxr&quot;, &quot;jose&quot;)
+## 
+## &gt; pkgTest &lt;- function(x) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install.packages(x, dep = TRUE)
+## +         if (!require(x, charact .... [TRUNCATED] 
+## 
+## &gt; pkgTest.github &lt;- function(x, source) {
+## +     if (!require(x, character.only = TRUE)) {
+## +         install_github(paste(source, x, sep = &quot;/&quot;))
+## +      .... [TRUNCATED] 
+## 
+## &gt; results &lt;- sapply(as.list(global.libraries), pkgTest)
+## 
 ## &gt; exportfile &lt;- paste0(&quot;export_&quot;, extractday, &quot;.csv&quot;)
 ## 
 ## &gt; if (!file.exists(file.path(jiraconf, exportfile))) {
 ## +     process_raw = FALSE
 ## +     print(&quot;Input file for anonymization not found - setting global  ...&quot; ... [TRUNCATED] 
-## [1] &quot;Input file for anonymization not found - setting global parameter to FALSE&quot;
 ## 
 ## &gt; if (process_raw == TRUE) {
 ## +     jira.conf.raw &lt;- read.csv(file.path(jiraconf, exportfile), 
-## +         stringsAsFactors = FALSE) %&gt;% rename(ticket = .... [TRUNCATED] 
-## [1] &quot;Not processing anonymization due to global parameter.&quot;</code></pre>
+## +         stringsAsFactors = FALSE) %&gt;% rename(ticket = .... [TRUNCATED]</code></pre>
+<pre><code>## Joining with `by = join_by(ticket)`</code></pre>
 </div>
 <div id="publishing-data" class="section level3">
 <h3>Publishing data</h3>
 <p>Some additional cleaning and matching, and then we write out the
 file</p>
-<pre class="r"><code>source(file.path(programs,&quot;02_jira_anon_publish.R&quot;),echo=TRUE)</code></pre>
+<pre class="r"><code>source(file.path(programs,&quot;10_jira_anon_publish.R&quot;),echo=TRUE)</code></pre>
 <pre><code>## 
 ## &gt; source(here::here(&quot;programs&quot;, &quot;config.R&quot;), echo = TRUE)
 ## 
@@ -544,11 +542,11 @@ file</p>
 ## 
 ## &gt; download_raw &lt;- TRUE
 ## 
-## &gt; extractday &lt;- &quot;12-12-2022&quot;
+## &gt; extractday &lt;- &quot;12-09-2023&quot;
 ## 
-## &gt; firstday &lt;- &quot;2021-12-01&quot;
+## &gt; firstday &lt;- &quot;2022-12-01&quot;
 ## 
-## &gt; lastday &lt;- &quot;2022-11-30&quot;
+## &gt; lastday &lt;- &quot;2023-11-30&quot;
 ## 
 ## &gt; basepath &lt;- here::here()
 ## 
@@ -579,10 +577,21 @@ file</p>
 ## +     }
 ##  .... [TRUNCATED] 
 ## 
-## &gt; mran.date &lt;- &quot;2022-04-22&quot;
+## &gt; jira.conf.plus.rds &lt;- file.path(jiraconf, &quot;jira.conf.plus.RDS&quot;)
 ## 
-## &gt; options(repos = paste0(&quot;https://cran.microsoft.com/snapshot/&quot;, 
-## +     mran.date, &quot;/&quot;))
+## &gt; assignee.lookup.rds &lt;- file.path(jiraconf, &quot;assignee-lookup.RDS&quot;)
+## 
+## &gt; mc.lookup.rds &lt;- file.path(jiraconf, &quot;mc-lookup.RDS&quot;)
+## 
+## &gt; source(here::here(&quot;global-libraries.R&quot;), echo = TRUE)
+## 
+## &gt; ppm.date &lt;- &quot;2023-11-01&quot;
+## 
+## &gt; options(repos = paste0(&quot;https://packagemanager.posit.co/cran/&quot;, 
+## +     ppm.date, &quot;/&quot;))
+## 
+## &gt; global.libraries &lt;- c(&quot;dplyr&quot;, &quot;stringr&quot;, &quot;tidyr&quot;, 
+## +     &quot;knitr&quot;, &quot;readr&quot;, &quot;here&quot;, &quot;splitstackshape&quot;, &quot;boxr&quot;, &quot;jose&quot;)
 ## 
 ## &gt; pkgTest &lt;- function(x) {
 ## +     if (!require(x, character.only = TRUE)) {
@@ -594,22 +603,19 @@ file</p>
 ## +         install_github(paste(source, x, sep = &quot;/&quot;))
 ## +      .... [TRUNCATED] 
 ## 
-## &gt; global.libraries &lt;- c(&quot;dplyr&quot;, &quot;tidyr&quot;, &quot;splitstackshape&quot;)
-## 
 ## &gt; results &lt;- sapply(as.list(global.libraries), pkgTest)
 ## 
 ## &gt; jira.anon.raw &lt;- readRDS(file.path(jiraanon, &quot;temp.jira.anon.RDS&quot;)) %&gt;% 
-## +     rename(reason.failure = Reason.for.Failure.to.Fully.Replicate) %&gt;% 
-## + .... [TRUNCATED] 
+## +     rename(reason.failure = Reason.for.Failure.to.be.Fully.Reproducible)  .... [TRUNCATED] 
 ## 
-## &gt; jira.conf.subtask &lt;- jira.anon.raw %&gt;% select(ticket, 
-## +     subtask) %&gt;% cSplit(&quot;subtask&quot;, &quot;,&quot;) %&gt;% distinct() %&gt;% pivot_longer(!ticket, 
-## +     nam .... [TRUNCATED] 
+## &gt; jira.conf.subtask &lt;- jira.anon.raw %&gt;% filter(subtask != 
+## +     &quot;&quot;) %&gt;% select(ticket, subtask) %&gt;% separate_longer_delim(subtask, 
+## +     delim = &quot;, ...&quot; ... [TRUNCATED] 
 ## 
-## &gt; jira.anon &lt;- jira.anon.raw %&gt;% select(ticket, mc_number_anon) %&gt;% 
-## +     distinct(ticket, .keep_all = TRUE) %&gt;% filter(mc_number_anon != 
-## +     is.n .... [TRUNCATED]</code></pre>
-<pre><code>## Joining, by = &quot;ticket&quot;</code></pre>
+## &gt; jira.anon &lt;- jira.anon.raw %&gt;% filter(!is.na(mc_number_anon)) %&gt;% 
+## +     anti_join(jira.conf.subtask) %&gt;% select(ticket, date_created, 
+## +     date_u .... [TRUNCATED]</code></pre>
+<pre><code>## Joining with `by = join_by(ticket)`</code></pre>
 <pre><code>## 
 ## &gt; saveRDS(jira.anon, file = file.path(jiraanon, &quot;jira.anon.RDS&quot;))
 ## 
@@ -689,18 +695,17 @@ listed here.</td>
 external validation.</td>
 </tr>
 <tr class="odd">
-<td align="left">subtask</td>
-<td align="left">An indicator for whether the issue is a subtask of
-another task.</td>
-</tr>
-<tr class="even">
 <td align="left">Resolution</td>
 <td align="left">Resolution associated with a ticket at the end of the
 replication process.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">reason.failure</td>
 <td align="left">A list of reasons for failure to fully replicate.</td>
+</tr>
+<tr class="odd">
+<td align="left">MCStatus</td>
+<td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">MCRecommendation</td>
@@ -720,20 +725,20 @@ accepted.</td>
 <table style="width:100%;">
 <colgroup>
 <col width="5%" />
-<col width="5%" />
-<col width="5%" />
 <col width="6%" />
-<col width="9%" />
+<col width="6%" />
+<col width="7%" />
+<col width="6%" />
 <col width="3%" />
 <col width="6%" />
 <col width="4%" />
-<col width="13%" />
+<col width="14%" />
 <col width="4%" />
-<col width="3%" />
+<col width="5%" />
 <col width="7%" />
-<col width="6%" />
-<col width="7%" />
+<col width="4%" />
 <col width="8%" />
+<col width="9%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -747,113 +752,113 @@ accepted.</td>
 <th align="left">received</th>
 <th align="left">Changed.Fields</th>
 <th align="left">external</th>
-<th align="left">subtask</th>
 <th align="left">Resolution</th>
 <th align="left">reason.failure</th>
+<th align="left">MCStatus</th>
 <th align="left">MCRecommendation</th>
 <th align="left">MCRecommendationV2</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">AEAREP-3787</td>
-<td align="left">2022-12-08</td>
-<td align="left">2022-12-08</td>
-<td align="right">1316</td>
-<td align="left">AEJ:Economic Policy</td>
+<td align="left">AEAREP-4863</td>
+<td align="left">2023-12-08</td>
+<td align="left">2023-12-08</td>
+<td align="right">1</td>
+<td align="left">AER:Insights</td>
 <td align="left">Open</td>
-<td align="left">Stata,R</td>
-<td align="left">No</td>
+<td align="left">Stata</td>
+<td align="left">Yes</td>
 <td align="left">Software used</td>
 <td align="left">No</td>
-<td align="left">NA</td>
 <td align="left"></td>
 <td align="left"></td>
+<td align="left">CA</td>
 <td align="left"></td>
 <td align="left"></td>
 </tr>
 <tr class="even">
-<td align="left">AEAREP-3787</td>
-<td align="left">2022-12-08</td>
-<td align="left">2022-12-08</td>
-<td align="right">1316</td>
-<td align="left">AEJ:Economic Policy</td>
+<td align="left">AEAREP-4863</td>
+<td align="left">2023-12-08</td>
+<td align="left">2023-12-08</td>
+<td align="right">1</td>
+<td align="left">AER:Insights</td>
 <td align="left">Open</td>
 <td align="left"></td>
-<td align="left">No</td>
+<td align="left">Yes</td>
 <td align="left">openICPSR Project Number</td>
 <td align="left">No</td>
-<td align="left">NA</td>
 <td align="left"></td>
 <td align="left"></td>
+<td align="left">CA</td>
 <td align="left"></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
-<td align="left">AEAREP-3787</td>
-<td align="left">2022-12-08</td>
-<td align="left">2022-12-08</td>
-<td align="right">1316</td>
-<td align="left">AEJ:Economic Policy</td>
+<td align="left">AEAREP-4863</td>
+<td align="left">2023-12-08</td>
+<td align="left">2023-12-08</td>
+<td align="right">1</td>
+<td align="left">AER:Insights</td>
 <td align="left">Open</td>
 <td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Yes</td>
 <td align="left">Manuscript Central identifier</td>
 <td align="left">No</td>
-<td align="left">NA</td>
 <td align="left"></td>
 <td align="left"></td>
+<td align="left">CA</td>
 <td align="left"></td>
 <td align="left"></td>
 </tr>
 <tr class="even">
-<td align="left">AEAREP-3787</td>
-<td align="left">2022-12-08</td>
-<td align="left">2022-12-08</td>
-<td align="right">1316</td>
-<td align="left">AEJ:Economic Policy</td>
+<td align="left">AEAREP-4862</td>
+<td align="left">2023-12-08</td>
+<td align="left">2023-12-08</td>
+<td align="right">2</td>
+<td align="left">AER</td>
 <td align="left">Open</td>
-<td align="left"></td>
-<td align="left">NA</td>
-<td align="left">Journal</td>
+<td align="left">Python</td>
+<td align="left">Yes</td>
+<td align="left">Software used</td>
 <td align="left">No</td>
-<td align="left">NA</td>
 <td align="left"></td>
 <td align="left"></td>
+<td align="left">CA</td>
 <td align="left"></td>
 <td align="left"></td>
 </tr>
 <tr class="odd">
-<td align="left">AEAREP-3787</td>
-<td align="left">2022-12-08</td>
-<td align="left">2022-12-08</td>
-<td align="right">1316</td>
-<td align="left"></td>
+<td align="left">AEAREP-4862</td>
+<td align="left">2023-12-08</td>
+<td align="left">2023-12-08</td>
+<td align="right">2</td>
+<td align="left">AER</td>
 <td align="left">Open</td>
 <td align="left"></td>
-<td align="left">NA</td>
-<td align="left"></td>
+<td align="left">Yes</td>
+<td align="left">openICPSR Project Number</td>
 <td align="left">No</td>
-<td align="left">NA</td>
 <td align="left"></td>
 <td align="left"></td>
+<td align="left">CA</td>
 <td align="left"></td>
 <td align="left"></td>
 </tr>
 <tr class="even">
-<td align="left">AEAREP-3786</td>
-<td align="left">2022-12-07</td>
-<td align="left">2022-12-07</td>
-<td align="right">316</td>
+<td align="left">AEAREP-4862</td>
+<td align="left">2023-12-08</td>
+<td align="left">2023-12-08</td>
+<td align="right">2</td>
 <td align="left">AER</td>
-<td align="left">Done</td>
+<td align="left">Open</td>
 <td align="left"></td>
+<td align="left">Yes</td>
+<td align="left">Journal</td>
 <td align="left">No</td>
-<td align="left">Status</td>
-<td align="left">No</td>
-<td align="left">NA</td>
-<td align="left">Evaluation only</td>
 <td align="left"></td>
+<td align="left"></td>
+<td align="left">CA</td>
 <td align="left"></td>
 <td align="left"></td>
 </tr>
@@ -862,27 +867,21 @@ accepted.</td>
 </div>
 <div id="lab-members-during-this-period" class="section level3">
 <h3>Lab members during this period</h3>
-<p>We list the lab members active at some point during this period.</p>
+<p>We list the lab members active at some point during this period. This
+still requires confidential data as an input.</p>
 <pre class="r"><code>source(file.path(programs,&quot;03_lab_members.R&quot;),echo=TRUE)</code></pre>
 <pre><code>## 
-## &gt; rm(list = ls())
-## 
-## &gt; gc()
-##           used (Mb) gc trigger  (Mb) max used  (Mb)
-## Ncells 1028453 55.0    2007871 107.3  2007871 107.3
-## Vcells 1946453 14.9   19765818 150.9 30884089 235.7
-## 
 ## &gt; source(here::here(&quot;programs&quot;, &quot;config.R&quot;), echo = TRUE)
 ## 
 ## &gt; process_raw &lt;- TRUE
 ## 
 ## &gt; download_raw &lt;- TRUE
 ## 
-## &gt; extractday &lt;- &quot;12-12-2022&quot;
+## &gt; extractday &lt;- &quot;12-09-2023&quot;
 ## 
-## &gt; firstday &lt;- &quot;2021-12-01&quot;
+## &gt; firstday &lt;- &quot;2022-12-01&quot;
 ## 
-## &gt; lastday &lt;- &quot;2022-11-30&quot;
+## &gt; lastday &lt;- &quot;2023-11-30&quot;
 ## 
 ## &gt; basepath &lt;- here::here()
 ## 
@@ -913,10 +912,25 @@ accepted.</td>
 ## +     }
 ##  .... [TRUNCATED] 
 ## 
-## &gt; mran.date &lt;- &quot;2022-04-22&quot;
+## &gt; jira.conf.plus.rds &lt;- file.path(jiraconf, &quot;jira.conf.plus.RDS&quot;)
 ## 
-## &gt; options(repos = paste0(&quot;https://cran.microsoft.com/snapshot/&quot;, 
-## +     mran.date, &quot;/&quot;))
+## &gt; assignee.lookup.rds &lt;- file.path(jiraconf, &quot;assignee-lookup.RDS&quot;)
+## 
+## &gt; mc.lookup.rds &lt;- file.path(jiraconf, &quot;mc-lookup.RDS&quot;)
+## 
+## &gt; if (file.exists(here::here(&quot;programs&quot;, &quot;confidential-config.R&quot;))) {
+## +     source(here::here(&quot;programs&quot;, &quot;confidential-config.R&quot;))
+## + }
+## 
+## &gt; source(here::here(&quot;global-libraries.R&quot;), echo = TRUE)
+## 
+## &gt; ppm.date &lt;- &quot;2023-11-01&quot;
+## 
+## &gt; options(repos = paste0(&quot;https://packagemanager.posit.co/cran/&quot;, 
+## +     ppm.date, &quot;/&quot;))
+## 
+## &gt; global.libraries &lt;- c(&quot;dplyr&quot;, &quot;stringr&quot;, &quot;tidyr&quot;, 
+## +     &quot;knitr&quot;, &quot;readr&quot;, &quot;here&quot;, &quot;splitstackshape&quot;, &quot;boxr&quot;, &quot;jose&quot;)
 ## 
 ## &gt; pkgTest &lt;- function(x) {
 ## +     if (!require(x, character.only = TRUE)) {
@@ -928,17 +942,28 @@ accepted.</td>
 ## +         install_github(paste(source, x, sep = &quot;/&quot;))
 ## +      .... [TRUNCATED] 
 ## 
-## &gt; global.libraries &lt;- c(&quot;dplyr&quot;, &quot;tidyr&quot;, &quot;splitstackshape&quot;)
-## 
 ## &gt; results &lt;- sapply(as.list(global.libraries), pkgTest)
 ## 
-## &gt; jira.conf.plus &lt;- readRDS(file = file.path(jiraconf, 
-## +     &quot;jira.conf.plus.RDS&quot;))
+## &gt; exclusions &lt;- c(&quot;Lars Vilhuber&quot;, &quot;Michael Darisse&quot;, 
+## +     &quot;Sofia Encarnacion&quot;, &quot;Linda Wang&quot;, &quot;Leonel Borja Plaza&quot;, 
+## +     &quot;User &quot;, &quot;Takshil Sachdev ...&quot; ... [TRUNCATED] 
 ## 
-## &gt; lab.member &lt;- jira.conf.plus %&gt;% filter(Change.Author != 
-## +     &quot;&quot; &amp; Change.Author != &quot;Automation for Jira&quot; &amp; Change.Author != 
-## +     &quot;LV (Data Edit ...&quot; ... [TRUNCATED] 
+## &gt; lookup &lt;- read_csv(file.path(jirameta, &quot;lookup.csv&quot;))</code></pre>
+<pre><code>## Rows: 2 Columns: 2
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): Assignee, Name
 ## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre><code>## 
+## &gt; jira.conf.plus &lt;- readRDS(jira.conf.plus.rds)
+## 
+## &gt; lab.member &lt;- jira.conf.plus %&gt;% filter(date_created &gt;= 
+## +     firstday, date_created &lt; lastday) %&gt;% filter(Assignee != 
+## +     &quot;&quot;) %&gt;% filter(!Assig .... [TRUNCATED]</code></pre>
+<pre><code>## Joining with `by = join_by(Assignee)`</code></pre>
+<pre><code>## 
 ## &gt; write.table(lab.member, file = file.path(basepath, 
 ## +     &quot;data&quot;, &quot;replicationlab_members.txt&quot;), sep = &quot;\t&quot;, row.names = FALSE)
 ## 
@@ -948,15 +973,15 @@ accepted.</td>
 ## 
 ## &gt; write.table(external.member, file = file.path(basepath, 
 ## +     &quot;data&quot;, &quot;external_replicators.txt&quot;), sep = &quot;\t&quot;, row.names = FALSE)</code></pre>
-<p>There were a total of 42 lab members over the course of the 12 month
+<p>There were a total of 45 lab members over the course of the 12 month
 period.</p>
 </div>
 <div id="r-session-info" class="section level3">
 <h3>R session info</h3>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 4.2.2 (2022-10-31)
+<pre><code>## R version 4.2.3 (2023-03-15)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 22.04.1 LTS
+## Running under: Ubuntu 22.04.2 LTS
 ## 
 ## Matrix products: default
 ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
@@ -974,22 +999,23 @@ period.</p>
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] splitstackshape_1.4.8 readr_2.1.3           knitr_1.41           
-## [4] tidyr_1.2.1           stringr_1.5.0         dplyr_1.0.10         
+##  [1] jose_1.2.0            openssl_2.0.6         boxr_0.3.6           
+##  [4] splitstackshape_1.4.8 here_1.0.1            readr_2.1.4          
+##  [7] knitr_1.42            tidyr_1.3.0           stringr_1.5.0        
+## [10] dplyr_1.1.0          
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] highr_0.9         bslib_0.4.1       compiler_4.2.2    pillar_1.8.1     
-##  [5] jquerylib_0.1.4   tools_4.2.2       bit_4.0.5         digest_0.6.30    
-##  [9] jsonlite_1.8.4    evaluate_0.18     lifecycle_1.0.3   tibble_3.1.8     
-## [13] pkgconfig_2.0.3   rlang_1.0.6       cli_3.4.1         DBI_1.1.3        
-## [17] rstudioapi_0.14   parallel_4.2.2    yaml_2.3.6        xfun_0.39        
-## [21] fastmap_1.1.0     withr_2.5.0       generics_0.1.3    vctrs_0.5.1      
-## [25] sass_0.4.4        hms_1.1.2         bit64_4.0.5       rprojroot_2.0.3  
-## [29] tidyselect_1.2.0  data.table_1.14.6 glue_1.6.2        here_1.0.1       
-## [33] R6_2.5.1          fansi_1.0.3       vroom_1.6.0       rmarkdown_2.18   
-## [37] tzdb_0.3.0        purrr_0.3.5       magrittr_2.0.3    ellipsis_0.3.2   
-## [41] htmltools_0.5.4   assertthat_0.2.1  utf8_1.2.2        stringi_1.7.8    
-## [45] cachem_1.0.6      crayon_1.5.2</code></pre>
+##  [1] pillar_1.8.1      bslib_0.4.2       compiler_4.2.3    jquerylib_0.1.4  
+##  [5] tools_4.2.3       bit_4.0.5         digest_0.6.31     jsonlite_1.8.4   
+##  [9] evaluate_0.20     lifecycle_1.0.3   tibble_3.2.0      pkgconfig_2.0.3  
+## [13] rlang_1.1.0       cli_3.6.0         rstudioapi_0.14   parallel_4.2.3   
+## [17] yaml_2.3.7        xfun_0.43         fastmap_1.1.1     withr_2.5.0      
+## [21] askpass_1.1       generics_0.1.3    vctrs_0.5.2       sass_0.4.5       
+## [25] hms_1.1.2         bit64_4.0.5       rprojroot_2.0.3   tidyselect_1.2.0 
+## [29] data.table_1.14.8 glue_1.6.2        R6_2.5.1          fansi_1.0.4      
+## [33] vroom_1.6.1       rmarkdown_2.20    purrr_1.0.1       tzdb_0.3.0       
+## [37] magrittr_2.0.3    htmltools_0.5.4   ellipsis_0.3.2    utf8_1.2.3       
+## [41] stringi_1.7.12    cachem_1.0.7      crayon_1.5.2</code></pre>
 </div>
 </div>
 

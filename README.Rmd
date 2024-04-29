@@ -30,16 +30,15 @@ ICPSR_DOI = paste0("https://doi.org/10.3886/E",ICPSR_PROJECT,VERSION)
 
 ```{r, results='asis', echo=FALSE}
 cat("```")
-cat(paste0("@techreport{10.3886/e117876",VERSION,","))
-cat(paste0("  doi = {10.3886/E117876",VERSION,"},"))
-cat(paste0("  url = {",ICPSR_DOI,"},"))
-cat("
-  author = {Vilhuber,  Lars},
-  title = {Process data for the AEA Pre-publication Verification Service},
-  institution = {American Economic Association [publisher]},
-  series = {ICPSR - Interuniversity Consortium for Political and Social Research},")
+cat(paste0("@techreport{10.3886/e117876",VERSION,",\n"))
+cat(paste0("  doi = {10.3886/E117876",VERSION,"},\n"))
+cat(paste0("  url = {",ICPSR_DOI,"},\n"))
+cat("  author = {Vilhuber,  Lars},\n")
+cat("  title = {Process data for the AEA Pre-publication Verification Service},\n")
+cat("  institution = {American Economic Association [publisher]},\n")
+cat("  series = {ICPSR - Interuniversity Consortium for Political and Social Research},\n")
 cat(paste0("  year = {",YEAR,"}"))
-cat("}")
+cat("}\n")
 cat("```")
 ```
 

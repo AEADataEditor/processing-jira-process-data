@@ -1,7 +1,7 @@
 ---
 title: "Process data from reproducibility service"
 author: "Lars Vilhuber"
-date: '2023-05-24'
+date: '2024-04-29'
 output:
   html_document:
     keep_md: yes
@@ -17,25 +17,23 @@ editor_options:
 
 ## Citation
 
-> Vilhuber, Lars. 2023. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2023-05-24. [https://doi.org/10.3886/E117876V3](https://doi.org/10.3886/E117876V4)
+> Vilhuber, Lars. 2024. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2024-04-29. [https://doi.org/10.3886/E117876V5](https://doi.org/10.3886/E117876V5)
 
-```
-@techreport{10.3886/e117876v4,
-  doi = {10.3886/E117876V4},
-  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V4/view},
+```@techreport{10.3886/e117876V5,
+  doi = {10.3886/E117876V5},
+  url = {https://doi.org/10.3886/E117876V5},
   author = {Vilhuber,  Lars},
   title = {Process data for the AEA Pre-publication Verification Service},
   institution = {American Economic Association [publisher]},
   series = {ICPSR - Interuniversity Consortium for Political and Social Research},
-  year = {2023}
-}
+  year = {2024}}
 ```
 
 ## Requirements
 
 This project requires
 
-- R (last run with R 4.2.2)
+- R (last run with R 4.2.3)
   - package `here` (>=0.1)
   
 Other packages might be installed automatically by the programs, as long as the requirements above are met, see [Session Info](#r-session-info).
@@ -56,25 +54,18 @@ The data is not made available outside of the organization, as it contains names
 
 
 
-At this time, the latest extract was made 2022-12-08. 
+At this time, the latest extract was made 2023-12-09. 
 
 ### Anonymized data
 
-We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version. 
+We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `02_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version. 
 
 
 ```r
-source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
+source(file.path(programs,"02_jira_anonymize.R"),echo=TRUE)
 ```
 
 ```
-## 
-## > rm(list = ls())
-## 
-## > gc()
-##           used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells  866198 46.3    1362272 72.8  1362272 72.8
-## Vcells 1557484 11.9    8388608 64.0  2312509 17.7
 ## 
 ## > source(here::here("programs", "config.R"), echo = TRUE)
 ## 
@@ -82,11 +73,11 @@ source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
 ## 
 ## > download_raw <- TRUE
 ## 
-## > extractday <- "12-12-2022"
+## > extractday <- "12-09-2023"
 ## 
-## > firstday <- "2021-12-01"
+## > firstday <- "2022-12-01"
 ## 
-## > lastday <- "2022-11-30"
+## > lastday <- "2023-11-30"
 ## 
 ## > basepath <- here::here()
 ## 
@@ -117,10 +108,25 @@ source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
 ## +     }
 ##  .... [TRUNCATED] 
 ## 
-## > mran.date <- "2022-04-22"
+## > jira.conf.plus.rds <- file.path(jiraconf, "jira.conf.plus.RDS")
 ## 
-## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
-## +     mran.date, "/"))
+## > assignee.lookup.rds <- file.path(jiraconf, "assignee-lookup.RDS")
+## 
+## > mc.lookup.rds <- file.path(jiraconf, "mc-lookup.RDS")
+## 
+## > if (file.exists(here::here("programs", "confidential-config.R"))) {
+## +     source(here::here("programs", "confidential-config.R"))
+## + }
+## 
+## > source(here::here("global-libraries.R"), echo = TRUE)
+## 
+## > ppm.date <- "2023-11-01"
+## 
+## > options(repos = paste0("https://packagemanager.posit.co/cran/", 
+## +     ppm.date, "/"))
+## 
+## > global.libraries <- c("dplyr", "stringr", "tidyr", 
+## +     "knitr", "readr", "here", "splitstackshape", "boxr", "jose")
 ## 
 ## > pkgTest <- function(x) {
 ## +     if (!require(x, character.only = TRUE)) {
@@ -132,32 +138,21 @@ source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
 ## +         install_github(paste(source, x, sep = "/"))
 ## +      .... [TRUNCATED] 
 ## 
-## > if (file.exists(here::here("programs", "confidential-config.R"))) {
-## +     source(here::here("programs", "confidential-config.R"))
-## + }
-## 
-## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
-## 
 ## > results <- sapply(as.list(global.libraries), pkgTest)
-```
-
-```
-## Loading required package: splitstackshape
-```
-
-```
 ## 
 ## > exportfile <- paste0("export_", extractday, ".csv")
 ## 
 ## > if (!file.exists(file.path(jiraconf, exportfile))) {
 ## +     process_raw = FALSE
 ## +     print("Input file for anonymization not found - setting global  ..." ... [TRUNCATED] 
-## [1] "Input file for anonymization not found - setting global parameter to FALSE"
 ## 
 ## > if (process_raw == TRUE) {
 ## +     jira.conf.raw <- read.csv(file.path(jiraconf, exportfile), 
-## +         stringsAsFactors = FALSE) %>% rename(ticket = .... [TRUNCATED] 
-## [1] "Not processing anonymization due to global parameter."
+## +         stringsAsFactors = FALSE) %>% rename(ticket = .... [TRUNCATED]
+```
+
+```
+## Joining with `by = join_by(ticket)`
 ```
 
 ### Publishing data
@@ -166,7 +161,7 @@ Some additional cleaning and matching, and then we write out the file
 
 
 ```r
-source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
+source(file.path(programs,"10_jira_anon_publish.R"),echo=TRUE)
 ```
 
 ```
@@ -177,11 +172,11 @@ source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
 ## 
 ## > download_raw <- TRUE
 ## 
-## > extractday <- "12-12-2022"
+## > extractday <- "12-09-2023"
 ## 
-## > firstday <- "2021-12-01"
+## > firstday <- "2022-12-01"
 ## 
-## > lastday <- "2022-11-30"
+## > lastday <- "2023-11-30"
 ## 
 ## > basepath <- here::here()
 ## 
@@ -212,10 +207,21 @@ source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
 ## +     }
 ##  .... [TRUNCATED] 
 ## 
-## > mran.date <- "2022-04-22"
+## > jira.conf.plus.rds <- file.path(jiraconf, "jira.conf.plus.RDS")
 ## 
-## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
-## +     mran.date, "/"))
+## > assignee.lookup.rds <- file.path(jiraconf, "assignee-lookup.RDS")
+## 
+## > mc.lookup.rds <- file.path(jiraconf, "mc-lookup.RDS")
+## 
+## > source(here::here("global-libraries.R"), echo = TRUE)
+## 
+## > ppm.date <- "2023-11-01"
+## 
+## > options(repos = paste0("https://packagemanager.posit.co/cran/", 
+## +     ppm.date, "/"))
+## 
+## > global.libraries <- c("dplyr", "stringr", "tidyr", 
+## +     "knitr", "readr", "here", "splitstackshape", "boxr", "jose")
 ## 
 ## > pkgTest <- function(x) {
 ## +     if (!require(x, character.only = TRUE)) {
@@ -227,25 +233,22 @@ source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
 ## +         install_github(paste(source, x, sep = "/"))
 ## +      .... [TRUNCATED] 
 ## 
-## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
-## 
 ## > results <- sapply(as.list(global.libraries), pkgTest)
 ## 
 ## > jira.anon.raw <- readRDS(file.path(jiraanon, "temp.jira.anon.RDS")) %>% 
-## +     rename(reason.failure = Reason.for.Failure.to.Fully.Replicate) %>% 
-## + .... [TRUNCATED] 
+## +     rename(reason.failure = Reason.for.Failure.to.be.Fully.Reproducible)  .... [TRUNCATED] 
 ## 
-## > jira.conf.subtask <- jira.anon.raw %>% select(ticket, 
-## +     subtask) %>% cSplit("subtask", ",") %>% distinct() %>% pivot_longer(!ticket, 
-## +     nam .... [TRUNCATED] 
+## > jira.conf.subtask <- jira.anon.raw %>% filter(subtask != 
+## +     "") %>% select(ticket, subtask) %>% separate_longer_delim(subtask, 
+## +     delim = ", ..." ... [TRUNCATED] 
 ## 
-## > jira.anon <- jira.anon.raw %>% select(ticket, mc_number_anon) %>% 
-## +     distinct(ticket, .keep_all = TRUE) %>% filter(mc_number_anon != 
-## +     is.n .... [TRUNCATED]
+## > jira.anon <- jira.anon.raw %>% filter(!is.na(mc_number_anon)) %>% 
+## +     anti_join(jira.conf.subtask) %>% select(ticket, date_created, 
+## +     date_u .... [TRUNCATED]
 ```
 
 ```
-## Joining, by = "ticket"
+## Joining with `by = join_by(ticket)`
 ```
 
 ```
@@ -289,27 +292,27 @@ The anonymized data has 15 columns.
 |received           |An indicator for whether the issue is just created and has not been assigned to a replicator yet.                                                                        |
 |Changed.Fields     |A transaction will change various fields. These are listed here.                                                                                                         |
 |external           |An indicator for whether the issue required the external validation.                                                                                                     |
-|subtask            |An indicator for whether the issue is a subtask of another task.                                                                                                         |
 |Resolution         |Resolution associated with a ticket at the end of the replication process.                                                                                               |
 |reason.failure     |A list of reasons for failure to fully replicate.                                                                                                                        |
+|MCStatus           |NA                                                                                                                                                                       |
 |MCRecommendation   |Decision status when the issue is Revise and Resubmit.                                                                                                                   |
 |MCRecommendationV2 |Decision status when the issue is conditionally accepted.                                                                                                                |
 
 ### Sample records
 
 
-|ticket      |date_created |date_updated | mc_number_anon|Journal             |Status |Software.used |received |Changed.Fields                |external |subtask |Resolution      |reason.failure |MCRecommendation |MCRecommendationV2 |
-|:-----------|:------------|:------------|--------------:|:-------------------|:------|:-------------|:--------|:-----------------------------|:--------|:-------|:---------------|:--------------|:----------------|:------------------|
-|AEAREP-3787 |2022-12-08   |2022-12-08   |           1316|AEJ:Economic Policy |Open   |Stata,R       |No       |Software used                 |No       |NA      |                |               |                 |                   |
-|AEAREP-3787 |2022-12-08   |2022-12-08   |           1316|AEJ:Economic Policy |Open   |              |No       |openICPSR Project Number      |No       |NA      |                |               |                 |                   |
-|AEAREP-3787 |2022-12-08   |2022-12-08   |           1316|AEJ:Economic Policy |Open   |              |NA       |Manuscript Central identifier |No       |NA      |                |               |                 |                   |
-|AEAREP-3787 |2022-12-08   |2022-12-08   |           1316|AEJ:Economic Policy |Open   |              |NA       |Journal                       |No       |NA      |                |               |                 |                   |
-|AEAREP-3787 |2022-12-08   |2022-12-08   |           1316|                    |Open   |              |NA       |                              |No       |NA      |                |               |                 |                   |
-|AEAREP-3786 |2022-12-07   |2022-12-07   |            316|AER                 |Done   |              |No       |Status                        |No       |NA      |Evaluation only |               |                 |                   |
+|ticket      |date_created |date_updated | mc_number_anon|Journal      |Status |Software.used |received |Changed.Fields                |external |Resolution |reason.failure |MCStatus |MCRecommendation |MCRecommendationV2 |
+|:-----------|:------------|:------------|--------------:|:------------|:------|:-------------|:--------|:-----------------------------|:--------|:----------|:--------------|:--------|:----------------|:------------------|
+|AEAREP-4863 |2023-12-08   |2023-12-08   |              1|AER:Insights |Open   |Stata         |Yes      |Software used                 |No       |           |               |CA       |                 |                   |
+|AEAREP-4863 |2023-12-08   |2023-12-08   |              1|AER:Insights |Open   |              |Yes      |openICPSR Project Number      |No       |           |               |CA       |                 |                   |
+|AEAREP-4863 |2023-12-08   |2023-12-08   |              1|AER:Insights |Open   |              |Yes      |Manuscript Central identifier |No       |           |               |CA       |                 |                   |
+|AEAREP-4862 |2023-12-08   |2023-12-08   |              2|AER          |Open   |Python        |Yes      |Software used                 |No       |           |               |CA       |                 |                   |
+|AEAREP-4862 |2023-12-08   |2023-12-08   |              2|AER          |Open   |              |Yes      |openICPSR Project Number      |No       |           |               |CA       |                 |                   |
+|AEAREP-4862 |2023-12-08   |2023-12-08   |              2|AER          |Open   |              |Yes      |Journal                       |No       |           |               |CA       |                 |                   |
 
 ### Lab members during this period
 
-We list the lab members active at some point during this period.
+We list the lab members active at some point during this period. This still requires confidential data as an input.
 
 
 ```r
@@ -318,24 +321,17 @@ source(file.path(programs,"03_lab_members.R"),echo=TRUE)
 
 ```
 ## 
-## > rm(list = ls())
-## 
-## > gc()
-##           used (Mb) gc trigger  (Mb) max used  (Mb)
-## Ncells 1028453 55.0    2007871 107.3  2007871 107.3
-## Vcells 1946453 14.9   19765818 150.9 30884089 235.7
-## 
 ## > source(here::here("programs", "config.R"), echo = TRUE)
 ## 
 ## > process_raw <- TRUE
 ## 
 ## > download_raw <- TRUE
 ## 
-## > extractday <- "12-12-2022"
+## > extractday <- "12-09-2023"
 ## 
-## > firstday <- "2021-12-01"
+## > firstday <- "2022-12-01"
 ## 
-## > lastday <- "2022-11-30"
+## > lastday <- "2023-11-30"
 ## 
 ## > basepath <- here::here()
 ## 
@@ -366,10 +362,25 @@ source(file.path(programs,"03_lab_members.R"),echo=TRUE)
 ## +     }
 ##  .... [TRUNCATED] 
 ## 
-## > mran.date <- "2022-04-22"
+## > jira.conf.plus.rds <- file.path(jiraconf, "jira.conf.plus.RDS")
 ## 
-## > options(repos = paste0("https://cran.microsoft.com/snapshot/", 
-## +     mran.date, "/"))
+## > assignee.lookup.rds <- file.path(jiraconf, "assignee-lookup.RDS")
+## 
+## > mc.lookup.rds <- file.path(jiraconf, "mc-lookup.RDS")
+## 
+## > if (file.exists(here::here("programs", "confidential-config.R"))) {
+## +     source(here::here("programs", "confidential-config.R"))
+## + }
+## 
+## > source(here::here("global-libraries.R"), echo = TRUE)
+## 
+## > ppm.date <- "2023-11-01"
+## 
+## > options(repos = paste0("https://packagemanager.posit.co/cran/", 
+## +     ppm.date, "/"))
+## 
+## > global.libraries <- c("dplyr", "stringr", "tidyr", 
+## +     "knitr", "readr", "here", "splitstackshape", "boxr", "jose")
 ## 
 ## > pkgTest <- function(x) {
 ## +     if (!require(x, character.only = TRUE)) {
@@ -381,16 +392,39 @@ source(file.path(programs,"03_lab_members.R"),echo=TRUE)
 ## +         install_github(paste(source, x, sep = "/"))
 ## +      .... [TRUNCATED] 
 ## 
-## > global.libraries <- c("dplyr", "tidyr", "splitstackshape")
-## 
 ## > results <- sapply(as.list(global.libraries), pkgTest)
 ## 
-## > jira.conf.plus <- readRDS(file = file.path(jiraconf, 
-## +     "jira.conf.plus.RDS"))
+## > exclusions <- c("Lars Vilhuber", "Michael Darisse", 
+## +     "Sofia Encarnacion", "Linda Wang", "Leonel Borja Plaza", 
+## +     "User ", "Takshil Sachdev ..." ... [TRUNCATED] 
 ## 
-## > lab.member <- jira.conf.plus %>% filter(Change.Author != 
-## +     "" & Change.Author != "Automation for Jira" & Change.Author != 
-## +     "LV (Data Edit ..." ... [TRUNCATED] 
+## > lookup <- read_csv(file.path(jirameta, "lookup.csv"))
+```
+
+```
+## Rows: 2 Columns: 2
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: ","
+## chr (2): Assignee, Name
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+```
+## 
+## > jira.conf.plus <- readRDS(jira.conf.plus.rds)
+## 
+## > lab.member <- jira.conf.plus %>% filter(date_created >= 
+## +     firstday, date_created < lastday) %>% filter(Assignee != 
+## +     "") %>% filter(!Assig .... [TRUNCATED]
+```
+
+```
+## Joining with `by = join_by(Assignee)`
+```
+
+```
 ## 
 ## > write.table(lab.member, file = file.path(basepath, 
 ## +     "data", "replicationlab_members.txt"), sep = "\t", row.names = FALSE)
@@ -403,7 +437,7 @@ source(file.path(programs,"03_lab_members.R"),echo=TRUE)
 ## +     "data", "external_replicators.txt"), sep = "\t", row.names = FALSE)
 ```
 
-There were a total of 42 lab members over the course of the 12 month period.
+There were a total of 45 lab members over the course of the 12 month period.
 
 ### R session info
 
@@ -413,9 +447,9 @@ sessionInfo()
 ```
 
 ```
-## R version 4.2.2 (2022-10-31)
+## R version 4.2.3 (2023-03-15)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 22.04.1 LTS
+## Running under: Ubuntu 22.04.2 LTS
 ## 
 ## Matrix products: default
 ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
@@ -433,22 +467,23 @@ sessionInfo()
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] splitstackshape_1.4.8 readr_2.1.3           knitr_1.41           
-## [4] tidyr_1.2.1           stringr_1.5.0         dplyr_1.0.10         
+##  [1] jose_1.2.0            openssl_2.0.6         boxr_0.3.6           
+##  [4] splitstackshape_1.4.8 here_1.0.1            readr_2.1.4          
+##  [7] knitr_1.42            tidyr_1.3.0           stringr_1.5.0        
+## [10] dplyr_1.1.0          
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] highr_0.9         bslib_0.4.1       compiler_4.2.2    pillar_1.8.1     
-##  [5] jquerylib_0.1.4   tools_4.2.2       bit_4.0.5         digest_0.6.30    
-##  [9] jsonlite_1.8.4    evaluate_0.18     lifecycle_1.0.3   tibble_3.1.8     
-## [13] pkgconfig_2.0.3   rlang_1.0.6       cli_3.4.1         DBI_1.1.3        
-## [17] rstudioapi_0.14   parallel_4.2.2    yaml_2.3.6        xfun_0.39        
-## [21] fastmap_1.1.0     withr_2.5.0       generics_0.1.3    vctrs_0.5.1      
-## [25] sass_0.4.4        hms_1.1.2         bit64_4.0.5       rprojroot_2.0.3  
-## [29] tidyselect_1.2.0  data.table_1.14.6 glue_1.6.2        here_1.0.1       
-## [33] R6_2.5.1          fansi_1.0.3       vroom_1.6.0       rmarkdown_2.18   
-## [37] tzdb_0.3.0        purrr_0.3.5       magrittr_2.0.3    ellipsis_0.3.2   
-## [41] htmltools_0.5.4   assertthat_0.2.1  utf8_1.2.2        stringi_1.7.8    
-## [45] cachem_1.0.6      crayon_1.5.2
+##  [1] pillar_1.8.1      bslib_0.4.2       compiler_4.2.3    jquerylib_0.1.4  
+##  [5] tools_4.2.3       bit_4.0.5         digest_0.6.31     jsonlite_1.8.4   
+##  [9] evaluate_0.20     lifecycle_1.0.3   tibble_3.2.0      pkgconfig_2.0.3  
+## [13] rlang_1.1.0       cli_3.6.0         rstudioapi_0.14   parallel_4.2.3   
+## [17] yaml_2.3.7        xfun_0.43         fastmap_1.1.1     withr_2.5.0      
+## [21] askpass_1.1       generics_0.1.3    vctrs_0.5.2       sass_0.4.5       
+## [25] hms_1.1.2         bit64_4.0.5       rprojroot_2.0.3   tidyselect_1.2.0 
+## [29] data.table_1.14.8 glue_1.6.2        R6_2.5.1          fansi_1.0.4      
+## [33] vroom_1.6.1       rmarkdown_2.20    purrr_1.0.1       tzdb_0.3.0       
+## [37] magrittr_2.0.3    htmltools_0.5.4   ellipsis_0.3.2    utf8_1.2.3       
+## [41] stringi_1.7.12    cachem_1.0.7      crayon_1.5.2
 ```
 
 
