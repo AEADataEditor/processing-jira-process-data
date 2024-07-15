@@ -33,6 +33,7 @@ esac
 # pull the docker if necessary
 set -ev
 
+echo $space/$repo
 tag_present=$(docker images | grep $space/$repo | awk ' { print $2 } ' | grep $tag)
 
 if [[ -z "$tag_present" ]]
