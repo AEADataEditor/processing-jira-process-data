@@ -72,4 +72,5 @@ jira.anon.rds  <- file.path(jiraanon,paste0(jira.anon.base,".RDS"))
 jira.anon.csv  <- file.path(jiraanon,paste0(jira.anon.base,".csv"))
 
 
+#mc.lookup.rds       <- file.path(jiraconf,"mc-lookup.RDS")
 
