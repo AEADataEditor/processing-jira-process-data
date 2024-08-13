@@ -31,17 +31,18 @@ case $USER in
 esac
   
 # pull the docker if necessary
-set -ev
+# set -ev
 
-tag_present=$(docker images | grep $space/$repo | awk ' { print $2 } ' | grep $tag)
+# tag_present=$(docker images | grep $space/$repo | awk ' { print $2 } ' | grep $tag)
 
-if [[ -z "$tag_present" ]]
-then
-  echo "Pulling $space/$repo:$tag"
-  docker pull $space/$repo:$tag
-else  
-  echo "Found $space/$repo:$tag"
-fi
+# if [[ -z "$tag_present" ]]
+# then
+#   echo "Pulling $space/$repo:$tag"
+#   docker pull $space/$repo:$tag
+# else  
+#   echo "Found $space/$repo:$tag"
+# fi
+if [[ ! -z $JIRA_USERNAME ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e JIRA_USERNAME=$JIRA_USERNAME" ; fi
+if [[ ! -z $JIRA_API_KEY ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e JIRA_API_KEY=$JIRA_USERNAME" ; fi
 
-
-docker run -e DISABLE_AUTH=true -v "$WORKSPACE":/home/rstudio --rm -p 8787:8787 $space/$repo:$tag
+docker run $DOCKEREXTRA -e DISABLE_AUTH=true -v "$WORKSPACE":/home/rstudio --rm -p 8787:8787 $space/$repo:$tag

@@ -29,5 +29,5 @@ To run the image as a Rstudio interactive development image, use
 bash ./start_rstudio.sh TAG
 ```
 
-It defaults to the `2023-11-08` image.
+It defaults to the `2023-11-08` image if you don't specify a tag.
 
