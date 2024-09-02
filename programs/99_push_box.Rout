@@ -1,0 +1,191 @@
+
+R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> ### Load libraries 
+> ### Requirements: have library *here*
+> source(here::here("programs","config.R"),echo=TRUE)
+
+> process_raw <- TRUE
+
+> download_raw <- TRUE
+
+> extractday <- "2024-09-02"
+
+> firstday <- "2023-12-01"
+
+> lastday <- "2024-08-31"
+
+> basepath <- here::here()
+
+> setwd(basepath)
+
+> jiraconf <- file.path(basepath, "data", "confidential")
+
+> jiraanon <- file.path(basepath, "data", "anon")
+
+> jirameta <- file.path(basepath, "data", "metadata")
+
+> images <- file.path(basepath, "images")
+
+> tables <- file.path(basepath, "tables")
+
+> programs <- file.path(basepath, "programs")
+
+> temp <- file.path(basepath, "data", "temp")
+
+> for (dir in list(images, tables, programs, temp)) {
++     if (file.exists(dir)) {
++     }
++     else {
++         dir.create(file.path(dir))
++     }
+ .... [TRUNCATED] 
+
+> issue_history.prefix <- "issue_history_"
+
+> manuscript.lookup <- "mc-lookup"
+
+> manuscript.lookup.rds <- file.path(jiraconf, paste0(manuscript.lookup, 
++     ".RDS"))
+
+> assignee.lookup <- "assignee-lookup"
+
+> assignee.lookup.rds <- file.path(jiraconf, paste0(assignee.lookup, 
++     ".RDS"))
+
+> jira.conf.plus.base <- "jira.conf.plus"
+
+> jira.conf.plus.rds <- file.path(jiraconf, paste0(jira.conf.plus.base, 
++     ".RDS"))
+
+> jira.conf.names.csv <- "jira_conf_names.csv"
+
+> members.txt <- file.path(jiraanon, "replicationlab_members.txt")
+
+> jira.anon.base <- "jira.anon"
+
+> jira.anon.rds <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".RDS"))
+
+> jira.anon.csv <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".csv"))
+> source(here::here("global-libraries.R"),echo=TRUE)
+
+> ppm.date <- "2023-11-01"
+
+> options(repos = paste0("https://packagemanager.posit.co/cran/", 
++     ppm.date, "/"))
+
+> global.libraries <- c("dplyr", "stringr", "tidyr", 
++     "knitr", "readr", "here", "splitstackshape", "boxr", "jose")
+
+> pkgTest <- function(x) {
++     if (!require(x, character.only = TRUE)) {
++         install.packages(x, dep = TRUE)
++         if (!require(x, charact .... [TRUNCATED] 
+
+> pkgTest.github <- function(x, source) {
++     if (!require(x, character.only = TRUE)) {
++         install_github(paste(source, x, sep = "/"))
++      .... [TRUNCATED] 
+
+> results <- sapply(as.list(global.libraries), pkgTest)
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: knitr
+Loading required package: readr
+Loading required package: here
+here() starts at /home/rstudio/processing-jira-process-data
+Loading required package: splitstackshape
+Loading required package: boxr
+boxr: see `vignette("boxr")` on how to authorize to your Box account.
+Loading required package: jose
+Loading required package: openssl
+Linking to: OpenSSL 3.0.2 15 Mar 2022
+> 
+> # Load boxr package
+> library(boxr)
+> 
+> # Read the key variables from the common .env file
+> 
+> readRenviron(file.path(basepath,".env"))
+> 
+> # Now load credentials
+> client_folder <- Sys.getenv("BOX_FOLDER_ID")
+> client_key_id <- Sys.getenv("BOX_PRIVATE_KEY_ID")  # This is the "Public Key (N) ID: ______"
+> client_enterprise_id <- Sys.getenv("BOX_ENTERPRISE_ID") # This is visible within the JSON file
+> json.config.file <- file.path(basepath,
++                               paste0(client_enterprise_id,"_",
++                                      client_key_id,"_config.json"))
+> 
+> # Authenticate 
+> box_auth_service(json.config.file)
+boxr: Authenticated using OAuth2 (JWT) as aeadata (AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com, id: 16949677861)
+> 
+> # List files in folder
+> #files <- box_ls(client_folder)
+> box_setwd(client_folder)
+box.com working directory changed to 'InternalData'
+
+      id: 143352802492
+    tree: All Files/InternalData
+   owner: ga.ldilab@cornell.edu
+contents: 21 files, 5 folders
+shared link: https://cornell.box.com/s/crnvz77g37bdyjiyv6801d6mezf5igny
+> 
+> 
+> issue_history.csv <- file.path(jiraconf,paste0(issue_history.prefix,extractday,".csv"))
+> 
+> 
+> box_ul(file=issue_history.csv)
+  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+File 'issue_history_2024-09-02.csv' aleady exists. Attempting to upload new version (V2).
+  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+
+box.com remote file reference
+
+ name        : issue_history_2024-09-02.csv 
+ file id     : 1637741668342 
+ version     : V2 
+ size        : 469 B 
+ modified at : 2024-09-02 16:56:44 
+ created at  : 2024-09-02 16:56:44 
+ uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
+ owned by    : ga.ldilab@cornell.edu 
+ shared link : None 
+
+ parent folder name :  InternalData 
+ parent folder id   :  143352802492 
+> box_ul(file=jira.conf.plus.rds)
+Error in httr::upload_file(file) : file.exists(path) is not TRUE
+Calls: box_ul ... request_build -> body_config -> <Anonymous> -> stopifnot
+Execution halted
