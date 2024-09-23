@@ -26,7 +26,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2024-09-02"
+> extractday <- "2024-09-23"
 
 > firstday <- "2023-12-01"
 
@@ -168,17 +168,15 @@ shared link: https://cornell.box.com/s/crnvz77g37bdyjiyv6801d6mezf5igny
 > 
 > box_ul(file=issue_history.csv)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'issue_history_2024-09-02.csv' aleady exists. Attempting to upload new version (V2).
-  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
- name        : issue_history_2024-09-02.csv 
- file id     : 1637741668342 
- version     : V2 
- size        : 469 B 
- modified at : 2024-09-02 16:56:44 
- created at  : 2024-09-02 16:56:44 
+ name        : issue_history_2024-09-23.csv 
+ file id     : 1654452940362 
+ version     : V1 
+ size        : 9.2 MB 
+ modified at : 2024-09-23 10:43:07 
+ created at  : 2024-09-23 10:43:07 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -186,6 +184,57 @@ box.com remote file reference
  parent folder name :  InternalData 
  parent folder id   :  143352802492 
 > box_ul(file=jira.conf.plus.rds)
-Error in httr::upload_file(file) : file.exists(path) is not TRUE
-Calls: box_ul ... request_build -> body_config -> <Anonymous> -> stopifnot
-Execution halted
+  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+
+box.com remote file reference
+
+ name        : jira.conf.plus.RDS 
+ file id     : 1654446981244 
+ version     : V1 
+ size        : 320 kB 
+ modified at : 2024-09-23 10:43:08 
+ created at  : 2024-09-23 10:43:08 
+ uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
+ owned by    : ga.ldilab@cornell.edu 
+ shared link : None 
+
+ parent folder name :  InternalData 
+ parent folder id   :  143352802492 
+> box_ul(file=assignee.lookup.rds)
+  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+
+box.com remote file reference
+
+ name        : assignee-lookup.RDS 
+ file id     : 1654452983356 
+ version     : V1 
+ size        : 828 B 
+ modified at : 2024-09-23 10:43:09 
+ created at  : 2024-09-23 10:43:09 
+ uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
+ owned by    : ga.ldilab@cornell.edu 
+ shared link : None 
+
+ parent folder name :  InternalData 
+ parent folder id   :  143352802492 
+> box_ul(file=manuscript.lookup.rds)
+  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+
+box.com remote file reference
+
+ name        : mc-lookup.RDS 
+ file id     : 1654452326062 
+ version     : V1 
+ size        : 2.8 kB 
+ modified at : 2024-09-23 10:43:10 
+ created at  : 2024-09-23 10:43:10 
+ uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
+ owned by    : ga.ldilab@cornell.edu 
+ shared link : None 
+
+ parent folder name :  InternalData 
+ parent folder id   :  143352802492 
+> 
+> proc.time()
+   user  system elapsed 
+  1.091   0.195   6.617 

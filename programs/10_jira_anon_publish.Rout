@@ -36,20 +36,17 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "12-09-2023"
+> extractday <- "2024-09-23"
 
-> firstday <- "2022-12-01"
+> firstday <- "2023-12-01"
 
-> lastday <- "2023-11-30"
+> lastday <- "2024-08-31"
 
 > basepath <- here::here()
 
 > setwd(basepath)
 
 > jiraconf <- file.path(basepath, "data", "confidential")
-
-> if (Sys.getenv("HOSTNAME") == "zotique3") {
-+     jiraconf <- paste0(Sys.getenv("XDG_RUNTIME_DIR"), "/gvfs/dav:host=dav.box.com,ssl=true/dav/Office  ..." ... [TRUNCATED] 
 
 > jiraanon <- file.path(basepath, "data", "anon")
 
@@ -71,11 +68,34 @@ Type 'q()' to quit R.
 +     }
  .... [TRUNCATED] 
 
-> jira.conf.plus.rds <- file.path(jiraconf, "jira.conf.plus.RDS")
+> issue_history.prefix <- "issue_history_"
 
-> assignee.lookup.rds <- file.path(jiraconf, "assignee-lookup.RDS")
+> manuscript.lookup <- "mc-lookup"
 
-> mc.lookup.rds <- file.path(jiraconf, "mc-lookup.RDS")
+> manuscript.lookup.rds <- file.path(jiraconf, paste0(manuscript.lookup, 
++     ".RDS"))
+
+> assignee.lookup <- "assignee-lookup"
+
+> assignee.lookup.rds <- file.path(jiraconf, paste0(assignee.lookup, 
++     ".RDS"))
+
+> jira.conf.plus.base <- "jira.conf.plus"
+
+> jira.conf.plus.rds <- file.path(jiraconf, paste0(jira.conf.plus.base, 
++     ".RDS"))
+
+> jira.conf.names.csv <- "jira_conf_names.csv"
+
+> members.txt <- file.path(jiraanon, "replicationlab_members.txt")
+
+> jira.anon.base <- "jira.anon"
+
+> jira.anon.rds <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".RDS"))
+
+> jira.anon.csv <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".csv"))
 > source(here::here("global-libraries.R"),echo=TRUE)
 
 > ppm.date <- "2023-11-01"
@@ -114,7 +134,7 @@ Loading required package: tidyr
 Loading required package: knitr
 Loading required package: readr
 Loading required package: here
-here() starts at /home/rstudio
+here() starts at /home/rstudio/processing-jira-process-data
 Loading required package: splitstackshape
 Loading required package: boxr
 boxr: see `vignette("boxr")` on how to authorize to your Box account.
@@ -131,14 +151,11 @@ Linking to: OpenSSL 3.0.2 15 Mar 2022
 +   rename(reason.failure=Reason.for.Failure.to.be.Fully.Reproducible) %>%
 +   rename(external=External.validation) %>%
 +   rename(subtask=Sub.tasks) %>%
-+   mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y"),
-+          date_resolved = as.Date(substr(Resolved, 1,10), "%m/%d/%Y"),
-+          date_updated = as.Date(substr(As.Of.Date, 1,10), "%m/%d/%Y")) %>%
++   mutate(date_resolved = as.Date(substr(Resolved, 1,10), "%Y-%m-%d"))%>%
 +   mutate(received = ifelse(Status=="Open","Yes","No")) %>%
 +   mutate(has_subtask=ifelse(subtask!="","Yes","No")) %>%
 +   filter(ticket!="AEAREP-365") %>% # duplicate with aearep-364
 +   filter(ticket!="AEAREP-1589")  ## Decision notice of aearep-1523
-> 
 > 
 > ## object to filter out subtasks
 > jira.conf.subtask <- jira.anon.raw %>%
@@ -151,16 +168,16 @@ Linking to: OpenSSL 3.0.2 15 Mar 2022
 > jira.anon <- jira.anon.raw %>%
 +   filter(!is.na(mc_number_anon)) %>%
 +   anti_join(jira.conf.subtask) %>%
-+   select(ticket,date_created,date_updated,mc_number_anon,Journal,Status,
++   select(ticket,date_created,date_asof,mc_number_anon,Journal,Status,
 +          Software.used,received,Changed.Fields,external,Resolution,reason.failure,MCStatus,
 +          MCRecommendation,MCRecommendationV2)
 Joining with `by = join_by(ticket)`
 > 
 > ## export it as a csv file
-> saveRDS(jira.anon,file=file.path(jiraanon,"jira.anon.RDS"))
-> write.csv(jira.anon,file=file.path(jiraanon,"jira.anon.csv"))
+> saveRDS(jira.anon,jira.anon.rds)
+> write.csv(jira.anon,jira.anon.csv)
 > 
 > 
 > proc.time()
    user  system elapsed 
-  2.365   1.457   2.320 
+  1.321   0.224   1.436 
