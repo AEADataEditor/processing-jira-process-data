@@ -120,11 +120,12 @@ if __name__ == "__main__":
     fieldfile = os.path.join(fieldfiledir, filename)
     # Select fields based on past submissions
     include_fields = ["RepositoryDOI", "openICPSRversion", "Resolution", "MCStatus", "MCRecommendationV2", 
-                      "Reason for Failure to be Fully Reproducible", "External validation", "External party name", 
+                      "Reason for Failure to be Fully Reproduced", "External validation", "External party name", 
                       "Candidate for Best Package", "Assignee", "Status", "DataAvailabilityAccess", "MCRecommendation", 
                       "Sub-tasks", "openICPSR Project Number", "RCT?", "RCT number", "Issue Type", "Manuscript Central identifier", 
-                      "Journal", "Software used", "Start date", "Non-compliant", "Resolved", "Status Category Changed", "Created"]
-
+                      "Journal", "Software used", "Start date", "Non-compliant", "Resolved", "Status Category Changed", "Created",
+                      "Key", "Summary", "Priority", "DCAF_Access_Restrictions", "Due date", "Bitbucket short name", "Updated", "Update type",
+                      "JournalIssueMonth", "JournalIssueYear", "Agreement signed"]
     
     # summarize
     print_summary(fieldfile, jiradomain)
