@@ -1,0 +1,139 @@
+#!/usr/bin/env python
+from jira import JIRA
+import pandas as pd
+import openpyxl
+import os
+import argparse
+from dotenv import load_dotenv
+
+def jira_username():
+    """Retrieve Jira username securely from env or prompt"""
+    
+    username = os.environ.get('JIRA_USERNAME')
+    if not username:
+        try:
+            load_dotenv()
+            username = os.environ.get("JIRA_USERNAME")
+        except FileNotFoundError:
+            print("Warning: .env file not found")
+            username = False
+
+    if not username:
+        username = input("Enter Jira username: ")
+    return username
+
+# find root directory based on either git or something elseroot_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def get_rootdir():
+    """Get root directory of project"""
+
+    cwd = os.getcwd()
+    while cwd != os.path.dirname(cwd):
+        if os.path.exists(os.path.join(cwd, '.git')):
+            repo_root = cwd
+            break
+        cwd = os.path.dirname(cwd)
+    return repo_root
+
+
+def get_api_key():
+    """Retrieve API key securely from env or prompt"""
+    
+    key = os.environ.get('JIRA_API_KEY')
+    if not key:
+        try:
+            load_dotenv()
+            key = os.environ.get("JIRA_API_KEY")
+        except FileNotFoundError:
+            print("Warning: .env file not found")
+            key = False
+
+
+    if not key:
+        key = input("Enter Jira API key: ")
+    return key
+
+def get_fields(username,api_token,jiradomain):
+
+    options = {
+    "server": jiradomain
+     }
+
+    jira = JIRA(options, basic_auth=(username, api_token))
+    fields = jira.fields()
+
+    # Extract field names and ids
+    field_data = []
+    for f in fields:
+        field_data.append([f['name'], f['id']])
+
+    return field_data
+
+def export_fields(field_data, filename, include_fields="all"):
+    # If include_fields is None or an empty list, print an error message and return
+    if not include_fields:
+        print("Error: No fields have been included.")
+        return
+    
+    # Convert to DataFrame    
+    df = pd.DataFrame(field_data, columns=['Name', 'Id'])
+
+    # If include_fields is "all", make 'Include' true for all fields
+    if include_fields == "all":
+        df['Include'] = True
+    # If include_fields is not "all", make 'Include' true only for the fields in include_fields
+    else:
+        df['Include'] = df['Name'].isin(include_fields)
+
+    # Export to Excel   
+    print('Check if file exists')
+    file_exists = os.path.isfile(filename)
+
+    if file_exists and not overwrite_file:
+        print('File already exists, not overwriting.')
+    else:
+        print('Writing to ' + filename)
+        df.to_excel(filename, index=False)
+
+
+
+def print_summary(filename, jiradomain):
+    print(f"Summary:")
+    print("")
+    print(f" About to update the field catalog for {jiradomain}.")
+    print(f" Writing to " + filename)
+    print("")
+    
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Extract Jira issue history")
+    parser.add_argument("-f", "--filename", required=False, default="jira-fields.xlsx", help="Filename to output")
+    parser.add_argument("-d", "--domain", required=False, default="https://aeadataeditors.atlassian.net", help="Jira domain")
+    parser.add_argument("-o", "--overwrite", required=False, default="True", help="Overwrite the output file? True/False")
+    args = parser.parse_args()
+
+    filename = args.filename
+    jiradomain = args.domain
+    overwrite_file = args.overwrite
+
+    fieldfiledir = os.path.join(get_rootdir(), "data","metadata")
+    fieldfile = os.path.join(fieldfiledir, filename)
+    # Select fields based on past submissions
+    include_fields = ["RepositoryDOI", "openICPSRversion", "Resolution", "MCStatus", "MCRecommendationV2", 
+                      "Reason for Failure to be Fully Reproduced", "External validation", "External party name", 
+                      "Candidate for Best Package", "Assignee", "Status", "DataAvailabilityAccess", "MCRecommendation", 
+                      "Sub-tasks", "openICPSR Project Number", "RCT?", "RCT number", "Issue Type", "Manuscript Central identifier", 
+                      "Journal", "Software used", "Start date", "Non-compliant", "Resolved", "Status Category Changed", "Created",
+                      "Key", "Summary", "Priority", "DCAF_Access_Restrictions", "Due date", "Bitbucket short name", "Updated", "Update type",
+                      "JournalIssueMonth", "JournalIssueYear", "Agreement signed"]
+    
+    # summarize
+    print_summary(fieldfile, jiradomain)
+  
+    confirm = input("Proceed? (y/N): ")
+    if confirm.lower() != "y":
+        exit()
+
+    data = get_fields(jira_username(),get_api_key(),jiradomain)
+    # If all (rather than only past submissions') fields are needed, remove the argument 'include_fields')
+    export_fields(data, fieldfile, include_fields)

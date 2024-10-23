@@ -1,7 +1,1 @@
 "name_external"
-"DIME"
-"Stanford Student"
-"Cornell GradStudent"
-"cascad"
-"BPLIM"
-"PSU GradStudent"

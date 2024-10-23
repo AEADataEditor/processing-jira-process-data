@@ -1,0 +1,6 @@
+jira
+requests
+python-dotenv
+pandas
+openpyxl
+argparse

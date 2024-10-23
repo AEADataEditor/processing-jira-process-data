@@ -1,5 +1,5 @@
 # Anonymize JIRA process files and construct variables
-# Harry Son, Lars Vilhuber
+# Harry Son, Lars Vilhuber, Linda Wang
 # 2021-05-20
 
 ## Inputs: export_(extractday).csv
@@ -14,9 +14,9 @@ if ( file.exists(here::here("programs","confidential-config.R"))) {
 }
 source(here::here("global-libraries.R"),echo=TRUE)
 
+exportfile <- paste0(issue_history.prefix,extractday,".csv")
 
-# double-check
-exportfile <- paste0("export_",extractday,".csv")
+# double-check for existence of issue history file.
 
 if (! file.exists(file.path(jiraconf,exportfile))) {
   process_raw = FALSE
@@ -25,14 +25,18 @@ if (! file.exists(file.path(jiraconf,exportfile))) {
 
 if ( process_raw == TRUE ) {
   # Read in data extracted from Jira
-  
+
+
   jira.conf.raw <- read.csv(file.path(jiraconf,exportfile), stringsAsFactors = FALSE) %>%
-    rename(ticket=1) %>%
+    # the first field name can be iffy. It is the Key (sic)...
+    rename(ticket=Key) %>%
+    mutate(mc_number = sub('\\..*', '', Manuscript.Central.identifier))  %>%
     filter(Issue.Type == "Task") %>%
-    filter(str_detect(ticket,"AEAREP")) %>%
-    select(-Change.Author)
-  # We need to remove all sub-tasks of AEAREP-1407
+    filter(str_detect(ticket,"AEAREP"))
+    #select(-Change.Author)   field not present anymore
   
+  
+  # We need to remove all sub-tasks of AEAREP-1407
 placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
                select(ticket,Sub.tasks) %>%
                separate_longer_delim(Sub.tasks,delim=",") %>%
@@ -41,9 +45,16 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
 
   # now do an anti_join
   jira.conf.cleaned <- jira.conf.raw %>%
-    # the first field name can be iffy. It is the Key (sic)...
-    mutate(mc_number = sub('\\..*', '', Manuscript.Central.identifier))  %>%
     anti_join(placeholders)
+  
+  # Write out names as currently captured to TEMP
+  names(jira.conf.raw) %>% as.data.frame() -> tmp
+  names(tmp) <- c("Name")
+  write_excel_csv(tmp,file=file.path(temp,jira.conf.names.csv),col_names = TRUE)
+
+  warning(paste0("If you need to edit the names to be included,\n",
+                 "edit the file ",file.path(temp,jira.conf.names.csv),"\n",
+                 "save it in ",jirameta, "with the same name, ran run again."))
   
   # anonymize mc_number
   jira.manuscripts <- jira.conf.cleaned %>% 
@@ -55,7 +66,7 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
     mutate(mc_number_anon = row_number()) %>%
     select(-rand) %>%
     arrange(mc_number)
-  
+
   # Create anonymized Assignee number
   jira.assignees <- jira.conf.cleaned %>%
     select(Assignee) %>%
@@ -72,15 +83,18 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
     
   
   # Save files
-  saveRDS(jira.manuscripts,file=mc.lookup.rds)
-  saveRDS(jira.assignees,file=assignee.lookup.rds)
+  saveRDS(jira.manuscripts,file=manuscript.lookup.rds)
+  saveRDS(jira.assignees,  file=assignee.lookup.rds)
+
   
   # Now merge the anonymized data on
   jira.conf.plus <- jira.conf.cleaned %>% 
     left_join(jira.manuscripts,by="mc_number") %>%
     left_join(jira.assignees,by="Assignee") %>%
-    mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y"),
-           date_asof    = as.Date(substr(As.Of.Date, 1,10), "%m/%d/%Y"))
+    #left_join(jira.assignees %>% rename(change.author.anon=assignee_anon),by=c("Change.Author"="Assignee"))
+    # a few extra fields
+    mutate(date_created = as.Date(substr(Created, 1,10), "%Y-%m-%d"),
+           date_asof    = as.Date(substr(As.Of.Date, 1,10), "%Y-%m-%d"))
   
   # save anonymized and confidential data
   
@@ -88,6 +102,7 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
           file=jira.conf.plus.rds)
   
   
+
   saveRDS(jira.conf.plus %>% 
             select(-mc_number,-Assignee),
     file=file.path(jiraanon,"temp.jira.anon.RDS"))
