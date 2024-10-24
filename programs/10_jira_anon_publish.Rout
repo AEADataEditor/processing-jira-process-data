@@ -36,7 +36,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2024-10-18"
+> extractday <- "2024-10-23"
 
 > firstday <- "2023-12-01"
 
@@ -148,7 +148,7 @@ Linking to: OpenSSL 3.0.2 15 Mar 2022
 > #base <- here::here()
 > 
 > jira.anon.raw <- readRDS(file.path(jiraanon,"temp.jira.anon.RDS")) %>%
-+   rename(reason.failure=Reason.for.Failure.to.be.Fully.Reproducible) %>%
++   rename(reason.failure=Reason.for.Failure.to.be.Fully.Reproduced) %>%
 +   rename(external=External.validation) %>%
 +   rename(subtask=Sub.tasks) %>%
 +   mutate(date_resolved = as.Date(substr(Resolved, 1,10), "%Y-%m-%d"))%>%
@@ -156,38 +156,30 @@ Linking to: OpenSSL 3.0.2 15 Mar 2022
 +   mutate(has_subtask=ifelse(subtask!="","Yes","No")) %>%
 +   filter(ticket!="AEAREP-365") %>% # duplicate with aearep-364
 +   filter(ticket!="AEAREP-1589")  ## Decision notice of aearep-1523
-Error in `rename()`:
-! Can't rename columns that don't exist.
-✖ Column `Reason.for.Failure.to.be.Fully.Reproducible` doesn't exist.
-Backtrace:
-     ▆
-  1. ├─... %>% filter(ticket != "AEAREP-1589")
-  2. ├─dplyr::filter(., ticket != "AEAREP-1589")
-  3. ├─dplyr::filter(., ticket != "AEAREP-365")
-  4. ├─dplyr::mutate(., has_subtask = ifelse(subtask != "", "Yes", "No"))
-  5. ├─dplyr::mutate(., received = ifelse(Status == "Open", "Yes", "No"))
-  6. ├─dplyr::mutate(...)
-  7. ├─dplyr::rename(., subtask = Sub.tasks)
-  8. ├─dplyr::rename(., external = External.validation)
-  9. ├─dplyr::rename(., reason.failure = Reason.for.Failure.to.be.Fully.Reproducible)
- 10. ├─dplyr:::rename.data.frame(., reason.failure = Reason.for.Failure.to.be.Fully.Reproducible)
- 11. │ └─tidyselect::eval_rename(expr(c(...)), .data)
- 12. │   └─tidyselect:::rename_impl(...)
- 13. │     └─tidyselect:::eval_select_impl(...)
- 14. │       ├─tidyselect:::with_subscript_errors(...)
- 15. │       │ └─rlang::try_fetch(...)
- 16. │       │   └─base::withCallingHandlers(...)
- 17. │       └─tidyselect:::vars_select_eval(...)
- 18. │         └─tidyselect:::walk_data_tree(expr, data_mask, context_mask)
- 19. │           └─tidyselect:::eval_c(expr, data_mask, context_mask)
- 20. │             └─tidyselect:::reduce_sels(node, data_mask, context_mask, init = init)
- 21. │               └─tidyselect:::walk_data_tree(new, data_mask, context_mask)
- 22. │                 └─tidyselect:::as_indices_sel_impl(...)
- 23. │                   └─tidyselect:::as_indices_impl(...)
- 24. │                     └─tidyselect:::chr_as_locations(x, vars, call = call, arg = arg)
- 25. │                       └─vctrs::vec_as_location(...)
- 26. └─vctrs (local) `<fn>`()
- 27.   └─vctrs:::stop_subscript_oob(...)
- 28.     └─vctrs:::stop_subscript(...)
- 29.       └─rlang::abort(...)
-Execution halted
+> 
+> ## object to filter out subtasks
+> jira.conf.subtask <- jira.anon.raw %>%
++   filter(subtask != "") %>%
++   select(ticket, subtask) %>%
++   separate_longer_delim(subtask,delim=",") %>%
++   select(ticket = subtask) %>%
++   distinct()
+> 
+> jira.anon <- jira.anon.raw %>%
++   filter(!is.na(mc_number_anon)) %>%
++   anti_join(jira.conf.subtask) 
+Joining with `by = join_by(ticket)`
+> 
+> ##Keeping all variables so can create necessary tables for the report
+> ##%>%select(ticket,date_created,date_asof,mc_number_anon,Journal,Status,
+>          ##Software.used,received,Changed.Fields,external,Resolution,reason.failure,MCStatus,
+>          ##MCRecommendation,MCRecommendationV2)
+> 
+> ## export it as a csv file
+> saveRDS(jira.anon,jira.anon.rds)
+> write.csv(jira.anon,jira.anon.csv)
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  1.951   0.281   2.152 

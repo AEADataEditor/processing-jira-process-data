@@ -30,7 +30,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2024-10-18"
+> extractday <- "2024-10-23"
 
 > firstday <- "2023-12-01"
 
@@ -182,4 +182,4 @@ Joining with `by = join_by(Assignee)`
 > 
 > proc.time()
    user  system elapsed 
-  1.340   0.219   1.463 
+  1.267   0.202   1.398 

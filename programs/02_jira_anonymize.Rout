@@ -32,7 +32,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2024-10-18"
+> extractday <- "2024-10-23"
 
 > firstday <- "2023-12-01"
 
@@ -246,4 +246,4 @@ save it in /home/rstudio/processing-jira-process-data/data/metadatawith the same
 > 
 > proc.time()
    user  system elapsed 
-  2.129   0.244   2.666 
+  2.023   0.203   2.143 
