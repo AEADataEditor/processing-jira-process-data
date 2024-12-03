@@ -30,11 +30,11 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2024-10-23"
+> extractday <- "2024-12-03"
 
 > firstday <- "2023-12-01"
 
-> lastday <- "2024-10-15"
+> lastday <- "2024-11-30"
 
 > basepath <- here::here()
 
@@ -182,4 +182,4 @@ Joining with `by = join_by(Assignee)`
 > 
 > proc.time()
    user  system elapsed 
-  1.267   0.202   1.398 
+  1.302   0.154   1.349 

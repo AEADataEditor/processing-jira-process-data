@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="readme">README</h1>
+<hr>
+<h2 id="title-%22process-data-from-reproducibility-service%22author-%22lars-vilhuber%22date-2024-12-03outputhtmldocumentkeepmd-yestoc-yespdfdocumenttoc-yeseditoroptionschunkoutputtype-console">title: &quot;Process data from reproducibility service&quot;
+author: &quot;Lars Vilhuber&quot;
+date: '2024-12-03'
+output:
+html_document:
+keep_md: yes
+toc: yes
+pdf_document:
+toc: yes
+editor_options:
+chunk_output_type: console</h2>
+<blockquote>
+<p>Note: The <a href="https://aeadataeditor.github.io/processing-jira-process-data/README.pdf">PDF version</a> of this document is transformed by manually printing from a browser.</p>
+</blockquote>
+<h2 id="citation">Citation</h2>
+<blockquote>
+<p>Vilhuber, Lars. 2024. &quot;Process data for the AEA Pre-publication Verification Service.&quot; <em>American Economic Association [publisher]</em>. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2024-04-29. <a href="https://doi.org/10.3886/E117876V5">https://doi.org/10.3886/E117876V5</a></p>
+</blockquote>
+<pre class="hljs"><code><div>  doi = {10.3886/E117876V5},
+  url = {https://doi.org/10.3886/E117876V5},
+  author = {Vilhuber,  Lars},
+  title = {Process data for the AEA Pre-publication Verification Service},
+  institution = {American Economic Association [publisher]},
+  series = {ICPSR - Interuniversity Consortium for Political and Social Research},
+  year = {2024}}
+</div></code></pre>
+<h2 id="requirements">Requirements</h2>
+<p>This project requires</p>
+<ul>
+<li>R (last run with R 4.2.3)
+<ul>
+<li>package <code>here</code> (&gt;=0.1)</li>
+</ul>
+</li>
+</ul>
+<p>Other packages might be installed automatically by the programs, as long as the requirements above are met, see <a href="#r-session-info">Session Info</a>.</p>
+<h2 id="data">Data</h2>
+<h3 id="the-workflow">The workflow</h3>
+<p><img src="file:///workspaces/processing-jira-process-data/images/AEADataEditorWorkflow-20191028.png" alt="Workflow stages"></p>
+<h3 id="raw-process-data">Raw process data</h3>
+<p>Raw process data is extracted from Jira using API (see below for details), and saved as</p>
+<ul>
+<li><code>export_MM-DD-YYYY.csv</code> (for detailed transaction-level data)</li>
+</ul>
+<p>The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence.</p>
+<p>To obtain, run <code>programs/01_download_issues.py</code>. This will use the fields as specified in <code>data/metadata/jira-fields.xlsx</code>. If fields need to be updated (they are keyed on names), run <code>programs/00_jira_fields.py</code> to obtain a new Excel file, and mark the to-be-included fields with &quot;True&quot;.</p>
+<p>A full download of JIRA issues as of 2024 would be</p>
+<pre class="hljs"><code><div>&gt; python3 01_download_issues.py -s 2018-01-01 -e 2024-11-30
+Summary:
+- Start Date: 2018-01-01
+- End Date: 2024-11-30
+
+ About to extract all issue history between these dates from https://aeadataeditors.atlassian.net.
+ The output will be written to /home/rstudio/data/confidential/issue_history_2024-12-03.csv.
+
+</div></code></pre>
+<p>Full year download should take about 30 minutes. At this time, the latest extract was made 2024-12-03.</p>
+<h3 id="anonymized-data">Anonymized data</h3>
+<p>We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running <code>02_jira_anonymize.R</code>. The programs saves both the confidential version and the anonymized version.</p>
+<h3 id="publishing-data">Publishing data</h3>
+<p>Some additional cleaning and matching, and then we write out the file. This is done by running <code>02_jira_anonymize.R</code>.</p>
+<h2 id="describing-the-data">Describing the Data</h2>
+<p>The anonymized data has 46 columns.</p>
+<h3 id="variables">Variables</h3>
+<pre class="hljs"><code><div>|name                          |label                                                                                                                                                                    |
+|:-----------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|Status.Category.Changed       |NA                                                                                                                                                                       |
+|RepositoryDOI                 |NA                                                                                                                                                                       |
+|openICPSRversion              |NA                                                                                                                                                                       |
+|Resolution                    |Resolution associated with a ticket at the end of the replication process.                                                                                               |
+|Agreement.signed              |NA                                                                                                                                                                       |
+|JournalIssueMonth             |NA                                                                                                                                                                       |
+|JournalIssueYear              |NA                                                                                                                                                                       |
+|Update.type                   |NA                                                                                                                                                                       |
+|MCStatus                      |NA                                                                                                                                                                       |
+|Bitbucket.short.name          |NA                                                                                                                                                                       |
+|MCRecommendationV2            |Decision status when the issue is conditionally accepted.                                                                                                                |
+|reason.failure                |A list of reasons for failure to fully replicate.                                                                                                                        |
+|Priority                      |NA                                                                                                                                                                       |
+|external                      |An indicator for whether the issue required the external validation.                                                                                                     |
+|External.party.name           |NA                                                                                                                                                                       |
+|Candidate.for.Best.Package    |NA                                                                                                                                                                       |
+|Status                        |Status associated with a ticket at any point in time. The schema for these has changed over time.                                                                        |
+|ticket                        |The tracking number within the system. Project specific. Sequentially assigned upon receipt.                                                                             |
+|DataAvailabilityAccess        |NA                                                                                                                                                                       |
+|MCRecommendation              |Decision status when the issue is Revise and Resubmit.                                                                                                                   |
+|subtask                       |An indicator for whether the issue is a subtask of another task.                                                                                                         |
+|openICPSR.Project.Number      |NA                                                                                                                                                                       |
+|RCT.                          |NA                                                                                                                                                                       |
+|RCT.number                    |NA                                                                                                                                                                       |
+|Issue.Type                    |NA                                                                                                                                                                       |
+|Manuscript.Central.identifier |NA                                                                                                                                                                       |
+|Journal                       |Journal associated with an issue and manuscript. Derived from the manuscript number. Possibly updated by hand                                                            |
+|Software.used                 |A list of software used to replicate the issue.                                                                                                                          |
+|Resolved                      |NA                                                                                                                                                                       |
+|Created                       |NA                                                                                                                                                                       |
+|Start.date                    |NA                                                                                                                                                                       |
+|Updated                       |NA                                                                                                                                                                       |
+|Non.compliant                 |NA                                                                                                                                                                       |
+|Summary                       |NA                                                                                                                                                                       |
+|DCAF_Access_Restrictions      |NA                                                                                                                                                                       |
+|Due.date                      |NA                                                                                                                                                                       |
+|Key.1                         |NA                                                                                                                                                                       |
+|As.Of.Date                    |NA                                                                                                                                                                       |
+|Changed.Fields                |A transaction will change various fields. These are listed here.                                                                                                         |
+|mc_number_anon                |The (anonymized) number assigned by the editorial workflow system (Manuscript Central/ ScholarOne) to a manuscript. This is purged by a script of any revision suffixes. |
+|assignee_anon                 |NA                                                                                                                                                                       |
+|date_created                  |Date of a receipt                                                                                                                                                        |
+|date_asof                     |NA                                                                                                                                                                       |
+|date_resolved                 |NA                                                                                                                                                                       |
+|received                      |An indicator for whether the issue is just created and has not been assigned to a replicator yet.                                                                        |
+|has_subtask                   |NA                                                                                                                                                                       |
+</div></code></pre>
+<h3 id="sample-records">Sample records</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Status.Category.Changed</th>
+<th style="text-align:left">RepositoryDOI</th>
+<th style="text-align:left">openICPSRversion</th>
+<th style="text-align:left">Resolution</th>
+<th style="text-align:left">Agreement.signed</th>
+<th style="text-align:left">JournalIssueMonth</th>
+<th style="text-align:right">JournalIssueYear</th>
+<th style="text-align:left">Update.type</th>
+<th style="text-align:left">MCStatus</th>
+<th style="text-align:left">Bitbucket.short.name</th>
+<th style="text-align:left">MCRecommendationV2</th>
+<th style="text-align:left">reason.failure</th>
+<th style="text-align:left">Priority</th>
+<th style="text-align:left">external</th>
+<th style="text-align:left">External.party.name</th>
+<th style="text-align:left">Candidate.for.Best.Package</th>
+<th style="text-align:left">Status</th>
+<th style="text-align:left">ticket</th>
+<th style="text-align:left">DataAvailabilityAccess</th>
+<th style="text-align:left">MCRecommendation</th>
+<th style="text-align:left">subtask</th>
+<th style="text-align:right">openICPSR.Project.Number</th>
+<th style="text-align:left">RCT.</th>
+<th style="text-align:left">RCT.number</th>
+<th style="text-align:left">Issue.Type</th>
+<th style="text-align:left">Manuscript.Central.identifier</th>
+<th style="text-align:left">Journal</th>
+<th style="text-align:left">Software.used</th>
+<th style="text-align:left">Resolved</th>
+<th style="text-align:left">Created</th>
+<th style="text-align:left">Start.date</th>
+<th style="text-align:left">Updated</th>
+<th style="text-align:left">Non.compliant</th>
+<th style="text-align:left">Summary</th>
+<th style="text-align:left">DCAF_Access_Restrictions</th>
+<th style="text-align:left">Due.date</th>
+<th style="text-align:left">Key.1</th>
+<th style="text-align:left">As.Of.Date</th>
+<th style="text-align:left">Changed.Fields</th>
+<th style="text-align:right">mc_number_anon</th>
+<th style="text-align:right">assignee_anon</th>
+<th style="text-align:left">date_created</th>
+<th style="text-align:left">date_asof</th>
+<th style="text-align:left">date_resolved</th>
+<th style="text-align:left">received</th>
+<th style="text-align:left">has_subtask</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">2024-10-14T13:48:01.596-0400</td>
+<td style="text-align:left">https://doi.org/10.3886/E208342V1</td>
+<td style="text-align:left">V1</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">CA, Revision</td>
+<td style="text-align:left">aearep-6135</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Medium</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Assigned</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">208342</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Task</td>
+<td style="text-align:left">AEJApp-2023-0672.R3</td>
+<td style="text-align:left">AEJ:Applied Economics</td>
+<td style="text-align:left">['R', 'Stata']</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-10-14T13:48:04.287-0400</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">2024-10-14T14:20:02.039-0400</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">AEJApp-2023-0672.R3 CA Data Review Request Rev.0</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-11-11</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left">2024-10-14T14:20:02.039-0400</td>
+<td style="text-align:left">status</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">2</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left">No</td>
+</tr>
+<tr>
+<td style="text-align:left">2024-10-14T13:48:01.596-0400</td>
+<td style="text-align:left">https://doi.org/10.3886/E208342V1</td>
+<td style="text-align:left">V1</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">CA, Revision</td>
+<td style="text-align:left">aearep-6135</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Medium</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Open</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">208342</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Task</td>
+<td style="text-align:left">AEJApp-2023-0672.R3</td>
+<td style="text-align:left">AEJ:Applied Economics</td>
+<td style="text-align:left">['R', 'Stata']</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-10-14T13:48:04.287-0400</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">2024-10-14T14:20:02.039-0400</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">AEJApp-2023-0672.R3 CA Data Review Request Rev.0</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-11-11</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left">2024-10-14T14:20:02.039-0400</td>
+<td style="text-align:left">assignee</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">2</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">No</td>
+</tr>
+<tr>
+<td style="text-align:left">2024-10-14T13:48:01.596-0400</td>
+<td style="text-align:left">https://doi.org/10.3886/E208342V1</td>
+<td style="text-align:left">V1</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">CA, Revision</td>
+<td style="text-align:left">aearep-6135</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Medium</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Open</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">208342</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Task</td>
+<td style="text-align:left">AEJApp-2023-0672.R3</td>
+<td style="text-align:left">AEJ:Applied Economics</td>
+<td style="text-align:left">['R', 'Stata']</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-10-14T13:48:04.287-0400</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">2024-10-14T14:20:02.039-0400</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">AEJApp-2023-0672.R3 CA Data Review Request Rev.0</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-11-11</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left">2024-10-14T14:19:25.287-0400</td>
+<td style="text-align:left">Report URL</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">No</td>
+</tr>
+<tr>
+<td style="text-align:left">2024-10-14T13:48:01.596-0400</td>
+<td style="text-align:left">https://doi.org/10.3886/E208342V1</td>
+<td style="text-align:left">V1</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">CA, Revision</td>
+<td style="text-align:left">aearep-6135</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Medium</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Open</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">208342</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Task</td>
+<td style="text-align:left">AEJApp-2023-0672.R3</td>
+<td style="text-align:left">AEJ:Applied Economics</td>
+<td style="text-align:left">['R', 'Stata']</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-10-14T13:48:04.287-0400</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">2024-10-14T14:20:02.039-0400</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">AEJApp-2023-0672.R3 CA Data Review Request Rev.0</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-11-11</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left">2024-10-14T14:18:47.656-0400</td>
+<td style="text-align:left">Git working location</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">No</td>
+</tr>
+<tr>
+<td style="text-align:left">2024-10-14T13:48:01.596-0400</td>
+<td style="text-align:left">https://doi.org/10.3886/E208342V1</td>
+<td style="text-align:left">V1</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">CA, Revision</td>
+<td style="text-align:left">aearep-6135</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Medium</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Open</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">208342</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Task</td>
+<td style="text-align:left">AEJApp-2023-0672.R3</td>
+<td style="text-align:left">AEJ:Applied Economics</td>
+<td style="text-align:left">['R', 'Stata']</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-10-14T13:48:04.287-0400</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">2024-10-14T14:20:02.039-0400</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">AEJApp-2023-0672.R3 CA Data Review Request Rev.0</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-11-11</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left">2024-10-14T14:18:47.100-0400</td>
+<td style="text-align:left">Bitbucket short name</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">No</td>
+</tr>
+<tr>
+<td style="text-align:left">2024-10-14T13:48:01.596-0400</td>
+<td style="text-align:left">https://doi.org/10.3886/E208342V1</td>
+<td style="text-align:left">V1</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">CA, Revision</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Medium</td>
+<td style="text-align:left">No</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Open</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:right">208342</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left">Task</td>
+<td style="text-align:left">AEJApp-2023-0672.R3</td>
+<td style="text-align:left">AEJ:Applied Economics</td>
+<td style="text-align:left">['R', 'Stata']</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-10-14T13:48:04.287-0400</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">2024-10-14T14:20:02.039-0400</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">AEJApp-2023-0672.R3 CA Data Review Request Rev.0</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">2024-11-11</td>
+<td style="text-align:left">AEAREP-6419</td>
+<td style="text-align:left">2024-10-14T14:18:44.916-0400</td>
+<td style="text-align:left">MCStatus</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">NA</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">2024-10-14</td>
+<td style="text-align:left">NA</td>
+<td style="text-align:left">Yes</td>
+<td style="text-align:left">No</td>
+</tr>
+</tbody>
+</table>
+<h3 id="lab-members-during-this-period">Lab members during this period</h3>
+<p>We list the lab members active at some point during this period. This still requires confidential data as an input.</p>
+<p>There were a total of 55 lab members over the course of the 12 month period.</p>
+<h3 id="r-session-info">R session info</h3>
+<pre class="hljs"><code><div>sessionInfo()
+</div></code></pre>
+<pre class="hljs"><code><div>R version 4.2.3 (2023-03-15)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 22.04.2 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8    LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] jose_1.2.0            openssl_2.0.6         boxr_0.3.6            splitstackshape_1.4.8 here_1.0.1           
+ [6] readr_2.1.4           knitr_1.42            tidyr_1.3.0           stringr_1.5.0         dplyr_1.1.0          
+
+loaded via a namespace (and not attached):
+ [1] pillar_1.8.1      compiler_4.2.3    tools_4.2.3       bit_4.0.5         digest_0.6.31     jsonlite_1.8.4   
+ [7] evaluate_0.20     lifecycle_1.0.3   tibble_3.2.0      pkgconfig_2.0.3   rlang_1.1.0       cli_3.6.0        
+[13] rstudioapi_0.14   parallel_4.2.3    yaml_2.3.7        xfun_0.37         fastmap_1.1.1     withr_2.5.0      
+[19] generics_0.1.3    vctrs_0.5.2       askpass_1.1       hms_1.1.2         bit64_4.0.5       rprojroot_2.0.3  
+[25] tidyselect_1.2.0  glue_1.6.2        data.table_1.14.8 R6_2.5.1          fansi_1.0.4       vroom_1.6.1      
+[31] rmarkdown_2.20    purrr_1.0.1       tzdb_0.3.0        magrittr_2.0.3    htmltools_0.5.4   ellipsis_0.3.2   
+[37] utf8_1.2.3        stringi_1.7.12    crayon_1.5.2
+</div></code></pre>
+<h2 id="downloading-new-extract">Downloading New Extract</h2>
+<h3 id="setup---1-docker">Setup - 1. Docker</h3>
+<h4 id="requirements">Requirements</h4>
+<ul>
+<li>Docker</li>
+</ul>
+<h4 id="build">Build</h4>
+<p>The <code>Dockerfile</code> is used to build the Docker image. The image is built with the <code>build.sh</code> script, which requires a <code>TAG</code> argument, and will otherwise read parameters from the <a href=".myconfig.sh"><code>.myconfig.sh</code></a> file.</p>
+<pre class="hljs"><code><div>bash ./build.sh TAG
+</div></code></pre>
+<p>You can do this in a GitHub Codespace or on BioHPC (remember to replace docker with docker1)</p>
+<h4 id="available-docker-image-tags">Available Docker image (tags)</h4>
+<p>Use <code>ls-tags.sh</code> to list available tags.</p>
+<pre class="hljs"><code><div>bash ./ls-tags.sh
+</div></code></pre>
+<h4 id="run">Run</h4>
+<p>To run the image as a Rstudio interactive development image, use</p>
+<pre class="hljs"><code><div>bash ./start_rstudio.sh TAG
+</div></code></pre>
+<p>It defaults to the <code>2023-12-06</code> image if you don't specify a tag.</p>
+<h3 id="setup---2-jira">Setup - 2. JIRA</h3>
+<h4 id="getting-api-key">Getting API key</h4>
+<p>The API is a per-individual key. It is not stored in this repository.</p>
+<ul>
+<li>Go to <a href="https://id.atlassian.com/manage-profile/security/api-tokens">https://id.atlassian.com/manage-profile/security/api-tokens</a></li>
+</ul>
+<p><img src="file:///workspaces/processing-jira-process-data/images/jira-account-apitokens.png" alt="JIRA API token"></p>
+<ul>
+<li>Click on &quot;Create API token&quot;</li>
+<li>Enter a label for the token (e.g. &quot;JIRA Extract&quot;)</li>
+<li>Copy the token to the clipboard</li>
+</ul>
+<p><img src="file:///workspaces/processing-jira-process-data/images/jira-account-api-copy.png" alt="JIRA API token"></p>
+<ul>
+<li>Use it with the Python scripts in this repository, in one of the following ways:
+<ul>
+<li>Set the environment variable <code>JIRA_API_TOKEN</code> to the token value
+<ul>
+<li>On github codespaces this involves creating a Github secret with the exact name <code>JIRA_API_TOKEN</code> and value of the key you get from JIRA</li>
+</ul>
+</li>
+<li>Create a file named <code>.env</code> in the root directory of this project, and add the following line to it:
+<code>JIRA_API_TOKEN=&lt;token value&gt;</code></li>
+<li>Pass the token value to the Python scripts when prompted.</li>
+</ul>
+</li>
+</ul>
+<h3 id="setup---3-reading-and-writing-confidential-data-to-box">Setup - 3. Reading and Writing Confidential Data to Box</h3>
+<p>Location: <a href="https://cornell.app.box.com/folder/143352802492">https://cornell.app.box.com/folder/143352802492</a></p>
+<p>We use the subfolder <a href="https://cornell.app.box.com/folder/235801403908"><code>jira_exports</code></a>.</p>
+<p>In order to up- and download, you need not just an API key, but a JSON file with other credentials. This file is called <code>client_enterprise_id,&quot;_&quot;,client_key_id,&quot;_config.json&quot;</code>, e.g. <code>81483_bkgnsg4p_config.json</code>.</p>
+<ul>
+<li>The <code>client_enterprise_id</code> is identified in the JSON file itself as well.</li>
+<li>The <code>client_key_id</code> is the name of the key in the <a href="https://cornell.app.box.com/developers/console/app/1590771/configuration">Box developer console</a>.</li>
+</ul>
+<p>This file is key. It is not stored in this repository, but is stored in the Box folder <code>InternalData</code>. To use this, the file must be downloaded and stored in the root of the project directory.</p>
+<p>The <code>.env</code> file needs to be appropriately adjusted:</p>
+<pre class="hljs"><code><div>BOX_FOLDER_ID=12345678890
+BOX_PRIVATE_KEY_ID=abcdef4g
+BOX_ENTERPRISE_ID=123456
+</div></code></pre>
+<p>with the relevant numbers as per above entered. The BOX_FOLDER_ID is the 12 digit number in the URL of the box folder <code>.../folder/12345678890?...</code>. The BOX_PRIVATE_KEY_ID refers to the <code>publicKeyID</code> in the JSON file. The BOX_ENTERPRISE_ID is the number at the beginning of the name of the JSON file. Alternatively, on Github Actions, these need to be encoded as secrets.</p>
+<p>The upload is then handled by <code>99_push_box.R</code>.</p>
+<h3 id="download-steps">Download Steps</h3>
+<ul>
+<li>After you run <code>./start_rstudio.sh</code> it should pull the image from the docker and open a port for you to develop in a familiar RStudio environment.
+<ul>
+<li>On GitHub Codespaces you can access this port by clicking on ports and then the little globe icon to open it in a new tab.</li>
+</ul>
+</li>
+<li>After opening development environment, ensure the docker image contains complete python requirements by running <code>pip install -r requirements.txt</code>.
+<ul>
+<li>Ensure you are in the correct directory, might need to CD to the folder containing <code>requirements.txt</code>.</li>
+</ul>
+</li>
+<li>To obtain extract run <code>python3 01_download_issues.py -s 2023-12-01 -e 2024-11-30</code> with the relevant dates.
+<ul>
+<li>This will get the fields as specified in <code>data/metadata/jira-fields.xlsx</code>.</li>
+<li>If fields need to be updated (they are keyed on names), edit <code>programs/00_jira_fields.py</code> to mark the to-be-included fields with &quot;True&quot; and then run it. Otherwise running this program is not required.</li>
+<li>If you have not set up a .env file, you may need to input your JIRA Username (netid@cornell.edu) and JIRA API Key at this step.</li>
+<li>Again ensure you are in the correct directory, might need to CD to the folder containing <code>01_download_issues.py</code>.</li>
+</ul>
+</li>
+<li>Once the download has concluded, update the <code>extractday</code>, <code>firstday</code>, and <code>lastday</code> fields in the <code>config.R</code> file.</li>
+<li>Now run <code>02_jira_anonymize.R</code>, <code>03_lab_members.R</code>, and <code>10_jira_anon_publish.R</code> to create the confidential and anonymized files used for the report.
+<ul>
+<li>You should run these through the terminal as <code>R CMD BATCH 02_jira_anonymize.R</code> to obtain ROut files and look through those files to ensure program is running successfully</li>
+<li>You can update the relevant parts of the README (extract day, extract contents) once you have re-run and obtained a new extract</li>
+</ul>
+</li>
+<li>Now you can upload the relevant file to our Box folder using <code>99_push_box.R</code>.
+<ul>
+<li>Remember to set up .env file as detailed above.</li>
+</ul>
+</li>
+</ul>
+
+</body>
+</html>
