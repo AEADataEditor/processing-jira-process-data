@@ -1,7 +1,1 @@
 "name_external"
-"IAB"
-"cascad"
-"BPLIM"
-"Princeton-RA"
-"UCalgary-RA"
-"FederalReserveBoard"

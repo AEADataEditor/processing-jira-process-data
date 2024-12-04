@@ -3,8 +3,10 @@
 # global libraries used everywhere #
 ####################################
 
-mran.date <- "2021-01-01"
-options(repos=paste0("https://cran.microsoft.com/snapshot/",mran.date,"/"))
+ppm.date <- "2023-11-01"
+options(repos=paste0("https://packagemanager.posit.co/cran/",ppm.date,"/"))
+
+global.libraries <- c("dplyr","stringr","tidyr","knitr","readr","here","splitstackshape","boxr","jose","rmarkdown")
 
 
 pkgTest <- function(x)
@@ -28,5 +30,4 @@ pkgTest.github <- function(x,source)
 }
 
 
-global.libraries <- c("dplyr","stringr","tidyr","knitr","readr","here","splitstackshape")
 results <- sapply(as.list(global.libraries), pkgTest)

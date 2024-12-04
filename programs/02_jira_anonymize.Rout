@@ -1,0 +1,249 @@
+
+R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Anonymize JIRA process files and construct variables
+> # Harry Son, Lars Vilhuber, Linda Wang
+> # 2021-05-20
+> 
+> ## Inputs: export_(extractday).csv
+> ## Outputs: file.path(jiraconf,"temp.jira.conf.RDS") file.path(jiraanon,"temp.jira.anon.RDS")
+> 
+> ### Load libraries 
+> ### Requirements: have library *here*
+> source(here::here("programs","config.R"),echo=TRUE)
+
+> process_raw <- TRUE
+
+> download_raw <- TRUE
+
+> extractday <- "2024-12-03"
+
+> firstday <- "2023-12-01"
+
+> lastday <- "2024-11-30"
+
+> basepath <- here::here()
+
+> setwd(basepath)
+
+> jiraconf <- file.path(basepath, "data", "confidential")
+
+> jiraanon <- file.path(basepath, "data", "anon")
+
+> jirameta <- file.path(basepath, "data", "metadata")
+
+> images <- file.path(basepath, "images")
+
+> tables <- file.path(basepath, "tables")
+
+> programs <- file.path(basepath, "programs")
+
+> temp <- file.path(basepath, "data", "temp")
+
+> for (dir in list(images, tables, programs, temp)) {
++     if (file.exists(dir)) {
++     }
++     else {
++         dir.create(file.path(dir))
++     }
+ .... [TRUNCATED] 
+
+> issue_history.prefix <- "issue_history_"
+
+> manuscript.lookup <- "mc-lookup"
+
+> manuscript.lookup.rds <- file.path(jiraconf, paste0(manuscript.lookup, 
++     ".RDS"))
+
+> assignee.lookup <- "assignee-lookup"
+
+> assignee.lookup.rds <- file.path(jiraconf, paste0(assignee.lookup, 
++     ".RDS"))
+
+> jira.conf.plus.base <- "jira.conf.plus"
+
+> jira.conf.plus.rds <- file.path(jiraconf, paste0(jira.conf.plus.base, 
++     ".RDS"))
+
+> jira.conf.names.csv <- "jira_conf_names.csv"
+
+> members.txt <- file.path(jiraanon, "replicationlab_members.txt")
+
+> jira.anon.base <- "jira.anon"
+
+> jira.anon.rds <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".RDS"))
+
+> jira.anon.csv <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".csv"))
+> if ( file.exists(here::here("programs","confidential-config.R"))) {
++   source(here::here("programs","confidential-config.R"))
++   # if not sourced, randomness will ensue
++ }
+> source(here::here("global-libraries.R"),echo=TRUE)
+
+> ppm.date <- "2023-11-01"
+
+> options(repos = paste0("https://packagemanager.posit.co/cran/", 
++     ppm.date, "/"))
+
+> global.libraries <- c("dplyr", "stringr", "tidyr", 
++     "knitr", "readr", "here", "splitstackshape", "boxr", "jose")
+
+> pkgTest <- function(x) {
++     if (!require(x, character.only = TRUE)) {
++         install.packages(x, dep = TRUE)
++         if (!require(x, charact .... [TRUNCATED] 
+
+> pkgTest.github <- function(x, source) {
++     if (!require(x, character.only = TRUE)) {
++         install_github(paste(source, x, sep = "/"))
++      .... [TRUNCATED] 
+
+> results <- sapply(as.list(global.libraries), pkgTest)
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: knitr
+Loading required package: readr
+Loading required package: here
+here() starts at /home/rstudio/processing-jira-process-data
+Loading required package: splitstackshape
+Loading required package: boxr
+boxr: see `vignette("boxr")` on how to authorize to your Box account.
+Loading required package: jose
+Loading required package: openssl
+Linking to: OpenSSL 3.0.2 15 Mar 2022
+> 
+> exportfile <- paste0(issue_history.prefix,extractday,".csv")
+> 
+> # double-check for existence of issue history file.
+> 
+> if (! file.exists(file.path(jiraconf,exportfile))) {
++   process_raw = FALSE
++   print("Input file for anonymization not found - setting global parameter to FALSE")
++ }
+> 
+> if ( process_raw == TRUE ) {
++   # Read in data extracted from Jira
++ 
++ 
++   jira.conf.raw <- read.csv(file.path(jiraconf,exportfile), stringsAsFactors = FALSE) %>%
++     # the first field name can be iffy. It is the Key (sic)...
++     rename(ticket=Key) %>%
++     mutate(mc_number = sub('\\..*', '', Manuscript.Central.identifier))  %>%
++     filter(Issue.Type == "Task") %>%
++     filter(str_detect(ticket,"AEAREP"))
++     #select(-Change.Author)   field not present anymore
++   
++   
++   # We need to remove all sub-tasks of AEAREP-1407
++ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
++                select(ticket,Sub.tasks) %>%
++                separate_longer_delim(Sub.tasks,delim=",") %>%
++                select(ticket = Sub.tasks) %>%
++                distinct()
++ 
++   # now do an anti_join
++   jira.conf.cleaned <- jira.conf.raw %>%
++     anti_join(placeholders)
++   
++   # Write out names as currently captured to TEMP
++   names(jira.conf.raw) %>% as.data.frame() -> tmp
++   names(tmp) <- c("Name")
++   write_excel_csv(tmp,file=file.path(temp,jira.conf.names.csv),col_names = TRUE)
++ 
++   warning(paste0("If you need to edit the names to be included,\n",
++                  "edit the file ",file.path(temp,jira.conf.names.csv),"\n",
++                  "save it in ",jirameta, "with the same name, ran run again."))
++   
++   # anonymize mc_number
++   jira.manuscripts <- jira.conf.cleaned %>% 
++     select(mc_number) %>% 
++     filter(mc_number!="") %>%
++     distinct()   %>%
++     mutate(rand = runif(1)) %>%
++     arrange(rand) %>%
++     mutate(mc_number_anon = row_number()) %>%
++     select(-rand) %>%
++     arrange(mc_number)
++ 
++   # Create anonymized Assignee number
++   jira.assignees <- jira.conf.cleaned %>%
++     select(Assignee) %>%
++     filter(Assignee!="") %>%
++     filter(Assignee!="Automation for Jira") %>%
++     filter(Assignee!="LV (Data Editor)") %>%
++     distinct() %>%
++     mutate(rand = runif(1),
++            rand = if_else(Assignee=="Lars Vilhuber",0,rand)) %>%
++     arrange(rand) %>%
++     mutate(assignee_anon = row_number()) %>%
++     select(-rand) %>%
++     arrange(Assignee)
++     
++   
++   # Save files
++   saveRDS(jira.manuscripts,file=manuscript.lookup.rds)
++   saveRDS(jira.assignees,  file=assignee.lookup.rds)
++ 
++   
++   # Now merge the anonymized data on
++   jira.conf.plus <- jira.conf.cleaned %>% 
++     left_join(jira.manuscripts,by="mc_number") %>%
++     left_join(jira.assignees,by="Assignee") %>%
++     #left_join(jira.assignees %>% rename(change.author.anon=assignee_anon),by=c("Change.Author"="Assignee"))
++     # a few extra fields
++     mutate(date_created = as.Date(substr(Created, 1,10), "%Y-%m-%d"),
++            date_asof    = as.Date(substr(As.Of.Date, 1,10), "%Y-%m-%d"))
++   
++   # save anonymized and confidential data
++   
++   saveRDS(jira.conf.plus,
++           file=jira.conf.plus.rds)
++   
++   
++ 
++   saveRDS(jira.conf.plus %>% 
++             select(-mc_number,-Assignee),
++     file=file.path(jiraanon,"temp.jira.anon.RDS"))
++   
++ } else { 
++   print("Not processing anonymization due to global parameter.")
++ }
+Joining with `by = join_by(ticket)`
+Warning message:
+If you need to edit the names to be included,
+edit the file /home/rstudio/processing-jira-process-data/data/temp/jira_conf_names.csv
+save it in /home/rstudio/processing-jira-process-data/data/metadatawith the same name, ran run again. 
+> 
+> proc.time()
+   user  system elapsed 
+  2.064   0.260   2.304 

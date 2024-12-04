@@ -1,0 +1,185 @@
+
+R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Export lab members worked during the designated period.
+> # Harry Son, Lars Vilhuber
+> # 2021-03-14
+> 
+> ## Inputs: jira.conf.plus.RDS
+> ## Outputs: file.path(basepath,"data","replicationlab_members.txt")
+> 
+> source(here::here("programs","config.R"),echo=TRUE)
+
+> process_raw <- TRUE
+
+> download_raw <- TRUE
+
+> extractday <- "2024-12-03"
+
+> firstday <- "2023-12-01"
+
+> lastday <- "2024-11-30"
+
+> basepath <- here::here()
+
+> setwd(basepath)
+
+> jiraconf <- file.path(basepath, "data", "confidential")
+
+> jiraanon <- file.path(basepath, "data", "anon")
+
+> jirameta <- file.path(basepath, "data", "metadata")
+
+> images <- file.path(basepath, "images")
+
+> tables <- file.path(basepath, "tables")
+
+> programs <- file.path(basepath, "programs")
+
+> temp <- file.path(basepath, "data", "temp")
+
+> for (dir in list(images, tables, programs, temp)) {
++     if (file.exists(dir)) {
++     }
++     else {
++         dir.create(file.path(dir))
++     }
+ .... [TRUNCATED] 
+
+> issue_history.prefix <- "issue_history_"
+
+> manuscript.lookup <- "mc-lookup"
+
+> manuscript.lookup.rds <- file.path(jiraconf, paste0(manuscript.lookup, 
++     ".RDS"))
+
+> assignee.lookup <- "assignee-lookup"
+
+> assignee.lookup.rds <- file.path(jiraconf, paste0(assignee.lookup, 
++     ".RDS"))
+
+> jira.conf.plus.base <- "jira.conf.plus"
+
+> jira.conf.plus.rds <- file.path(jiraconf, paste0(jira.conf.plus.base, 
++     ".RDS"))
+
+> jira.conf.names.csv <- "jira_conf_names.csv"
+
+> members.txt <- file.path(jiraanon, "replicationlab_members.txt")
+
+> jira.anon.base <- "jira.anon"
+
+> jira.anon.rds <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".RDS"))
+
+> jira.anon.csv <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".csv"))
+> if ( file.exists(here::here("programs","confidential-config.R"))) {
++   source(here::here("programs","confidential-config.R"))
++   # if not sourced, randomness will ensue
++ }
+> source(here::here("global-libraries.R"),echo=TRUE)
+
+> ppm.date <- "2023-11-01"
+
+> options(repos = paste0("https://packagemanager.posit.co/cran/", 
++     ppm.date, "/"))
+
+> global.libraries <- c("dplyr", "stringr", "tidyr", 
++     "knitr", "readr", "here", "splitstackshape", "boxr", "jose")
+
+> pkgTest <- function(x) {
++     if (!require(x, character.only = TRUE)) {
++         install.packages(x, dep = TRUE)
++         if (!require(x, charact .... [TRUNCATED] 
+
+> pkgTest.github <- function(x, source) {
++     if (!require(x, character.only = TRUE)) {
++         install_github(paste(source, x, sep = "/"))
++      .... [TRUNCATED] 
+
+> results <- sapply(as.list(global.libraries), pkgTest)
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: knitr
+Loading required package: readr
+Loading required package: here
+here() starts at /home/rstudio/processing-jira-process-data
+Loading required package: splitstackshape
+Loading required package: boxr
+boxr: see `vignette("boxr")` on how to authorize to your Box account.
+Loading required package: jose
+Loading required package: openssl
+Linking to: OpenSSL 3.0.2 15 Mar 2022
+> 
+> exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
++                 "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
++                 "LV (Data Editor)")
+> 
+> lookup <- read_csv(file.path(jirameta,"lookup.csv"))
+Rows: 2 Columns: 2
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (2): Assignee, Name
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> 
+> jira.conf.plus <- readRDS(jira.conf.plus.rds)
+> 
+> lab.member <- jira.conf.plus %>%
++   filter(date_created >= firstday, date_created < lastday) %>%
++   filter(Assignee != "") %>%
++   filter(!Assignee %in% exclusions) %>%
++   left_join(lookup) %>%
++   mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
++   distinct(Assignee) 
+Joining with `by = join_by(Assignee)`
+> 
+> if (! file.exists(jira.conf.plus.rds)) {
++   process_raw = FALSE
++   warning("Input file with confidential information not found - setting global parameter to FALSE")
++ }
+> 
+> ### Repeat process for external replicators
+> external.member <- jira.conf.plus %>%
++   filter(External.party.name!="") %>%
++   mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y")) %>%
++   filter(date_created >= firstday, date_created < lastday) %>%
++   mutate(name_external=str_replace(External.party.name,"-"," ")) %>%
++   distinct(name_external) 
+> 
+> write.table(external.member, file = file.path(basepath,"data","external_replicators.txt"), sep = "\t",
++             row.names = FALSE)
+> 
+> proc.time()
+   user  system elapsed 
+  1.302   0.154   1.349 

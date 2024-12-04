@@ -14,26 +14,32 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+source(here::here("global-libraries.R"),echo=TRUE)
 source(here::here("programs","config.R"),echo=TRUE)
-global.libraries <- c("dplyr","stringr","tidyr","knitr","readr")
-results <- sapply(as.list(global.libraries), pkgTest)
+
+VERSION = "V5"
+YEAR = "2024"
+ICPSR_PROJECT = "117876"
+ICPSR_DOI = paste0("https://doi.org/10.3886/E",ICPSR_PROJECT,VERSION)
 ```
 > Note: The [PDF version](https://aeadataeditor.github.io/processing-jira-process-data/README.pdf) of this document is transformed by manually printing from a browser.
 
 ## Citation
 
-> Vilhuber, Lars. 2023. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], `r Sys.Date()`. [https://doi.org/10.3886/E117876V3](https://doi.org/10.3886/E117876V4)
+> Vilhuber, Lars. `r YEAR`. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], `r Sys.Date()`. [`r ICPSR_DOI`](`r ICPSR_DOI`)
 
-```
-@techreport{10.3886/e117876v4,
-  doi = {10.3886/E117876V4},
-  url = {https://www.openicpsr.org/openicpsr/project/117876/version/V4/view},
-  author = {Vilhuber,  Lars},
-  title = {Process data for the AEA Pre-publication Verification Service},
-  institution = {American Economic Association [publisher]},
-  series = {ICPSR - Interuniversity Consortium for Political and Social Research},
-  year = {2023}
-}
+```{r, results='asis', echo=FALSE}
+cat("```")
+cat(paste0("@techreport{10.3886/e117876",VERSION,",\n"))
+cat(paste0("  doi = {10.3886/E117876",VERSION,"},\n"))
+cat(paste0("  url = {",ICPSR_DOI,"},\n"))
+cat("  author = {Vilhuber,  Lars},\n")
+cat("  title = {Process data for the AEA Pre-publication Verification Service},\n")
+cat("  institution = {American Economic Association [publisher]},\n")
+cat("  series = {ICPSR - Interuniversity Consortium for Political and Social Research},\n")
+cat(paste0("  year = {",YEAR,"}"))
+cat("}\n")
+cat("```")
 ```
 
 ## Requirements
@@ -42,8 +48,31 @@ This project requires
 
 - R (last run with R `r paste0(R.Version()$major,".",R.Version()$minor)`)
   - package `here` (>=0.1)
+- Python
+  - module `venv`
   
-Other packages might be installed automatically by the programs, as long as the requirements above are met, see [Session Info](#r-session-info).
+Other packages will be installed automatically by the programs, as long as the requirements above are met, see [Session Info](#r-session-info).
+
+### R packages
+
+```{r libs, echo=FALSE,message=FALSE,warning=FALSE}
+
+left_join(as.data.frame(global.libraries) %>% select(Package=global.libraries),
+          as.data.frame(installed.packages())) %>%
+  select(Package,Version) %>% kable()
+```
+
+### Python packages
+
+```{r pylibs,echo=FALSE,,warning=FALSE,message=FALSE}
+
+read_csv("requirements.txt",col_names = c("Modules")) %>% kable()
+```
+
+
+### Docker
+
+These requirements are satisfied in the Docker image created by `Dockerfile`, see [description below](#setup---1.-docker)
 
 ## Data 
 
@@ -53,19 +82,35 @@ Other packages might be installed automatically by the programs, as long as the 
 
 ### Raw process data
 
-Raw process data is manually extracted from Jira, and saved as 
+Raw process data is extracted from Jira using API (see below for details), and saved as 
 
 - `export_MM-DD-YYYY.csv` (for detailed transaction-level data)
 
-The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence. 
+The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence.
+
+To obtain, run `programs/01_download_issues.py`. This will use the fields as specified in `data/metadata/jira-fields.xlsx`. If fields need to be updated (they are keyed on names), run `programs/00_jira_fields.py` to obtain a new Excel file, and mark the to-be-included fields with "True".
+
+A full download of JIRA issues as of `r YEAR` would be
+
+```
+> python3 01_download_issues.py -s 2018-01-01 -e 2024-11-30
+Summary:
+- Start Date: 2018-01-01
+- End Date: 2024-11-30
+
+ About to extract all issue history between these dates from https://aeadataeditors.atlassian.net.
+ The output will be written to /home/rstudio/data/confidential/issue_history_2024-12-03.csv.
+
+```
+
 
 ```{r listfiles,include=FALSE}
-listfiles <- as.data.frame(list.files(file.path(jiraconf),pattern = "^export_")) 
+listfiles <- as.data.frame(list.files(file.path(jiraconf),pattern = "^issue_history_")) 
 names(listfiles) <- c("filename")
 latest <- listfiles %>% 
   separate(filename,c("base","extension"),sep = "([\\.])",remove = FALSE) %>%
-  separate(base,c("prefix","date_str"),sep="_") %>% 
-  mutate(date = as.Date(date_str, format = "%m-%d-%Y")) %>% select(-prefix)
+  separate(base,c("prefix","prefix2","date_str"),sep="_") %>% 
+  mutate(date = as.Date(date_str, format = "%Y-%m-%d")) %>% select(-prefix)
 
 ```
 
@@ -73,10 +118,10 @@ At this time, the latest extract was made `r max(latest$date)`.
 
 ### Anonymized data
 
-We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `01_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version. 
+We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `02_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version.
 
 ```{r anonymize, echo = TRUE, eval = TRUE, warning=FALSE}
-source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
+source(file.path(programs,"02_jira_anonymize.R"),echo=TRUE)
 ```
 
 ### Publishing data
@@ -84,21 +129,26 @@ source(file.path(programs,"01_jira_anonymize.R"),echo=TRUE)
 Some additional cleaning and matching, and then we write out the file
 
 ```{r publish, echo = TRUE, eval = TRUE, warning=FALSE}
-source(file.path(programs,"02_jira_anon_publish.R"),echo=TRUE)
+source(file.path(programs,"10_jira_anon_publish.R"),echo=TRUE)
 ```
 
+Finally, we push the confidential data to Box, using the following code, which we specifically run manually:
 
+```{bash, echo = TRUE, eval = FALSE, warning=TRUE}
+cd programs
+R CMD BATCH 99_push_box.R
+```
 
 ## Describing the Data
 ```{r read,include=FALSE}
 jira <- readRDS(file.path(jiraanon,"jira.anon.RDS"))
 ```
 
-The anonymized data has `r length(names(jira))` columns. 
+The anonymized data has 46 columns. 
 
 ### Variables
 
-```{r describe, echo=FALSE,cache=FALSE,warning=FALSE}
+```{r describe, echo=FALSE,cache=FALSE,warning=FALSE,message=FALSE}
 description <- read_csv("data/metadata/description_anon.csv")
 
 jira.tmp <- as.data.frame(names(jira),stringsAsFactors = FALSE) 
@@ -115,9 +165,9 @@ kable(head(jira))
 
 ### Lab members during this period
 
-We list the lab members active at some point during this period.
+We list the lab members active at some point during this period. This still requires confidential data as an input.
 
-```{r lab, warning=FALSE}
+```{r lab, echo=FALSE,cache=FALSE,warning=FALSE,message=FALSE}
 source(file.path(programs,"03_lab_members.R"),echo=TRUE)
 ```
 
@@ -130,3 +180,106 @@ sessionInfo()
 ```
 
 
+## Downloading New Extract
+
+### Setup - 1. Docker
+
+#### Requirements
+
+- Docker
+
+#### Build
+
+The `Dockerfile` is used to build the Docker image. The image is built with the `build.sh` script, which requires a `TAG` argument, and will otherwise read parameters from the [`.myconfig.sh`](.myconfig.sh) file.
+
+```bash
+bash ./build.sh TAG
+```
+
+You can do this in a GitHub Codespace or on BioHPC (remember to replace docker with docker1)
+
+#### Available Docker image (tags)
+
+Use `ls-tags.sh` to list available tags.
+
+```bash
+bash ./ls-tags.sh
+```
+
+#### Run
+
+To run the image as a Rstudio interactive development image, use
+
+```bash
+bash ./start_rstudio.sh TAG
+```
+
+It defaults to the `2023-12-06` image if you don't specify a tag.
+
+
+### Setup - 2. JIRA
+
+#### Getting API key
+
+The API is a per-individual key. It is not stored in this repository.
+
+- Go to [https://id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
+
+![JIRA API token](images/jira-account-apitokens.png)
+
+- Click on "Create API token"
+- Enter a label for the token (e.g. "JIRA Extract")
+- Copy the token to the clipboard
+
+![JIRA API token](images/jira-account-api-copy.png)
+
+- Use it with the Python scripts in this repository, in one of the following ways:
+    - Set the environment variable `JIRA_API_KEY` to the token value
+      - On github codespaces this involves creating a Github secret with the exact name `JIRA_API_KEY` and value of the key you get from JIRA
+    - Create a file named `.env` in the root directory of this project, and add the following line to it:
+      `JIRA_API_KEY=<token value>`
+    - Pass the token value to the Python scripts when prompted.
+
+
+### Setup - 3. Reading and Writing Confidential Data to Box
+
+Location: [https://cornell.app.box.com/folder/143352802492](https://cornell.app.box.com/folder/143352802492)
+
+We use the subfolder [`jira_exports`](https://cornell.app.box.com/folder/235801403908).
+
+In order to up- and download, you need not just an API key, but a JSON file with other credentials. This file is called `client_enterprise_id,"_",client_key_id,"_config.json"`, e.g. `81483_bkgnsg4p_config.json`. 
+
+- The `client_enterprise_id` is identified in the JSON file itself as well. 
+- The `client_key_id` is the name of the key in the [Box developer console](https://cornell.app.box.com/developers/console/app/1590771/configuration). 
+
+This file is key. It is not stored in this repository, but is stored in the Box folder `InternalData`. To use this, the file must be downloaded and stored in the root of the project directory.
+
+The `.env` file needs to be appropriately adjusted:
+
+```dotenv
+BOX_FOLDER_ID=12345678890
+BOX_PRIVATE_KEY_ID=abcdef4g
+BOX_ENTERPRISE_ID=123456
+```
+
+with the relevant numbers as per above entered. The BOX_FOLDER_ID is the 12 digit number in the URL of the box folder `.../folder/12345678890?...`. The BOX_PRIVATE_KEY_ID refers to the `publicKeyID` in the JSON file. The BOX_ENTERPRISE_ID is the number at the beginning of the name of the JSON file. Alternatively, on Github Actions, these need to be encoded as secrets.
+
+The upload is then handled by `99_push_box.R`.
+
+### Download Steps
+
+- After you run `./start_rstudio.sh` it should pull the image from the docker and open a port for you to develop in a familiar RStudio environment.
+  - On GitHub Codespaces you can access this port by clicking on ports and then the little globe icon to open it in a new tab.
+- After opening development environment, ensure the docker image contains complete python requirements by running `pip install -r requirements.txt`.
+  - Ensure you are in the correct directory, might need to CD to the folder containing `requirements.txt`.
+- To obtain extract run `python3 01_download_issues.py -s 2023-12-01 -e 2024-11-30` with the relevant dates.
+  - This will get the fields as specified in `data/metadata/jira-fields.xlsx`.
+  - If fields need to be updated (they are keyed on names), edit `programs/00_jira_fields.py` to mark the to-be-included fields with "True" and then run it. Otherwise running this program is not required.
+  - If you have not set up a .env file, you may need to input your JIRA Username (netid@cornell.edu) and JIRA API Key at this step.
+  - Again ensure you are in the correct directory, might need to CD to the folder containing `01_download_issues.py`.
+- Once the download has concluded, update the `extractday`, `firstday`, and `lastday` fields in the `config.R` file.
+- Now run `02_jira_anonymize.R`, `03_lab_members.R`, and `10_jira_anon_publish.R` to create the confidential and anonymized files used for the report.
+  - You should run these through the terminal as `R CMD BATCH 02_jira_anonymize.R` to obtain ROut files and look through those files to ensure program is running successfully
+  - You can update the relevant parts of the README (extract day, extract contents) once you have re-run and obtained a new extract
+- Now you can upload the relevant file to our Box folder using `99_push_box.R`.
+  - Remember to set up .env file as detailed above.
