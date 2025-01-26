@@ -34,9 +34,9 @@ if (! file.exists(jira.conf.plus.rds)) {
 }
 
 ### Repeat process for external replicators
+
 external.member <- jira.conf.plus %>%
   filter(External.party.name!="") %>%
-  mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y")) %>%
   filter(date_created >= firstday, date_created < lastday) %>%
   mutate(name_external=str_replace(External.party.name,"-"," ")) %>%
   distinct(name_external) 

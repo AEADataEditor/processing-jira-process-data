@@ -36,7 +36,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2024-12-03"
+> extractday <- "2025-01-26"
 
 > firstday <- "2023-12-01"
 
@@ -104,7 +104,8 @@ Type 'q()' to quit R.
 +     ppm.date, "/"))
 
 > global.libraries <- c("dplyr", "stringr", "tidyr", 
-+     "knitr", "readr", "here", "splitstackshape", "boxr", "jose")
++     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
++     "rmarkdown")
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -141,19 +142,13 @@ boxr: see `vignette("boxr")` on how to authorize to your Box account.
 Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
+Loading required package: rmarkdown
 > 
 > # double-check
 > 
 > # Read in data extracted from Jira
-> #base <- here::here()
 > 
 > jira.anon.raw <- readRDS(file.path(jiraanon,"temp.jira.anon.RDS")) %>%
-+   rename(reason.failure=Reason.for.Failure.to.be.Fully.Reproduced) %>%
-+   rename(external=External.validation) %>%
-+   rename(subtask=Sub.tasks) %>%
-+   mutate(date_resolved = as.Date(substr(Resolved, 1,10), "%Y-%m-%d"))%>%
-+   mutate(received = ifelse(Status=="Open","Yes","No")) %>%
-+   mutate(has_subtask=ifelse(subtask!="","Yes","No")) %>%
 +   filter(ticket!="AEAREP-365") %>% # duplicate with aearep-364
 +   filter(ticket!="AEAREP-1589")  ## Decision notice of aearep-1523
 > 
@@ -170,11 +165,6 @@ Linking to: OpenSSL 3.0.2 15 Mar 2022
 +   anti_join(jira.conf.subtask) 
 Joining with `by = join_by(ticket)`
 > 
-> ##Keeping all variables so can create necessary tables for the report
-> ##%>%select(ticket,date_created,date_asof,mc_number_anon,Journal,Status,
->          ##Software.used,received,Changed.Fields,external,Resolution,reason.failure,MCStatus,
->          ##MCRecommendation,MCRecommendationV2)
-> 
 > ## export it as a csv file
 > saveRDS(jira.anon,jira.anon.rds)
 > write.csv(jira.anon,jira.anon.csv)
@@ -182,4 +172,4 @@ Joining with `by = join_by(ticket)`
 > 
 > proc.time()
    user  system elapsed 
-  2.134   0.306   2.390 
+  1.795   0.188   1.954 

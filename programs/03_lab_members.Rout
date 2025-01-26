@@ -30,7 +30,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2024-12-03"
+> extractday <- "2025-01-26"
 
 > firstday <- "2023-12-01"
 
@@ -102,7 +102,8 @@ Type 'q()' to quit R.
 +     ppm.date, "/"))
 
 > global.libraries <- c("dplyr", "stringr", "tidyr", 
-+     "knitr", "readr", "here", "splitstackshape", "boxr", "jose")
++     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
++     "rmarkdown")
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -139,13 +140,14 @@ boxr: see `vignette("boxr")` on how to authorize to your Box account.
 Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
+Loading required package: rmarkdown
 > 
 > exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
 +                 "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
 +                 "LV (Data Editor)")
 > 
 > lookup <- read_csv(file.path(jirameta,"lookup.csv"))
-Rows: 2 Columns: 2
+Rows: 5 Columns: 2
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
 chr (2): Assignee, Name
@@ -170,9 +172,9 @@ Joining with `by = join_by(Assignee)`
 + }
 > 
 > ### Repeat process for external replicators
+> 
 > external.member <- jira.conf.plus %>%
 +   filter(External.party.name!="") %>%
-+   mutate(date_created = as.Date(substr(Created, 1,10), "%m/%d/%Y")) %>%
 +   filter(date_created >= firstday, date_created < lastday) %>%
 +   mutate(name_external=str_replace(External.party.name,"-"," ")) %>%
 +   distinct(name_external) 
@@ -182,4 +184,4 @@ Joining with `by = join_by(Assignee)`
 > 
 > proc.time()
    user  system elapsed 
-  1.302   0.154   1.349 
+  1.213   0.209   1.337 

@@ -26,11 +26,11 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2024-10-23"
+> extractday <- "2025-01-26"
 
 > firstday <- "2023-12-01"
 
-> lastday <- "2024-10-15"
+> lastday <- "2024-11-30"
 
 > basepath <- here::here()
 
@@ -94,7 +94,8 @@ Type 'q()' to quit R.
 +     ppm.date, "/"))
 
 > global.libraries <- c("dplyr", "stringr", "tidyr", 
-+     "knitr", "readr", "here", "splitstackshape", "boxr", "jose")
++     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
++     "rmarkdown")
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -131,6 +132,7 @@ boxr: see `vignette("boxr")` on how to authorize to your Box account.
 Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
+Loading required package: rmarkdown
 > 
 > # Load boxr package
 > library(boxr)
@@ -149,10 +151,6 @@ Linking to: OpenSSL 3.0.2 15 Mar 2022
 > 
 > # Authenticate 
 > box_auth_service(json.config.file)
-Failed JWT request: time offset was 0 seconds.
-Retrying JWT request: time offset now -15 seconds.
-Failed JWT request: time offset was -15 seconds.
-Retrying JWT request: time offset now 15 seconds.
 boxr: Authenticated using OAuth2 (JWT) as aeadata (AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com, id: 16949677861)
 > 
 > # List files in folder
@@ -163,7 +161,7 @@ box.com working directory changed to 'InternalData'
       id: 143352802492
     tree: All Files/InternalData
    owner: ga.ldilab@cornell.edu
-contents: 25 files, 5 folders
+contents: 27 files, 5 folders
 shared link: https://cornell.box.com/s/crnvz77g37bdyjiyv6801d6mezf5igny
 > 
 > 
@@ -175,12 +173,12 @@ shared link: https://cornell.box.com/s/crnvz77g37bdyjiyv6801d6mezf5igny
 
 box.com remote file reference
 
- name        : issue_history_2024-10-23.csv 
- file id     : 1680901856709 
+ name        : issue_history_2025-01-26.csv 
+ file id     : 1760025311662 
  version     : V1 
- size        : 16 MB 
- modified at : 2024-10-23 16:24:00 
- created at  : 2024-10-23 16:24:00 
+ size        : 13 MB 
+ modified at : 2025-01-26 14:21:47 
+ created at  : 2025-01-26 14:21:47 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -189,17 +187,17 @@ box.com remote file reference
  parent folder id   :  143352802492 
 > box_ul(file=jira.conf.plus.rds)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'jira.conf.plus.RDS' aleady exists. Attempting to upload new version (V2).
+File 'jira.conf.plus.RDS' aleady exists. Attempting to upload new version (V4).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : jira.conf.plus.RDS 
  file id     : 1654446981244 
- version     : V2 
- size        : 430 kB 
- modified at : 2024-10-23 16:24:02 
- created at  : 2024-10-23 16:24:02 
+ version     : V4 
+ size        : 420 kB 
+ modified at : 2025-01-26 14:21:49 
+ created at  : 2025-01-26 14:21:49 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -208,17 +206,17 @@ box.com remote file reference
  parent folder id   :  143352802492 
 > box_ul(file=assignee.lookup.rds)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'assignee-lookup.RDS' aleady exists. Attempting to upload new version (V2).
+File 'assignee-lookup.RDS' aleady exists. Attempting to upload new version (V4).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : assignee-lookup.RDS 
  file id     : 1654452983356 
- version     : V2 
+ version     : V4 
  size        : 877 B 
- modified at : 2024-10-23 16:24:04 
- created at  : 2024-10-23 16:24:04 
+ modified at : 2025-01-26 14:21:50 
+ created at  : 2025-01-26 14:21:50 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -227,17 +225,17 @@ box.com remote file reference
  parent folder id   :  143352802492 
 > box_ul(file=manuscript.lookup.rds)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'mc-lookup.RDS' aleady exists. Attempting to upload new version (V2).
+File 'mc-lookup.RDS' aleady exists. Attempting to upload new version (V4).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : mc-lookup.RDS 
  file id     : 1654452326062 
- version     : V2 
- size        : 3 kB 
- modified at : 2024-10-23 16:24:06 
- created at  : 2024-10-23 16:24:06 
+ version     : V4 
+ size        : 3.3 kB 
+ modified at : 2025-01-26 14:21:52 
+ created at  : 2025-01-26 14:21:52 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -247,4 +245,4 @@ box.com remote file reference
 > 
 > proc.time()
    user  system elapsed 
-  1.021   0.240   9.796 
+  1.081   0.202   8.751 

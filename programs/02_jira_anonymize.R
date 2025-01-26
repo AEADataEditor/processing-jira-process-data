@@ -34,8 +34,6 @@ if ( process_raw == TRUE ) {
     mutate(mc_number = sub('\\..*', '', Manuscript.Central.identifier))  %>%
     filter(Issue.Type == "Task") %>%
     filter(str_detect(ticket,"AEAREP"))
-    #select(-Change.Author)   field not present anymore
-  
   
   # We need to remove all sub-tasks of AEAREP-1407
 placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
@@ -47,6 +45,15 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
   # now do an anti_join
   jira.conf.cleaned <- jira.conf.raw %>%
     anti_join(placeholders)
+  
+  # Fix External Party Name
+  jira.conf.cleaned$External.party.clean <- sapply(jira.conf.cleaned$External.party.name, function(x) {
+    if (grepl("\\[|\\]", x)) {
+      gsub("\\[|\\]|'", "", x)
+    } else {
+      x
+    }
+  })
   
   # Write out names as currently captured to TEMP
   names(jira.conf.raw) %>% as.data.frame() -> tmp
@@ -82,30 +89,36 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
     select(-rand) %>%
     arrange(Assignee)
     
-  
   # Save files
   saveRDS(jira.manuscripts,file=manuscript.lookup.rds)
   saveRDS(jira.assignees,  file=assignee.lookup.rds)
-
   
-  # Now merge the anonymized data on
+  # Now merge the anonymized data on, keep & rename relevant variables
   jira.conf.plus <- jira.conf.cleaned %>% 
     left_join(jira.manuscripts,by="mc_number") %>%
     left_join(jira.assignees,by="Assignee") %>%
-    #left_join(jira.assignees %>% rename(change.author.anon=assignee_anon),by=c("Change.Author"="Assignee"))
-    # a few extra fields
     mutate(date_created = as.Date(substr(Created, 1,10), "%Y-%m-%d"),
-           date_asof    = as.Date(substr(As.Of.Date, 1,10), "%Y-%m-%d"))
+           date_asof    = as.Date(substr(As.Of.Date, 1,10), "%Y-%m-%d")) %>%
+    rename(reason.failure=Reason.for.Failure.to.be.Fully.Reproduced) %>%
+    rename(external=External.validation) %>%
+    rename(subtask=Sub.tasks) %>%
+    mutate(date_resolved = as.Date(substr(Resolved, 1,10), "%Y-%m-%d"))%>%
+    mutate(received = ifelse(Status=="Open","Yes","No")) %>%
+    mutate(has_subtask=ifelse(subtask!="","Yes","No")) %>%
+    select(ticket, Manuscript.Central.identifier, mc_number, mc_number_anon, MCStatus, Status, received, Changed.Fields,
+           MCRecommendation, MCRecommendationV2, Created, As.Of.Date, Resolved, date_created, date_asof, date_resolved, 
+           Assignee, assignee_anon, Journal, Software.used, Issue.Type, subtask, has_subtask, Agreement.signed, 
+           Update.type, reason.failure, external, External.party.clean, Non.compliant, DCAF_Access_Restrictions,
+           openICPSR.Project.Number, Resolution)%>%
+    rename(External.party.name = External.party.clean)
   
   # save anonymized and confidential data
   
   saveRDS(jira.conf.plus,
           file=jira.conf.plus.rds)
-  
-  
 
   saveRDS(jira.conf.plus %>% 
-            select(-mc_number,-Assignee),
+            select(-Manuscript.Central.identifier,-mc_number,-Assignee),
     file=file.path(jiraanon,"temp.jira.anon.RDS"))
   
 } else { 
