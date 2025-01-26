@@ -28,6 +28,9 @@ lab.member <- jira.conf.plus %>%
   mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
   distinct(Assignee) 
 
+write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
+            row.names = FALSE)
+
 if (! file.exists(jira.conf.plus.rds)) {
   process_raw = FALSE
   warning("Input file with confidential information not found - setting global parameter to FALSE")
