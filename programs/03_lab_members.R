@@ -16,7 +16,10 @@ exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wa
                 "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
                 "LV (Data Editor)")
 
-lookup <- read_csv(file.path(jirameta,"lookup.csv"))
+# This contains unmapped IDs that need to be cleaned up
+
+lookup <- read_csv(file.path(jirameta,"assignee-name-lookup.csv"))
+removal <- read_csv(file.path(jirameta,"assignee-remove.csv"))
 
 jira.conf.plus <- readRDS(jira.conf.plus.rds)
 
@@ -25,9 +28,11 @@ lab.member <- jira.conf.plus %>%
   filter(Assignee != "") %>%
   filter(!Assignee %in% exclusions) %>%
   left_join(lookup) %>%
+  anti_join(removal) %>%
   mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
   distinct(Assignee) 
 
+saveRDS(lab.member,file=file.path(basepath,"data","replicationlab_members.Rds"))
 write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
             row.names = FALSE)
 
