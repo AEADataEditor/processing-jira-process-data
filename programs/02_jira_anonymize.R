@@ -50,6 +50,7 @@ if ( process_raw == TRUE ) {
 placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
                select(ticket,Sub.tasks) %>%
                separate_longer_delim(Sub.tasks,delim=",") %>%
+               mutate(Sub.tasks = str_trim(Sub.tasks)) %>%
                select(ticket = Sub.tasks) %>%
                distinct()
 
