@@ -1,5 +1,5 @@
 # Anonymize JIRA process files and construct variables
-# Harry Son, Lars Vilhuber, Linda Wang
+# Harry Son, Lars Vilhuber, Linda Wang, Takshil Sachdev
 # 2021-05-20
 
 ## Inputs: export_(extractday).csv
@@ -7,6 +7,7 @@
 
 ### Load libraries 
 ### Requirements: have library *here*
+
 source(here::here("programs","config.R"),echo=TRUE)
 if ( file.exists(here::here("programs","confidential-config.R"))) {
   source(here::here("programs","confidential-config.R"))
