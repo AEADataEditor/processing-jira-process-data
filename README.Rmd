@@ -17,8 +17,8 @@ knitr::opts_chunk$set(echo = TRUE)
 source(here::here("global-libraries.R"),echo=TRUE)
 source(here::here("programs","config.R"),echo=TRUE)
 
-VERSION = "V5"
-YEAR = "2024"
+VERSION = "V6"
+YEAR = "2025"
 ICPSR_PROJECT = "117876"
 ICPSR_DOI = paste0("https://doi.org/10.3886/E",ICPSR_PROJECT,VERSION)
 ```
@@ -84,7 +84,7 @@ These requirements are satisfied in the Docker image created by `Dockerfile`, se
 
 Raw process data is extracted from Jira using API (see below for details), and saved as 
 
-- `export_MM-DD-YYYY.csv` (for detailed transaction-level data)
+- `issue_history_MM-DD-YYYY.csv` (for detailed transaction-level data)
 
 The data is not made available outside of the organization, as it contains names of replicators,  manuscript numbers, and verbatim email correspondence.
 
@@ -128,7 +128,7 @@ source(file.path(programs,"02_jira_anonymize.R"),echo=TRUE)
 
 Some additional cleaning and matching, and then we write out the file
 
-```{r publish, echo = TRUE, eval = TRUE, warning=FALSE}
+```{r publish, echo = TRUE, eval = FALSE, warning=FALSE}
 source(file.path(programs,"10_jira_anon_publish.R"),echo=TRUE)
 ```
 
@@ -144,7 +144,7 @@ R CMD BATCH 99_push_box.R
 jira <- readRDS(file.path(jiraanon,"jira.anon.RDS"))
 ```
 
-The anonymized data has 46 columns. 
+The anonymized data has `r ncol(jira)` columns. 
 
 ### Variables
 
@@ -157,18 +157,18 @@ jira.tmp %>% left_join(description,by=c("name")) %>%
   kable()
 ```
 
-### Sample records
-
-```{r sample,echo=FALSE}
-kable(head(jira))
-```
 
 ### Lab members during this period
 
 We list the lab members active at some point during this period. This still requires confidential data as an input.
 
-```{r lab, echo=FALSE,cache=FALSE,warning=FALSE,message=FALSE}
+```{r lab, echo=FALSE,cache=FALSE,warning=FALSE,message=FALSE,eval=FALSE}
 source(file.path(programs,"03_lab_members.R"),echo=TRUE)
+```
+
+```{r labmembers,echo=FALSE,include=FALSE}
+lab.member <- readRDS(file=file.path(basepath,"data","replicationlab_members.Rds"))
+
 ```
 
 There were a total of `r nrow(lab.member)` lab members over the course of the 12 month period.
@@ -214,7 +214,17 @@ To run the image as a Rstudio interactive development image, use
 bash ./start_rstudio.sh TAG
 ```
 
-It defaults to the `2023-12-06` image if you don't specify a tag.
+```{r getenvs,include=FALSE}
+lines <- readLines(file.path(basepath,".myconfig.sh"))
+
+# Find the line that starts with TAG=
+tag_line <- lines[grep("^tag=", lines)]
+
+# Extract the value after TAG=
+tag_value <- sub("tag=", "", tag_line)
+
+```
+It defaults to the `r tag_value` image if you don't specify a tag.
 
 
 ### Setup - 2. JIRA
@@ -243,14 +253,14 @@ The API is a per-individual key. It is not stored in this repository.
 
 ### Setup - 3. Reading and Writing Confidential Data to Box
 
-Location: [https://cornell.app.box.com/folder/143352802492](https://cornell.app.box.com/folder/143352802492)
+Location: [https://cornell.app.box.com/folder/143352802492](https://cornell.app.box.com/folder/143352802492)🔒
 
-We use the subfolder [`jira_exports`](https://cornell.app.box.com/folder/235801403908).
+We use the subfolder [`jira_exports`](https://cornell.app.box.com/folder/235801403908)🔒.
 
 In order to up- and download, you need not just an API key, but a JSON file with other credentials. This file is called `client_enterprise_id,"_",client_key_id,"_config.json"`, e.g. `81483_bkgnsg4p_config.json`. 
 
 - The `client_enterprise_id` is identified in the JSON file itself as well. 
-- The `client_key_id` is the name of the key in the [Box developer console](https://cornell.app.box.com/developers/console/app/1590771/configuration). 
+- The `client_key_id` is the name of the key in the [Box developer console](https://cornell.app.box.com/developers/console/app/1590771/configuration)🔒. 
 
 This file is key. It is not stored in this repository, but is stored in the Box folder `InternalData`. To use this, the file must be downloaded and stored in the root of the project directory.
 
@@ -266,20 +276,49 @@ with the relevant numbers as per above entered. The BOX_FOLDER_ID is the 12 digi
 
 The upload is then handled by `99_push_box.R`.
 
-### Download Steps
+### Processing Steps
 
-- After you run `./start_rstudio.sh` it should pull the image from the docker and open a port for you to develop in a familiar RStudio environment.
+#### Start Docker and Setup Environment
+
+- Run `./start_rstudio.sh` it should pull the image from the docker and open a port for you to develop in a familiar RStudio environment.
   - On GitHub Codespaces you can access this port by clicking on ports and then the little globe icon to open it in a new tab.
-- After opening development environment, ensure the docker image contains complete python requirements by running `pip install -r requirements.txt`.
-  - Ensure you are in the correct directory, might need to CD to the folder containing `requirements.txt`.
-- To obtain extract run `python3 01_download_issues.py -s 2023-12-01 -e 2024-11-30` with the relevant dates.
+  - On a local computer, you may need to open a browser at <http://localhost:8787>
+  
+> The remainder of the instructions assume you are working within the Docker environment. Adjust as necessary if you are only using the code base in your own environment.
+
+- Change to the correct working directory:
+  - Rstudio: click on `processing-jira-process-data/processing-jira-process-data.Rproj`
+  - Console: cd to the correct directory.
+- Install any missing Python packages  by running `pip install -r requirements.txt`.
+- Set up **environment variables**:
+  - Use an `.env` file is present in the root project directory
+  - Ensure that the Box `json` file as outlined above is present in the root project directory.
+  - Provide JIRA and BOX information
+  
+> Template file
+
+```
+JIRA_USERNAME=
+JIRA_API_KEY=
+BOX_FOLDER_ID=
+BOX_PRIVATE_KEY_ID=
+BOX_ENTERPRISE_ID=
+```
+
+- Define start and end dates:
+  - Update the `extractday`, `firstday`, and `lastday` fields in the [`programs/config.R`](programs/config.R) file.
+  - You will need to manually provide them to the Python programs (for now)
+
+
+#### Obtain Extract
+
+- `cd programs`
+- To obtain extract **run `python3 01_download_issues.py -s ` `r firstday` ` -e ` `r lastday`** with the relevant dates.
   - This will get the fields as specified in `data/metadata/jira-fields.xlsx`.
-  - If fields need to be updated (they are keyed on names), edit `programs/00_jira_fields.py` to mark the to-be-included fields with "True" and then run it. Otherwise running this program is not required.
-  - If you have not set up a .env file, you may need to input your JIRA Username (netid@cornell.edu) and JIRA API Key at this step.
-  - Again ensure you are in the correct directory, might need to CD to the folder containing `01_download_issues.py`.
-- Once the download has concluded, update the `extractday`, `firstday`, and `lastday` fields in the `config.R` file.
-- Now run `02_jira_anonymize.R`, `03_lab_members.R`, and `10_jira_anon_publish.R` to create the confidential and anonymized files used for the report.
-  - You should run these through the terminal as `R CMD BATCH 02_jira_anonymize.R` to obtain ROut files and look through those files to ensure program is running successfully
-  - You can update the relevant parts of the README (extract day, extract contents) once you have re-run and obtained a new extract
-- Now you can upload the relevant file to our Box folder using `99_push_box.R`.
-  - Remember to set up .env file as detailed above.
+  - If fields need to be updated (they are keyed on names), edit `programs/00_jira_fields.py` to obtain the full list of fields, open the resulting Excel file (`data/metadata/jira-fields.xlsx`) and  mark the to-be-included fields with "True". Otherwise running `programs/00_jira_fields.py` is not required.
+
+- **Run R programs in numerical order** to create the confidential and anonymized files used for the report.
+  - Running with `R CMD BATCH name_of_file.R` will create the necessary log files.
+- Convenience:
+
+```{bash}
