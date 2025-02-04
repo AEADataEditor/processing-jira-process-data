@@ -33,7 +33,17 @@ if ( process_raw == TRUE ) {
     # the first field name can be iffy. It is the Key (sic)...
     rename(ticket=Key) %>%
     mutate(mc_number = sub('\\..*', '', Manuscript.Central.identifier))  %>%
+    # Some corrections
+    mutate(mc_number = case_when(
+      substr(Manuscript.Central.identifier,1,4) == "aer." ~ str_replace(Manuscript.Central.identifier,".","-"),
+      substr(Manuscript.Central.identifier,1,4) == "pol." ~ str_replace(Manuscript.Central.identifier,".","-"),
+      substr(Manuscript.Central.identifier,1,4) == "app." ~ str_replace(Manuscript.Central.identifier,".","-"),
+      TRUE ~  mc_number
+    )) %>%
     filter(Issue.Type == "Task") %>%
+    # Possibly temporary issue?
+    filter(ticket == Key.1) %>%
+    select(-Key.1) %>%
     filter(str_detect(ticket,"AEAREP"))
   
   # We need to remove all sub-tasks of AEAREP-1407
