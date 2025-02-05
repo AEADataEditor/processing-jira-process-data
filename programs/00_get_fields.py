@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-from jira import JIRA
-import pandas as pd
-import openpyxl
 import os
 import argparse
+from jira import JIRA
+import pandas as pd
 from dotenv import load_dotenv
 
 def jira_username():
@@ -84,7 +83,7 @@ def export_fields(field_data, filename, include_fields="all"):
     else:
         df['Include'] = df['Name'].isin(include_fields)
 
-    # Export to Excel   
+    # Export to CSV   
     print('Check if file exists')
     file_exists = os.path.isfile(filename)
 
@@ -92,8 +91,7 @@ def export_fields(field_data, filename, include_fields="all"):
         print('File already exists, not overwriting.')
     else:
         print('Writing to ' + filename)
-        df.to_excel(filename, index=False)
-
+        df.to_csv(filename, index=False)
 
 
 def print_summary(filename, jiradomain):
@@ -106,8 +104,8 @@ def print_summary(filename, jiradomain):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Extract Jira issue history")
-    parser.add_argument("-f", "--filename", required=False, default="jira-fields.xlsx", help="Filename to output")
+    parser = argparse.ArgumentParser(description="Define fields to be included in query")
+    parser.add_argument("-f", "--filename", required=False, default="jira-fields.csv", help="Filename to output")
     parser.add_argument("-d", "--domain", required=False, default="https://aeadataeditors.atlassian.net", help="Jira domain")
     parser.add_argument("-o", "--overwrite", required=False, default="True", help="Overwrite the output file? True/False")
     args = parser.parse_args()
@@ -123,7 +121,7 @@ if __name__ == "__main__":
                       "External validation", "External party name", "Assignee", "Status","MCRecommendation", 
                       "Sub-tasks", "openICPSR Project Number", "Issue Type", "Manuscript Central identifier", 
                       "Journal", "Software used", "Non-compliant", "Resolved", "Created","Key", "Update type",
-                      "DCAF_Access_Restrictions", "Agreement signed"]
+                      "DCAF_Access_Restrictions", "DCAF_Access_Restrictions_V2","Agreement signed"]
     
     # summarize
     print_summary(fieldfile, jiradomain)

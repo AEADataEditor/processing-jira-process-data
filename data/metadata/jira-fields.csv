@@ -1,0 +1,145 @@
+Name,Id,Include
+Status Category Changed,statuscategorychangedate,False
+RepositoryDOI,customfield_10070,False
+openICPSRversion,customfield_10071,False
+Report URL PDF,customfield_10072,False
+Parent,parent,False
+openICPSR alternate URL,customfield_10073,False
+DataAccessReplicationTeam,customfield_10074,False
+Target start,customfield_10075,False
+Target end,customfield_10076,False
+DataCitationSummary,customfield_10077,False
+Project overview status,customfield_10110,False
+Status Category,statusCategory,False
+Reserve Review,customfield_10078,False
+Restricted data OSP NDA number,customfield_10111,False
+Agreement signed,customfield_10079,True
+Consulting Assignee,customfield_10112,False
+Resolution,resolution,True
+Design,customfield_10113,False
+openICPSRProblem,customfield_10104,False
+JournalIssueMonth,customfield_10106,False
+JournalIssueYear,customfield_10107,False
+Update type,customfield_10108,True
+Project overview key,customfield_10109,False
+Last Viewed,lastViewed,False
+MCEntryURL,customfield_10060,False
+MCStatus,customfield_10061,True
+Bitbucket short name,customfield_10062,False
+JiraSearchMC,customfield_10063,False
+MCRecommendationV2,customfield_10064,True
+Highlight in Annual Report,customfield_10065,False
+Reason for Failure to be Fully Reproduced,customfield_10066,True
+Priority,priority,False
+External validation,customfield_10067,True
+Category,customfield_10100,False
+External party name,customfield_10068,True
+Satisfaction date,customfield_10101,False
+Candidate for Best Package,customfield_10069,False
+Request language,customfield_10102,False
+Affected services,customfield_10103,False
+Labels,labels,False
+Remaining Estimate,timeestimate,False
+Σ Original Estimate,aggregatetimeoriginalestimate,False
+Linked Issues,issuelinks,False
+Assignee,assignee,True
+Status,status,True
+Key,issuekey,True
+ProgramSequence,customfield_10050,False
+AssessDifficulty,customfield_10051,False
+NumberOfDataSets,customfield_10052,False
+DatasetsIncluded,customfield_10053,False
+DataAvailabilityAccess,customfield_10055,False
+DataAvailabilityExclusive,customfield_10056,False
+Empirical Article,customfield_10057,False
+MCRecommendation,customfield_10058,True
+openICPSRshared,customfield_10059,False
+ProgramsStructureManual,customfield_10049,False
+Σ Remaining Estimate,aggregatetimeestimate,False
+Creator,creator,False
+Sub-tasks,subtasks,True
+Replication package URL,customfield_10040,False
+Data provenance,customfield_10041,False
+Satisfaction,customfield_10042,False
+openICPSR Project Number,customfield_10043,True
+Reporter,reporter,False
+Σ Progress,aggregateprogress,False
+Data Citation Report,customfield_10044,False
+RCT?,customfield_10045,False
+Computing Environment,customfield_10046,False
+RCT number,customfield_10047,False
+ProgramsDocumentation,customfield_10048,False
+Story point estimate,customfield_10038,False
+Issue color,customfield_10039,False
+Progress,progress,False
+Log Work,worklog,False
+Issue Type,issuetype,True
+Time Spent,timespent,False
+Git working location,customfield_10030,False
+Project,project,False
+Manuscript Central identifier,customfield_10032,True
+Journal,customfield_10033,True
+Σ Time Spent,aggregatetimespent,False
+Entry questionnaire,customfield_10034,False
+Working location of the data,customfield_10035,False
+Reason for non-accessibility of data,customfield_10036,False
+Report URL,customfield_10037,False
+Software used,customfield_10028,True
+Resolved,resolutiondate,True
+Work Ratio,workratio,False
+Watchers,watches,False
+Restrict to,issuerestriction,False
+Images,thumbnail,False
+Created,created,True
+Request Type,customfield_10020,False
+Request participants,customfield_10021,False
+Start date,customfield_10016,False
+Story Points,customfield_10018,False
+Flagged,customfield_10019,False
+Updated,updated,False
+Non-compliant,customfield_10090,True
+Restricted openICPSR project number,customfield_10091,False
+Restricted openICPSR access type,customfield_10092,False
+Working location of restricted data,customfield_10093,False
+Restricted data DOI or URL,customfield_10094,False
+Original estimate,timeoriginalestimate,False
+Open forms,customfield_10095,False
+Submitted forms,customfield_10096,False
+Locked forms,customfield_10097,False
+Description,description,False
+Sprint,customfield_10010,False
+Total forms,customfield_10098,False
+Rank,customfield_10011,False
+[CHART] Date of First Response,customfield_10012,False
+[CHART] Time in Status,customfield_10013,False
+Time tracking,timetracking,False
+Epic Name,customfield_10005,False
+Epic Status,customfield_10006,False
+Epic Colour,customfield_10007,False
+Security Level,security,False
+Epic Link,customfield_10008,False
+Attachment,attachment,False
+Parent Link,customfield_10009,False
+Summary,summary,False
+Was data deleted?,customfield_10080,False
+DCAF_README_checked,customfield_10082,False
+DCAF_README_compliant,customfield_10083,False
+DCAF_Access_Restrictions,customfield_10084,True
+Alt Display Eligibility,customfield_10085,False
+Computing URL,customfield_10086,False
+Candidate for Best Package NOTES,customfield_10087,False
+Goals,customfield_10120,False
+Development,customfield_10000,False
+Release Notes PUBLIC,customfield_10088,False
+ICPSR or other deposit title,customfield_10121,False
+Team,customfield_10001,False
+Initiate WholeTale,customfield_10089,False
+Organizations,customfield_10004,False
+DCAF_Access_Restrictions_V2,customfield_10115,True
+Vulnerability,customfield_10116,False
+Codeocean Capsule Number,customfield_10117,False
+Environment,environment,False
+MainFile,customfield_10118,False
+Sentiment,customfield_10119,False
+Due date,duedate,False
+Comment,comment,False
