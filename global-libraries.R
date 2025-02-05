@@ -6,7 +6,7 @@
 ppm.date <- "2023-11-01"
 options(repos=paste0("https://packagemanager.posit.co/cran/",ppm.date,"/"))
 
-global.libraries <- c("dplyr","stringr","tidyr","knitr","readr","here","splitstackshape","boxr","jose","rmarkdown")
+global.libraries <- c("dplyr","stringr","tidyr","knitr","readr","here","splitstackshape","boxr","jose","rmarkdown","tidylog")
 
 
 pkgTest <- function(x)

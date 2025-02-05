@@ -30,7 +30,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-01-26"
+> extractday <- "2025-02-05"
 
 > firstday <- "2023-12-01"
 
@@ -103,7 +103,7 @@ Type 'q()' to quit R.
 
 > global.libraries <- c("dplyr", "stringr", "tidyr", 
 +     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
-+     "rmarkdown")
++     "rmarkdown", "tidylog" .... [TRUNCATED] 
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -136,189 +136,58 @@ Loading required package: here
 here() starts at /home/rstudio/processing-jira-process-data
 Loading required package: splitstackshape
 Loading required package: boxr
-Installing package into ‘/usr/local/lib/R/site-library’
-(as ‘lib’ is unspecified)
-also installing the dependencies ‘R.oo’, ‘R.methodsS3’, ‘R.utils’, ‘rio’, ‘jose’, ‘sodium’
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/R.oo_1.25.0.tar.gz'
-Content type 'application/x-tar' length 383263 bytes (374 KB)
-==================================================
-downloaded 374 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/R.methodsS3_1.8.2.tar.gz'
-Content type 'application/x-tar' length 24315 bytes (23 KB)
-==================================================
-downloaded 23 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/R.utils_2.12.2.tar.gz'
-Content type 'application/x-tar' length 365152 bytes (356 KB)
-==================================================
-downloaded 356 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/rio_1.0.1.tar.gz'
-Content type 'binary/octet-stream' length 511843 bytes (499 KB)
-==================================================
-downloaded 499 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/jose_1.2.0.tar.gz'
-Content type 'binary/octet-stream' length 506189 bytes (494 KB)
-==================================================
-downloaded 494 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/sodium_1.3.0.tar.gz'
-Content type 'application/x-tar' length 465769 bytes (454 KB)
-==================================================
-downloaded 454 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/boxr_0.3.6.tar.gz'
-Content type 'application/x-tar' length 2227890 bytes (2.1 MB)
-==================================================
-downloaded 2.1 MB
-
-* installing *source* package ‘R.methodsS3’ ...
-** package ‘R.methodsS3’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (R.methodsS3)
-* installing *source* package ‘jose’ ...
-** package ‘jose’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (jose)
-* installing *source* package ‘sodium’ ...
-** package ‘sodium’ successfully unpacked and MD5 sums checked
-** using staged installation
-Found pkg-config cflags and libs!
-Using PKG_CFLAGS=
-Using PKG_LIBS=-lsodium
-** libs
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c diffie.c -o diffie.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c hashing.c -o hashing.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c helpers.c -o helpers.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c init.c -o init.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c keygen.c -o keygen.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c messaging.c -o messaging.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c password.c -o password.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c seal.c -o seal.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c secret.c -o secret.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c signing.c -o signing.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c stream.c -o stream.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c xor.c -o xor.o
-gcc -shared -L/usr/local/lib/R/lib -L/usr/local/lib -o sodium.so diffie.o hashing.o helpers.o init.o keygen.o messaging.o password.o seal.o secret.o signing.o stream.o xor.o -lsodium -L/usr/local/lib/R/lib -lR
-installing to /usr/local/lib/R/site-library/00LOCK-sodium/00new/sodium/libs
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** checking absolute paths in shared objects and dynamic libraries
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (sodium)
-* installing *source* package ‘R.oo’ ...
-** package ‘R.oo’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Warning in setGenericS3.default(name, export = exportGeneric, envir = envir,  :
-  Renamed the preexisting function getMethods to getMethods.default, which was defined in environment R.oo.
-Warning in setGenericS3.default(name, export = exportGeneric, envir = envir,  :
-  Renamed the preexisting function getClasses to getClasses.default, which was defined in environment R.oo.
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (R.oo)
-* installing *source* package ‘R.utils’ ...
-** package ‘R.utils’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Warning in setGenericS3.default(name, export = exportGeneric, envir = envir,  :
-  Renamed the preexisting function warnings to warnings.default, which was defined in environment R.utils.
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (R.utils)
-* installing *source* package ‘rio’ ...
-** package ‘rio’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-*** copying figures
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (rio)
-* installing *source* package ‘boxr’ ...
-** package ‘boxr’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-*** copying figures
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (boxr)
-
-The downloaded source packages are in
-	‘/tmp/Rtmp8BwRFs/downloaded_packages’
-Loading required package: boxr
 boxr: see `vignette("boxr")` on how to authorize to your Box account.
 Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
 Loading required package: rmarkdown
-Warning message:
-In library(package, lib.loc = lib.loc, character.only = TRUE, logical.return = TRUE,  :
-  there is no package called ‘boxr’
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
 > 
 > exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
 +                 "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
 +                 "LV (Data Editor)")
 > 
-> lookup <- read_csv(file.path(jirameta,"lookup.csv"))
-Rows: 5 Columns: 2
+> # This contains unmapped IDs that need to be cleaned up
+> 
+> lookup <- read_csv(file.path(jirameta,"assignee-name-lookup.csv"))
+Rows: 9 Columns: 2
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
 chr (2): Assignee, Name
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> removal <- read_csv(file.path(jirameta,"assignee-remove.csv"))
+Rows: 2 Columns: 1
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): Assignee
 
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -330,10 +199,30 @@ chr (2): Assignee, Name
 +   filter(Assignee != "") %>%
 +   filter(!Assignee %in% exclusions) %>%
 +   left_join(lookup) %>%
++   anti_join(removal) %>%
 +   mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
 +   distinct(Assignee) 
+filter: no rows removed
+filter: removed 8,661 rows (32%), 18,594 rows remaining
+filter: removed 5,856 rows (31%), 12,738 rows remaining
 Joining with `by = join_by(Assignee)`
+left_join: added one column (Name)
+           > rows only in x   12,106
+           > rows only in y  (     6)
+           > matched rows        632
+           >                 ========
+           > rows total       12,738
+Joining with `by = join_by(Assignee)`
+anti_join: added no columns
+           > rows only in x   12,738
+           > rows only in y  (     2)
+           > matched rows    (     0)
+           >                 ========
+           > rows total       12,738
+mutate: changed 632 values (5%) of 'Assignee' (0 new NA)
+distinct: removed 12,689 rows (>99%), 49 rows remaining
 > 
+> saveRDS(lab.member,file=file.path(jiraanon,"replicationlab_members.Rds"))
 > write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
 +             row.names = FALSE)
 > 
@@ -349,10 +238,14 @@ Joining with `by = join_by(Assignee)`
 +   filter(date_created >= firstday, date_created < lastday) %>%
 +   mutate(name_external=str_replace(External.party.name,"-"," ")) %>%
 +   distinct(name_external) 
+filter: removed 26,933 rows (99%), 322 rows remaining
+filter: no rows removed
+mutate: new variable 'name_external' (character) with 5 unique values and 0% NA
+distinct: removed 317 rows (98%), 5 rows remaining
 > 
 > write.table(external.member, file = file.path(basepath,"data","external_replicators.txt"), sep = "\t",
 +             row.names = FALSE)
 > 
 > proc.time()
    user  system elapsed 
- 22.660   5.870  29.812 
+  1.271   0.156   1.400 

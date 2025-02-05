@@ -32,7 +32,7 @@ lab.member <- jira.conf.plus %>%
   mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
   distinct(Assignee) 
 
-saveRDS(lab.member,file=file.path(basepath,"data","replicationlab_members.Rds"))
+saveRDS(lab.member,file=file.path(jiraanon,"replicationlab_members.Rds"))
 write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
             row.names = FALSE)
 

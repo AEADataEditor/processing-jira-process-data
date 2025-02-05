@@ -104,9 +104,17 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
   # Save files
   saveRDS(jira.manuscripts,file=manuscript.lookup.rds)
   saveRDS(jira.assignees,  file=assignee.lookup.rds)
-  
+  # Read in `description_anon.csv`, and from the `name`column, construct code that will keep only those variables listed in the `name` column
+
+  # Read in the anonymization file
+  public_names <- read_csv(file.path(jirameta,"description_anon.csv")) %>%
+    filter(name!="") %>%
+    select(name) %>%
+    pull()
+  extra_conf <- c("Manuscript.Central.identifier", "mc_number", "Assignee", "openICPSR.Project.Number")
+
   # Now merge the anonymized data on, keep & rename relevant variables
-  jira.conf.plus <- jira.conf.cleaned %>% 
+  jira.conf.all <- jira.conf.cleaned %>% 
     left_join(jira.manuscripts,by="mc_number") %>%
     left_join(jira.assignees,by="Assignee") %>%
     mutate(date_created = as.Date(substr(Created, 1,10), "%Y-%m-%d"),
@@ -117,12 +125,24 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
     mutate(date_resolved = as.Date(substr(Resolved, 1,10), "%Y-%m-%d"))%>%
     mutate(received = ifelse(Status=="Open","Yes","No")) %>%
     mutate(has_subtask=ifelse(subtask!="","Yes","No")) %>%
-    select(ticket, Manuscript.Central.identifier, mc_number, mc_number_anon, MCStatus, Status, received, Changed.Fields,
-           MCRecommendation, MCRecommendationV2, Created, As.Of.Date, Resolved, date_created, date_asof, date_resolved, 
-           Assignee, assignee_anon, Journal, Software.used, Issue.Type, subtask, has_subtask, Agreement.signed, 
-           Update.type, reason.failure, external, External.party.clean, Non.compliant, DCAF_Access_Restrictions,
-           openICPSR.Project.Number, Resolution)%>%
-    rename(External.party.name = External.party.clean)
+    rename(External.party.name.conf = External.party.name,
+           External.party.name = External.party.clean) 
+
+
+##   filter out subtasks
+jira.conf.subtask <- jira.conf.all %>%
+  filter(subtask != "") %>%
+  select(ticket, subtask) %>%
+  separate_longer_delim(subtask,delim=",") %>%
+  mutate(subtask = str_trim(subtask)) %>%
+  select(ticket = subtask) %>%
+  distinct()
+
+jira.conf.plus <- jira.conf.all %>%
+  filter(!is.na(mc_number_anon)) %>%
+  anti_join(jira.conf.subtask) %>%
+  select(all_of(public_names),all_of(extra_conf))
+
   
   # save anonymized and confidential data
   
@@ -130,8 +150,8 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
           file=jira.conf.plus.rds)
 
   saveRDS(jira.conf.plus %>% 
-            select(-Manuscript.Central.identifier,-mc_number,-Assignee),
-    file=file.path(jiraanon,"temp.jira.anon.RDS"))
+            select(all_of(public_names)),
+    file=file.path(jiraconf,"temp.jira.anon.RDS"))
   
 } else { 
   print("Not processing anonymization due to global parameter.")

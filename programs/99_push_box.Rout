@@ -26,7 +26,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-01-26"
+> extractday <- "2025-02-05"
 
 > firstday <- "2023-12-01"
 
@@ -95,7 +95,7 @@ Type 'q()' to quit R.
 
 > global.libraries <- c("dplyr", "stringr", "tidyr", 
 +     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
-+     "rmarkdown")
++     "rmarkdown", "tidylog" .... [TRUNCATED] 
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -133,6 +133,33 @@ Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
 Loading required package: rmarkdown
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
 > 
 > # Load boxr package
 > library(boxr)
@@ -140,6 +167,9 @@ Loading required package: rmarkdown
 > # Read the key variables from the common .env file
 > 
 > readRenviron(file.path(basepath,".env"))
+Warning message:
+In readRenviron(file.path(basepath, ".env")) :
+  file '/home/rstudio/processing-jira-process-data/.env' cannot be opened for reading
 > 
 > # Now load credentials
 > client_folder <- Sys.getenv("BOX_FOLDER_ID")
@@ -151,18 +181,20 @@ Loading required package: rmarkdown
 > 
 > # Authenticate 
 > box_auth_service(json.config.file)
+Failed JWT request: time offset was 0 seconds.
+Retrying JWT request: time offset now -15 seconds.
 boxr: Authenticated using OAuth2 (JWT) as aeadata (AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com, id: 16949677861)
 > 
 > # List files in folder
 > #files <- box_ls(client_folder)
 > box_setwd(client_folder)
-box.com working directory changed to 'InternalData'
+box.com working directory changed to 'jira_exports'
 
-      id: 143352802492
-    tree: All Files/InternalData
+      id: 235801403908
+    tree: All Files/InternalData/jira_exports
    owner: ga.ldilab@cornell.edu
-contents: 27 files, 5 folders
-shared link: https://cornell.box.com/s/crnvz77g37bdyjiyv6801d6mezf5igny
+contents: 7 files, 0 folders
+
 > 
 > 
 > issue_history.csv <- file.path(jiraconf,paste0(issue_history.prefix,extractday,".csv"))
@@ -170,79 +202,100 @@ shared link: https://cornell.box.com/s/crnvz77g37bdyjiyv6801d6mezf5igny
 > 
 > box_ul(file=issue_history.csv)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+File 'issue_history_2025-02-05.csv' aleady exists. Attempting to upload new version (V5).
+  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
- name        : issue_history_2025-01-26.csv 
- file id     : 1760025311662 
- version     : V1 
+ name        : issue_history_2025-02-05.csv 
+ file id     : 1769593533357 
+ version     : V5 
  size        : 13 MB 
- modified at : 2025-01-26 14:21:47 
- created at  : 2025-01-26 14:21:47 
+ modified at : 2025-02-05 11:21:19 
+ created at  : 2025-02-05 11:21:19 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
 
- parent folder name :  InternalData 
- parent folder id   :  143352802492 
+ parent folder name :  jira_exports 
+ parent folder id   :  235801403908 
 > box_ul(file=jira.conf.plus.rds)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'jira.conf.plus.RDS' aleady exists. Attempting to upload new version (V4).
+File 'jira.conf.plus.RDS' aleady exists. Attempting to upload new version (V8).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : jira.conf.plus.RDS 
- file id     : 1654446981244 
- version     : V4 
- size        : 420 kB 
- modified at : 2025-01-26 14:21:49 
- created at  : 2025-01-26 14:21:49 
+ file id     : 1365599255567 
+ version     : V8 
+ size        : 330 kB 
+ modified at : 2025-02-05 11:21:21 
+ created at  : 2025-02-05 11:21:21 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
 
- parent folder name :  InternalData 
- parent folder id   :  143352802492 
+ parent folder name :  jira_exports 
+ parent folder id   :  235801403908 
 > box_ul(file=assignee.lookup.rds)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'assignee-lookup.RDS' aleady exists. Attempting to upload new version (V4).
+File 'assignee-lookup.RDS' aleady exists. Attempting to upload new version (V8).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : assignee-lookup.RDS 
- file id     : 1654452983356 
- version     : V4 
+ file id     : 1365598266362 
+ version     : V8 
  size        : 877 B 
- modified at : 2025-01-26 14:21:50 
- created at  : 2025-01-26 14:21:50 
+ modified at : 2025-02-05 11:21:23 
+ created at  : 2025-02-05 11:21:23 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
 
- parent folder name :  InternalData 
- parent folder id   :  143352802492 
+ parent folder name :  jira_exports 
+ parent folder id   :  235801403908 
 > box_ul(file=manuscript.lookup.rds)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'mc-lookup.RDS' aleady exists. Attempting to upload new version (V4).
+File 'mc-lookup.RDS' aleady exists. Attempting to upload new version (V7).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : mc-lookup.RDS 
- file id     : 1654452326062 
- version     : V4 
- size        : 3.3 kB 
- modified at : 2025-01-26 14:21:52 
- created at  : 2025-01-26 14:21:52 
+ file id     : 1384485085553 
+ version     : V7 
+ size        : 3.5 kB 
+ modified at : 2025-02-05 11:21:26 
+ created at  : 2025-02-05 11:21:26 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
 
- parent folder name :  InternalData 
- parent folder id   :  143352802492 
+ parent folder name :  jira_exports 
+ parent folder id   :  235801403908 
+> box_ul(file=file.path(programs,"confidential-config.R"))
+  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+File 'confidential-config.R' aleady exists. Attempting to upload new version (V3).
+  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
+
+box.com remote file reference
+
+ name        : confidential-config.R 
+ file id     : 1769587521527 
+ version     : V3 
+ size        : 66 B 
+ modified at : 2025-02-05 11:21:28 
+ created at  : 2025-02-05 11:21:28 
+ uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
+ owned by    : ga.ldilab@cornell.edu 
+ shared link : None 
+
+ parent folder name :  jira_exports 
+ parent folder id   :  235801403908 
 > 
 > proc.time()
    user  system elapsed 
-  1.081   0.202   8.751 
+  1.061   0.246  13.846 

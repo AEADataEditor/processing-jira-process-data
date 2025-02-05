@@ -44,5 +44,10 @@ esac
 # fi
 if [[ ! -z $JIRA_USERNAME ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e JIRA_USERNAME=$JIRA_USERNAME" ; fi
 if [[ ! -z $JIRA_API_KEY ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e JIRA_API_KEY=$JIRA_API_KEY" ; fi
+# do the same for BOX_ENTERPRISE_ID, BOX_FOLDER_ID, BOX_PRIVATE_KEY_ID 
+if [[ ! -z $BOX_ENTERPRISE_ID ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e BOX_ENTERPRISE_ID=$BOX_ENTERPRISE_ID" ; fi
+if [[ ! -z $BOX_FOLDER_ID ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e BOX_FOLDER_ID=$BOX_FOLDER_ID" ; fi
+if [[ ! -z $BOX_PRIVATE_KEY_ID ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e BOX_PRIVATE_KEY_ID=$BOX_PRIVATE_KEY_ID" ; fi
+
 
 docker run $DOCKEREXTRA -e DISABLE_AUTH=true -v "$WORKSPACE":/home/rstudio --rm -p 8787:8787 $space/$repo:$tag

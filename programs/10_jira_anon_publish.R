@@ -16,23 +16,18 @@ source(here::here("global-libraries.R"),echo=TRUE)
 
 # double-check
 
+# Read in the anonymization file
+  public_names <- read_csv(file.path(jirameta,"description_anon.csv")) %>%
+    filter(name!="") %>%
+    select(name) %>%
+    pull()
+
 # Read in data extracted from Jira
 
-jira.anon.raw <- readRDS(file.path(jiraanon,"temp.jira.anon.RDS")) %>%
+jira.anon.raw <- readRDS(file.path(jiraconf,"temp.jira.anon.RDS")) %>%
   filter(ticket!="AEAREP-365") %>% # duplicate with aearep-364
-  filter(ticket!="AEAREP-1589")  ## Decision notice of aearep-1523
-
-## object to filter out subtasks
-jira.conf.subtask <- jira.anon.raw %>%
-  filter(subtask != "") %>%
-  select(ticket, subtask) %>%
-  separate_longer_delim(subtask,delim=",") %>%
-  select(ticket = subtask) %>%
-  distinct()
-
-jira.anon <- jira.anon.raw %>%
-  filter(!is.na(mc_number_anon)) %>%
-  anti_join(jira.conf.subtask) 
+  filter(ticket!="AEAREP-1589")  %>%  ## Decision notice of aearep-1523
+  select(all_of(public_names))
 
 ## export it as a csv file
 saveRDS(jira.anon,jira.anon.rds)

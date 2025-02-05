@@ -18,7 +18,7 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > # Anonymize JIRA process files and construct variables
-> # Harry Son, Lars Vilhuber, Linda Wang
+> # Harry Son, Lars Vilhuber, Linda Wang, Takshil Sachdev
 > # 2021-05-20
 > 
 > ## Inputs: export_(extractday).csv
@@ -26,13 +26,14 @@ Type 'q()' to quit R.
 > 
 > ### Load libraries 
 > ### Requirements: have library *here*
+> 
 > source(here::here("programs","config.R"),echo=TRUE)
 
 > process_raw <- TRUE
 
 > download_raw <- TRUE
 
-> extractday <- "2025-01-26"
+> extractday <- "2025-02-05"
 
 > firstday <- "2023-12-01"
 
@@ -97,6 +98,7 @@ Type 'q()' to quit R.
 +   message("Confidential config found.")
 +   # if not sourced, randomness will ensue
 + }
+Confidential config found.
 > source(here::here("global-libraries.R"),echo=TRUE)
 
 > ppm.date <- "2023-11-01"
@@ -106,7 +108,7 @@ Type 'q()' to quit R.
 
 > global.libraries <- c("dplyr", "stringr", "tidyr", 
 +     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
-+     "rmarkdown")
++     "rmarkdown", "tidylog" .... [TRUNCATED] 
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -144,6 +146,33 @@ Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
 Loading required package: rmarkdown
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
 > 
 > exportfile <- paste0(issue_history.prefix,extractday,".csv")
 > 
@@ -162,13 +191,24 @@ Loading required package: rmarkdown
 +     # the first field name can be iffy. It is the Key (sic)...
 +     rename(ticket=Key) %>%
 +     mutate(mc_number = sub('\\..*', '', Manuscript.Central.identifier))  %>%
++     # Some corrections
++     mutate(mc_number = case_when(
++       substr(Manuscript.Central.identifier,1,4) == "aer." ~ str_replace(Manuscript.Central.identifier,".","-"),
++       substr(Manuscript.Central.identifier,1,4) == "pol." ~ str_replace(Manuscript.Central.identifier,".","-"),
++       substr(Manuscript.Central.identifier,1,4) == "app." ~ str_replace(Manuscript.Central.identifier,".","-"),
++       TRUE ~  mc_number
++     )) %>%
 +     filter(Issue.Type == "Task") %>%
++     # Possibly temporary issue?
++     filter(ticket == Key.1) %>%
++     select(-Key.1) %>%
 +     filter(str_detect(ticket,"AEAREP"))
 +   
 +   # We need to remove all sub-tasks of AEAREP-1407
 + placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
 +                select(ticket,Sub.tasks) %>%
 +                separate_longer_delim(Sub.tasks,delim=",") %>%
++                mutate(Sub.tasks = str_trim(Sub.tasks)) %>%
 +                select(ticket = Sub.tasks) %>%
 +                distinct()
 + 
@@ -222,9 +262,17 @@ Loading required package: rmarkdown
 +   # Save files
 +   saveRDS(jira.manuscripts,file=manuscript.lookup.rds)
 +   saveRDS(jira.assignees,  file=assignee.lookup.rds)
-+   
++   # Read in `description_anon.csv`, and from the `name`column, construct code that will keep only those variables listed in the `name` column
++ 
++   # Read in the anonymization file
++   public_names <- read_csv(file.path(jirameta,"description_anon.csv")) %>%
++     filter(name!="") %>%
++     select(name) %>%
++     pull()
++   extra_conf <- c("Manuscript.Central.identifier", "mc_number", "Assignee", "openICPSR.Project.Number")
++ 
 +   # Now merge the anonymized data on, keep & rename relevant variables
-+   jira.conf.plus <- jira.conf.cleaned %>% 
++   jira.conf.all <- jira.conf.cleaned %>% 
 +     left_join(jira.manuscripts,by="mc_number") %>%
 +     left_join(jira.assignees,by="Assignee") %>%
 +     mutate(date_created = as.Date(substr(Created, 1,10), "%Y-%m-%d"),
@@ -235,12 +283,24 @@ Loading required package: rmarkdown
 +     mutate(date_resolved = as.Date(substr(Resolved, 1,10), "%Y-%m-%d"))%>%
 +     mutate(received = ifelse(Status=="Open","Yes","No")) %>%
 +     mutate(has_subtask=ifelse(subtask!="","Yes","No")) %>%
-+     select(ticket, Manuscript.Central.identifier, mc_number, mc_number_anon, MCStatus, Status, received, Changed.Fields,
-+            MCRecommendation, MCRecommendationV2, Created, As.Of.Date, Resolved, date_created, date_asof, date_resolved, 
-+            Assignee, assignee_anon, Journal, Software.used, Issue.Type, subtask, has_subtask, Agreement.signed, 
-+            Update.type, reason.failure, external, External.party.clean, Non.compliant, DCAF_Access_Restrictions,
-+            openICPSR.Project.Number, Resolution)%>%
-+     rename(External.party.name = External.party.clean)
++     rename(External.party.name.conf = External.party.name,
++            External.party.name = External.party.clean) 
++ 
++ 
++ ##   filter out subtasks
++ jira.conf.subtask <- jira.conf.all %>%
++   filter(subtask != "") %>%
++   select(ticket, subtask) %>%
++   separate_longer_delim(subtask,delim=",") %>%
++   mutate(subtask = str_trim(subtask)) %>%
++   select(ticket = subtask) %>%
++   distinct()
++ 
++ jira.conf.plus <- jira.conf.all %>%
++   filter(!is.na(mc_number_anon)) %>%
++   anti_join(jira.conf.subtask) %>%
++   select(all_of(public_names),all_of(extra_conf))
++ 
 +   
 +   # save anonymized and confidential data
 +   
@@ -248,13 +308,90 @@ Loading required package: rmarkdown
 +           file=jira.conf.plus.rds)
 + 
 +   saveRDS(jira.conf.plus %>% 
-+             select(-Manuscript.Central.identifier,-mc_number,-Assignee),
-+     file=file.path(jiraanon,"temp.jira.anon.RDS"))
++             select(all_of(public_names)),
++     file=file.path(jiraconf,"temp.jira.anon.RDS"))
 +   
 + } else { 
 +   print("Not processing anonymization due to global parameter.")
 + }
+rename: renamed one variable (ticket)
+mutate: new variable 'mc_number' (character) with 518 unique values and 0% NA
+mutate: changed 345 values (1%) of 'mc_number' (0 new NA)
+filter: removed 7,140 rows (19%), 30,151 rows remaining
+filter: no rows removed
+select: dropped one variable (Key.1)
+filter: no rows removed
+filter: removed all rows (100%)
+select: dropped 24 variables (Agreement.signed, Resolution, Update.type, MCStatus, MCRecommendationV2, …)
+mutate: no changes
+select: dropped one variable (Sub.tasks)
+distinct: no rows removed
 Joining with `by = join_by(ticket)`
+anti_join: added no columns
+           > rows only in x   30,151
+           > rows only in y  (     0)
+           > matched rows    (     0)
+           >                 ========
+           > rows total       30,151
+select: dropped 26 variables (Agreement.signed, Resolution, Update.type, MCStatus, MCRecommendationV2, …)
+filter: removed 2,704 rows (9%), 27,447 rows remaining
+distinct: removed 26,917 rows (98%), 530 rows remaining
+mutate: new variable 'rand' (double) with one unique value and 0% NA
+mutate: new variable 'mc_number_anon' (integer) with 530 unique values and 0% NA
+select: dropped one variable (rand)
+select: dropped 26 variables (Agreement.signed, Resolution, Update.type, MCStatus, MCRecommendationV2, …)
+filter: removed 11,190 rows (37%), 18,961 rows remaining
+filter: no rows removed
+filter: removed 1,017 rows (5%), 17,944 rows remaining
+distinct: removed 17,884 rows (>99%), 60 rows remaining
+mutate: new variable 'rand' (double) with 2 unique values and 0% NA
+mutate: new variable 'assignee_anon' (integer) with 60 unique values and 0% NA
+select: dropped one variable (rand)
+Rows: 23 Columns: 2
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (2): name, label
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+filter: no rows removed
+select: dropped one variable (label)
+left_join: added one column (mc_number_anon)
+           > rows only in x    2,704
+           > rows only in y  (     0)
+           > matched rows     27,447
+           >                 ========
+           > rows total       30,151
+left_join: added one column (assignee_anon)
+           > rows only in x   12,207
+           > rows only in y  (     0)
+           > matched rows     17,944
+           >                 ========
+           > rows total       30,151
+mutate: new variable 'date_created' (Date) with 236 unique values and 0% NA
+        new variable 'date_asof' (Date) with 415 unique values and 0% NA
+rename: renamed one variable (reason.failure)
+rename: renamed one variable (external)
+rename: renamed one variable (subtask)
+mutate: new variable 'date_resolved' (Date) with 287 unique values and 4% NA
+mutate: new variable 'received' (character) with 2 unique values and 0% NA
+mutate: new variable 'has_subtask' (character) with 2 unique values and 0% NA
+rename: renamed one variable (External.party.name.conf)
+filter: removed 10,590 rows (35%), 19,561 rows remaining
+select: dropped 32 variables (Agreement.signed, Resolution, Update.type, MCStatus, MCRecommendationV2, …)
+mutate: changed 26,742 values (58%) of 'subtask' (0 new NA)
+select: dropped one variable (subtask)
+distinct: removed 45,426 rows (98%), 877 rows remaining
+filter: removed 2,704 rows (9%), 27,447 rows remaining
+Joining with `by = join_by(ticket)`
+anti_join: added no columns
+           > rows only in x   27,255
+           > rows only in y  (   842)
+           > matched rows    (   192)
+           >                 ========
+           > rows total       27,255
+select: dropped 7 variables (External.party.name.conf, subtask, Issue.Type, Resolved, Created, …)
+select: dropped 4 variables (Manuscript.Central.identifier, mc_number, Assignee, openICPSR.Project.Number)
 Warning message:
 If you need to edit the names to be included,
 edit the file /home/rstudio/processing-jira-process-data/data/temp/jira_conf_names.csv
@@ -262,4 +399,4 @@ save it in /home/rstudio/processing-jira-process-data/data/metadatawith the same
 > 
 > proc.time()
    user  system elapsed 
-  2.057   0.213   2.254 
+  2.265   0.209   2.422 

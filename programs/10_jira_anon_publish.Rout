@@ -36,7 +36,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-01-26"
+> extractday <- "2025-02-05"
 
 > firstday <- "2023-12-01"
 
@@ -105,7 +105,7 @@ Type 'q()' to quit R.
 
 > global.libraries <- c("dplyr", "stringr", "tidyr", 
 +     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
-+     "rmarkdown")
++     "rmarkdown", "tidylog" .... [TRUNCATED] 
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -143,33 +143,62 @@ Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
 Loading required package: rmarkdown
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
 > 
 > # double-check
 > 
+> # Read in the anonymization file
+>   public_names <- read_csv(file.path(jirameta,"description_anon.csv")) %>%
++     filter(name!="") %>%
++     select(name) %>%
++     pull()
+Rows: 23 Columns: 2
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (2): name, label
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+filter: no rows removed
+select: dropped one variable (label)
+> 
 > # Read in data extracted from Jira
 > 
-> jira.anon.raw <- readRDS(file.path(jiraanon,"temp.jira.anon.RDS")) %>%
+> jira.anon.raw <- readRDS(file.path(jiraconf,"temp.jira.anon.RDS")) %>%
 +   filter(ticket!="AEAREP-365") %>% # duplicate with aearep-364
-+   filter(ticket!="AEAREP-1589")  ## Decision notice of aearep-1523
-> 
-> ## object to filter out subtasks
-> jira.conf.subtask <- jira.anon.raw %>%
-+   filter(subtask != "") %>%
-+   select(ticket, subtask) %>%
-+   separate_longer_delim(subtask,delim=",") %>%
-+   select(ticket = subtask) %>%
-+   distinct()
-> 
-> jira.anon <- jira.anon.raw %>%
-+   filter(!is.na(mc_number_anon)) %>%
-+   anti_join(jira.conf.subtask) 
-Joining with `by = join_by(ticket)`
++   filter(ticket!="AEAREP-1589")  %>%  ## Decision notice of aearep-1523
++   select(all_of(public_names))
+filter: no rows removed
+filter: no rows removed
+select: no changes
 > 
 > ## export it as a csv file
 > saveRDS(jira.anon,jira.anon.rds)
-> write.csv(jira.anon,jira.anon.csv)
-> 
-> 
-> proc.time()
-   user  system elapsed 
-  1.795   0.188   1.954 
+Error in saveRDS(jira.anon, jira.anon.rds) : object 'jira.anon' not found
+Execution halted
