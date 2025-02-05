@@ -25,10 +25,10 @@ def get_rootdir():
 
 # define the fields we are interested in
 def get_fields(fieldfile):
-    """Get fields to extract from excel file"""
+    """Get fields to extract from CSV file"""
 
-    # Read excel file 
-    df = pd.read_excel(fieldfile)  
+    # Read CSV file 
+    df = pd.read_csv(fieldfile)  
 
     # Filter to only include fields set to True
     included_fields = df.loc[df['Include'] == True, 'Id'].tolist()
@@ -256,7 +256,7 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--start", required=False, default="today", help="Start date in YYYY-MM-DD format")
     parser.add_argument("-e", "--end", required=False, default="today", help="End date in YYYY-MM-DD format")
     parser.add_argument("-d", "--domain", required=False, default="https://aeadataeditors.atlassian.net", help="Jira domain")
-    parser.add_argument("-f", "--fieldfile", required=False, default="jira-fields.xlsx", help="Excel file with fields to extract")
+    parser.add_argument("-f", "--fieldfile", required=False, default="jira-fields.csv", help="CSV file with fields to extract")
     parser.add_argument("-o", "--outfile", required=False, default="issue_history.csv", help="Output file. Date will be appended to the filename.")
 
     args = parser.parse_args()
