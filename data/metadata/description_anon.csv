@@ -18,7 +18,7 @@ assignee_anon,"Anonymized assignee name (time-varying)"
 "External.party.name","Name of the external party. Usually only institutional names."
 "Non.compliant","An indicator for whether the issue is non-compliant for some reason."
 "DCAF_Access_Restrictions","Category of Access Restrictions (2 categories)"
-"DCAF_Access_Restrictions_V2",Category of Access Restrictions (4 categories)"\
+"DCAF_Access_Restrictions_V2",Category of Access Restrictions (4 categories)"
 "Update.type","Who initiated the need to update the replication package"
 "Software.used","Manually coded software used in the replication package"
 "Agreement.signed","Type of agreements signed by Data Editor to obtain private data"
