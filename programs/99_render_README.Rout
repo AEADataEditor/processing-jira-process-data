@@ -1,0 +1,176 @@
+
+R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Export README to Markdown and HTML
+> 
+> 
+> source(here::here("programs","config.R"),echo=TRUE)
+
+> process_raw <- TRUE
+
+> download_raw <- TRUE
+
+> extractday <- "2025-02-05"
+
+> firstday <- "2023-12-01"
+
+> lastday <- "2024-11-30"
+
+> basepath <- here::here()
+
+> setwd(basepath)
+
+> jiraconf <- file.path(basepath, "data", "confidential")
+
+> jiraanon <- file.path(basepath, "data", "anon")
+
+> jirameta <- file.path(basepath, "data", "metadata")
+
+> images <- file.path(basepath, "images")
+
+> tables <- file.path(basepath, "tables")
+
+> programs <- file.path(basepath, "programs")
+
+> temp <- file.path(basepath, "data", "temp")
+
+> for (dir in list(images, tables, programs, temp)) {
++     if (file.exists(dir)) {
++     }
++     else {
++         dir.create(file.path(dir))
++     }
+ .... [TRUNCATED] 
+
+> issue_history.prefix <- "issue_history_"
+
+> manuscript.lookup <- "mc-lookup"
+
+> manuscript.lookup.rds <- file.path(jiraconf, paste0(manuscript.lookup, 
++     ".RDS"))
+
+> assignee.lookup <- "assignee-lookup"
+
+> assignee.lookup.rds <- file.path(jiraconf, paste0(assignee.lookup, 
++     ".RDS"))
+
+> jira.conf.plus.base <- "jira.conf.plus"
+
+> jira.conf.plus.rds <- file.path(jiraconf, paste0(jira.conf.plus.base, 
++     ".RDS"))
+
+> jira.conf.names.csv <- "jira_conf_names.csv"
+
+> members.txt <- file.path(jiraanon, "replicationlab_members.txt")
+
+> jira.anon.base <- "jira.anon"
+
+> jira.anon.rds <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".RDS"))
+
+> jira.anon.csv <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".csv"))
+> source(here::here("global-libraries.R"),echo=TRUE)
+
+> ppm.date <- "2023-11-01"
+
+> options(repos = paste0("https://packagemanager.posit.co/cran/", 
++     ppm.date, "/"))
+
+> global.libraries <- c("dplyr", "stringr", "tidyr", 
++     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
++     "rmarkdown", "tidylog" .... [TRUNCATED] 
+
+> pkgTest <- function(x) {
++     if (!require(x, character.only = TRUE)) {
++         install.packages(x, dep = TRUE)
++         if (!require(x, charact .... [TRUNCATED] 
+
+> pkgTest.github <- function(x, source) {
++     if (!require(x, character.only = TRUE)) {
++         install_github(paste(source, x, sep = "/"))
++      .... [TRUNCATED] 
+
+> results <- sapply(as.list(global.libraries), pkgTest)
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: knitr
+Loading required package: readr
+Loading required package: here
+here() starts at /home/rstudio/processing-jira-process-data
+Loading required package: splitstackshape
+Loading required package: boxr
+boxr: see `vignette("boxr")` on how to authorize to your Box account.
+Loading required package: jose
+Loading required package: openssl
+Linking to: OpenSSL 3.0.2 15 Mar 2022
+Loading required package: rmarkdown
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+> rmarkdown::render(here::here("README.Rmd"))
+
+
+processing file: README.Rmd
+  |                                                            |                                                    |   0%  |                                                            |..                                                  |   3%                    |                                                            |....                                                |   7% (setup)            |                                                            |.....                                               |  10%                    |                                                            |.......                                             |  14% (unnamed-chunk-1)  |                                                            |.........                                           |  17%                    |                                                            |...........                                         |  21% (libs)             |                                                            |.............                                       |  24%                    |                                                            |..............                                      |  28% (pylibs)           |                                                            |................                                    |  31%                    |                                                            |..................                                  |  34% (listfiles)        |                                                            |....................                                |  38%                    |                                                            |......................                              |  41% (anonymize)        |                                                            |.......................                             |  45%                    |                                                            |.........................                           |  48% (publish)          |                                                            |...........................                         |  52%                    |                                                            |.............................                       |  55% (unnamed-chunk-2)  |                                                            |..............................                      |  59%                    |                                                            |................................                    |  62% (read)             |                                                            |..................................                  |  66%                    |                                                            |....................................                |  69% (describe)         |                                                            |......................................              |  72%                    |                                                            |.......................................             |  76% (lab)              |                                                            |.........................................           |  79%                    |                                                            |...........................................         |  83% (labmembers)       |                                                            |.............................................       |  86%                    |                                                            |...............................................     |  90% (sessionInfo)      |                                                            |................................................    |  93%                    |                                                            |..................................................  |  97% (getenvs)          |                                                            |....................................................| 100%                                                                                                                              
+output file: README.knit.md
+
+/usr/local/bin/pandoc +RTS -K512m -RTS README.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output README.html --lua-filter /usr/local/lib/R/site-library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /usr/local/lib/R/site-library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --template /usr/local/lib/R/site-library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpfW6F8Z/rmarkdown-str1b03a20dc81.html 
+
+Output created: README.html
+> 
+> proc.time()
+   user  system elapsed 
+  2.884   0.384   3.757 

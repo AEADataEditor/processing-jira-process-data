@@ -6,8 +6,6 @@ output:
   html_document:
     keep_md: yes
     toc: yes
-  pdf_document: 
-    toc: yes
 editor_options:
   chunk_output_type: console
 ---
@@ -29,7 +27,7 @@ ICPSR_DOI = paste0("https://doi.org/10.3886/E",ICPSR_PROJECT,VERSION)
 > Vilhuber, Lars. `r YEAR`. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], `r Sys.Date()`. [`r ICPSR_DOI`](`r ICPSR_DOI`)
 
 ```{r, results='asis', echo=FALSE}
-cat("```")
+cat("```\n")
 cat(paste0("@techreport{10.3886/e117876",VERSION,",\n"))
 cat(paste0("  doi = {10.3886/E117876",VERSION,"},\n"))
 cat(paste0("  url = {",ICPSR_DOI,"},\n"))
@@ -39,7 +37,7 @@ cat("  institution = {American Economic Association [publisher]},\n")
 cat("  series = {ICPSR - Interuniversity Consortium for Political and Social Research},\n")
 cat(paste0("  year = {",YEAR,"}"))
 cat("}\n")
-cat("```")
+cat("```\n")
 ```
 
 ## Requirements
@@ -167,7 +165,7 @@ source(file.path(programs,"03_lab_members.R"),echo=TRUE)
 ```
 
 ```{r labmembers,echo=FALSE,include=FALSE}
-lab.member <- readRDS(file=file.path(basepath,"data","replicationlab_members.Rds"))
+lab.member <- readRDS(file=file.path(jiraanon,"replicationlab_members.Rds"))
 
 ```
 
@@ -283,6 +281,12 @@ The upload is then handled by `99_push_box.R`.
 - Run `./start_rstudio.sh` it should pull the image from the docker and open a port for you to develop in a familiar RStudio environment.
   - On GitHub Codespaces you can access this port by clicking on ports and then the little globe icon to open it in a new tab.
   - On a local computer, you may need to open a browser at <http://localhost:8787>
+  - To obtain a console in the running Docker container, open a second terminal and connect: `
+  
+```bash
+container_id=$(docker container ls | head -2 | tail -1 | awk ' { print $1 } ')
+docker exec -it -u rstudio $container_id /bin/bash`
+```
   
 > The remainder of the instructions assume you are working within the Docker environment. Adjust as necessary if you are only using the code base in your own environment.
 
@@ -319,6 +323,10 @@ BOX_ENTERPRISE_ID=
 
 - **Run R programs in numerical order** to create the confidential and anonymized files used for the report.
   - Running with `R CMD BATCH name_of_file.R` will create the necessary log files.
-- Convenience:
+  - This is encapsulated in the `main.sh` file, for convenience:
 
-```{bash}
+```bash
+cd programs
+bash -x ./main.sh
+```
+

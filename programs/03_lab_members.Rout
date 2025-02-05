@@ -248,4 +248,4 @@ distinct: removed 317 rows (98%), 5 rows remaining
 > 
 > proc.time()
    user  system elapsed 
-  1.271   0.156   1.400 
+  1.114   0.184   1.250 

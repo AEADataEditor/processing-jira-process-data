@@ -190,7 +190,7 @@ select: dropped one variable (label)
 > 
 > # Read in data extracted from Jira
 > 
-> jira.anon.raw <- readRDS(file.path(jiraconf,"temp.jira.anon.RDS")) %>%
+> jira.anon <- readRDS(file.path(jiraconf,"temp.jira.anon.RDS")) %>%
 +   filter(ticket!="AEAREP-365") %>% # duplicate with aearep-364
 +   filter(ticket!="AEAREP-1589")  %>%  ## Decision notice of aearep-1523
 +   select(all_of(public_names))
@@ -200,5 +200,9 @@ select: no changes
 > 
 > ## export it as a csv file
 > saveRDS(jira.anon,jira.anon.rds)
-Error in saveRDS(jira.anon, jira.anon.rds) : object 'jira.anon' not found
-Execution halted
+> write.csv(jira.anon,jira.anon.csv)
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  1.555   0.285   1.752 

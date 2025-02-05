@@ -24,7 +24,7 @@ source(here::here("global-libraries.R"),echo=TRUE)
 
 # Read in data extracted from Jira
 
-jira.anon.raw <- readRDS(file.path(jiraconf,"temp.jira.anon.RDS")) %>%
+jira.anon <- readRDS(file.path(jiraconf,"temp.jira.anon.RDS")) %>%
   filter(ticket!="AEAREP-365") %>% # duplicate with aearep-364
   filter(ticket!="AEAREP-1589")  %>%  ## Decision notice of aearep-1523
   select(all_of(public_names))
