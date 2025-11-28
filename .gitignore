@@ -19,3 +19,4 @@ processing
 .vscode
 issues.json
 __pycache__
+venv*
