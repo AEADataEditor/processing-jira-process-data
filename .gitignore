@@ -18,3 +18,4 @@ processing
 .lesshst
 .vscode
 issues.json
+__pycache__

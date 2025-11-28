@@ -1,8 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# Updated for JIRA v3 API compatibility
+# Requires Python 3.6+ for f-string support
 import os
 import csv
 import json
 import argparse 
+import re
 from datetime import datetime
 from datetime import timedelta
 import pandas as pd
@@ -10,7 +13,7 @@ from dotenv import load_dotenv
 from jira import JIRA
 
 
-# find root directory based on either git or something elseroot_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# find root directory based on either git or something else
 def get_rootdir():
     """Get root directory of project"""
 
@@ -88,7 +91,24 @@ def get_issues(jira, start_date, end_date):
 
     while True:
         print(f"Fetching batch {start}/{batch_size}")
-        issues = jira.search_issues(jql, start, batch_size)
+        # For JIRA Cloud, enhanced_search_issues requires different parameters
+        # Let's try different parameter combinations
+        try:
+            # Try with snake_case parameters
+            issues = jira.enhanced_search_issues(jql, start_at=start, max_results=batch_size)
+        except Exception:
+            try:
+                # Try with positional parameters
+                issues = jira.enhanced_search_issues(jql, start, batch_size)
+            except Exception:
+                # Try with just the JQL and handle pagination differently
+                issues = jira.enhanced_search_issues(jql)
+                # If we get all results, slice them manually
+                if len(issues) > start:
+                    end_index = min(start + batch_size, len(issues))
+                    issues = issues[start:end_index]
+                else:
+                    issues = []
         # Store batch 
         all_issues.extend(issues)  
 
@@ -115,8 +135,22 @@ def get_issue_history(jira, issue_key, fields):
     issue = jira.issue(issue_key, expand='changelog')
 
     # Initialize state with most recent values
-        
-    state = {f: getattr(issue.fields, f) if hasattr(issue.fields, f) else None for f in fields}
+    state = {}
+    for f in fields:
+        if f in ['issue_key', 'As Of Date', 'Changed Fields']:
+            continue  # Skip system fields, handle separately
+        try:
+            field_value = getattr(issue.fields, f, None)
+            # Handle complex field types
+            if field_value is not None and hasattr(field_value, '__dict__') and hasattr(field_value, 'name'):
+                state[f] = field_value.name
+            elif isinstance(field_value, list) and field_value and hasattr(field_value[0], 'name'):
+                state[f] = ', '.join([item.name for item in field_value if item is not None])
+            else:
+                state[f] = field_value
+        except Exception as e:
+            print(f"Warning: Could not access field {f}: {e}")
+            state[f] = None
     
     state['Resolved'] = issue.fields.resolutiondate
     
@@ -132,21 +166,33 @@ def get_issue_history(jira, issue_key, fields):
     state['subtasks'] = subtask_keys
 
     # Change the formatting of the 'MCStatus' field (to more easily work with R code)
-    mcstatuses = getattr(issue.fields, 'customfield_10061')
-    # Check if mcstatuses is a list
-    if isinstance(mcstatuses, list):
-        # Check if the first element in mcstatuses is a string that contains "JIRA CustomFieldOption"
-        if mcstatuses and "JIRA CustomFieldOption" in str(mcstatuses[0]):
-            # Extract the value from each string in mcstatuses using a regular expression
-            mcstatuses = [re.search("value='(.*?)'", str(mcstatus)).group(1) for mcstatus in mcstatuses if mcstatus is not None]
+    mcstatuses = getattr(issue.fields, 'customfield_10061', None)
+    if mcstatuses is not None:
+        # Check if mcstatuses is a list
+        if isinstance(mcstatuses, list):
+            # Handle different object types in the list
+            formatted_statuses = []
+            for mcstatus in mcstatuses:
+                if mcstatus is None:
+                    continue
+                # Try to get the value attribute first, then fallback to string conversion
+                if hasattr(mcstatus, 'value'):
+                    formatted_statuses.append(mcstatus.value)
+                elif hasattr(mcstatus, 'name'):
+                    formatted_statuses.append(mcstatus.name)
+                else:
+                    formatted_statuses.append(str(mcstatus))
+            mcstatuses = ', '.join(formatted_statuses)
         else:
-            # If the first element in mcstatuses does not contain "JIRA CustomFieldOption", use the list as is
-            mcstatuses = [str(mcstatus) for mcstatus in mcstatuses if mcstatus is not None]
+            # If mcstatuses is not a list, handle single value
+            if hasattr(mcstatuses, 'value'):
+                mcstatuses = mcstatuses.value
+            elif hasattr(mcstatuses, 'name'):
+                mcstatuses = mcstatuses.name
+            else:
+                mcstatuses = str(mcstatuses)
     else:
-        # If mcstatuses is not a list, convert it to a list with a single element
-        mcstatuses = [str(mcstatuses)] if mcstatuses is not None else []
-    # Convert mcstatuses to a string, without brackets
-    mcstatuses = ', '.join(mcstatuses)
+        mcstatuses = ''
     # Initialize the 'MCStatus' field with the new string
     state['customfield_10061'] = mcstatuses
 
@@ -198,16 +244,24 @@ def get_issue_history(jira, issue_key, fields):
         changed_fields = []
 
         for item in history.items:  
-
-            if item.fromString != item.toString:
-
+            # Handle both old and new API response formats
+            from_value = getattr(item, 'fromString', getattr(item, 'from', None))
+            to_value = getattr(item, 'toString', getattr(item, 'to', None))
+            
+            # Handle callable toString vs string property
+            if callable(to_value):
+                to_value = to_value()
+            if callable(from_value):
+                from_value = from_value()
+                
+            if from_value != to_value:
                 changed_fields.append(item.field)
 
                 # If the field is not in new_state, add it
                 if item.field not in new_state:
                     new_state[item.field] = None
                 
-                new_state[item.field] = item.fromString
+                new_state[item.field] = from_value
                 
         # Store the 'Changed Fields' for this history
         changed_fields_list.append(changed_fields)
@@ -302,16 +356,11 @@ if __name__ == "__main__":
     if confirm.lower() != "y":
         exit()
 
-    options = {
-    "server": jiradomain
-     }
-    
     # we get the fields from the excel file
-
     fields, id_to_name, names = get_fields(fieldfile)
 
-
-    jira = JIRA(options, basic_auth=(jira_username(), get_api_key()))
+    # Initialize JIRA connection with v3 API
+    jira = JIRA(server=jiradomain, basic_auth=(jira_username(), get_api_key()))
 
     issue_keys = get_issues(jira, start_date, end_date)
 
