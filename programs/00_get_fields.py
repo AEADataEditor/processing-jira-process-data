@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# Updated for JIRA v3 API compatibility
+# Requires Python 3.6+ for f-string support
 import os
 import argparse
 from jira import JIRA
@@ -21,7 +23,7 @@ def jira_username():
         username = input("Enter Jira username: ")
     return username
 
-# find root directory based on either git or something elseroot_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# find root directory based on either git or something else
 def get_rootdir():
     """Get root directory of project"""
 
@@ -53,11 +55,8 @@ def get_api_key():
 
 def get_fields(username,api_token,jiradomain):
 
-    options = {
-    "server": jiradomain
-     }
-
-    jira = JIRA(options, basic_auth=(username, api_token))
+    # Initialize JIRA connection with v3 API
+    jira = JIRA(server=jiradomain, basic_auth=(username, api_token))
     fields = jira.fields()
 
     # Extract field names and ids

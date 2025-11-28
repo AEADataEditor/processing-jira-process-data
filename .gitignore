@@ -18,3 +18,5 @@ processing
 .lesshst
 .vscode
 issues.json
+__pycache__
+venv*
