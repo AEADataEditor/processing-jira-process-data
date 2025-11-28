@@ -1,9 +1,5 @@
 #!/bin/bash
 
-
-PWD=$(pwd)
-. ${PWD}/.myconfig.sh
-
 if [[ "$1" == "-h" ]]
 then
 cat << EOF
@@ -14,13 +10,9 @@ EOF
 exit 0
 fi
 
-if [[ ! -z "$1" ]]
-then
-  tag=${1}
-fi
-
-echo "Using tag = $tag"
-
+PWD=$(pwd)
+. ${PWD}/.myconfig.sh
+tag=${1:-$tag}
 case $USER in
   codespace)
   WORKSPACE=/workspaces
@@ -31,23 +23,23 @@ case $USER in
 esac
   
 # pull the docker if necessary
-# set -ev
 
-# tag_present=$(docker images | grep $space/$repo | awk ' { print $2 } ' | grep $tag)
+docker pull $dockerrepo:$tag
 
-# if [[ -z "$tag_present" ]]
-# then
-#   echo "Pulling $space/$repo:$tag"
-#   docker pull $space/$repo:$tag
-# else  
-#   echo "Found $space/$repo:$tag"
-# fi
+# map the cache
+if [[ -d .cache ]] ; then
+  export DOCKEREXTRA="-v $PWD/.cache:/home/rstudio/.cache"
+fi
+# Dropbox stuff
+if [[ ! -z $DROPBOX_SECRET_BASE ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e DROPBOX_SECRET_BASE=$DROPBOX_SECRET_BASE" ; fi
+if [[ ! -z $DROPBOX_SECRET_RLKEY ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e DROPBOX_SECRET_RLKEY=$DROPBOX_SECRET_RLKEY" ; fi
+# JIRA stuff
 if [[ ! -z $JIRA_USERNAME ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e JIRA_USERNAME=$JIRA_USERNAME" ; fi
 if [[ ! -z $JIRA_API_KEY ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e JIRA_API_KEY=$JIRA_API_KEY" ; fi
-# do the same for BOX_ENTERPRISE_ID, BOX_FOLDER_ID, BOX_PRIVATE_KEY_ID 
-if [[ ! -z $BOX_ENTERPRISE_ID ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e BOX_ENTERPRISE_ID=$BOX_ENTERPRISE_ID" ; fi
-if [[ ! -z $BOX_FOLDER_ID ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e BOX_FOLDER_ID=$BOX_FOLDER_ID" ; fi
-if [[ ! -z $BOX_PRIVATE_KEY_ID ]]; then export DOCKEREXTRA="$DOCKEREXTRA -e BOX_PRIVATE_KEY_ID=$BOX_PRIVATE_KEY_ID" ; fi
 
+[[ -z $(which xdg-open 2>/dev/null) ]] || xdg-open http://localhost:8787
+# for OSX
+[[ -z $(which open 2>/dev/null) ]] ||   open http://localhost:8787
 
-docker run $DOCKEREXTRA -e DISABLE_AUTH=true -v "$WORKSPACE":/home/rstudio --rm -p 8787:8787 $space/$repo:$tag
+DOCKEREXTRA="$DOCKEREXTRA -e DISABLE_AUTH=true -p 8787:8787"
+docker run $DOCKEREXTRA -v "$WORKSPACE":/home/rstudio/${PWD##*/} --rm  $dockerrepo:$tag
