@@ -33,11 +33,11 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-02-05"
+> extractday <- "2025-12-02"
 
-> firstday <- "2023-12-01"
+> firstday <- "2024-12-01"
 
-> lastday <- "2024-11-30"
+> lastday <- "2025-11-30"
 
 > basepath <- here::here()
 
@@ -315,37 +315,37 @@ The following object is masked from ‘package:stats’:
 +   print("Not processing anonymization due to global parameter.")
 + }
 rename: renamed one variable (ticket)
-mutate: new variable 'mc_number' (character) with 518 unique values and 0% NA
-mutate: changed 345 values (1%) of 'mc_number' (0 new NA)
-filter: removed 7,140 rows (19%), 30,151 rows remaining
+mutate: new variable 'mc_number' (character) with 552 unique values and 0% NA
+mutate: changed 87 values (<1%) of 'mc_number' (0 new NA)
+filter: no rows removed
 filter: no rows removed
 select: dropped one variable (Key.1)
 filter: no rows removed
 filter: removed all rows (100%)
-select: dropped 24 variables (Agreement.signed, Resolution, Update.type, MCStatus, MCRecommendationV2, …)
+select: dropped 43 variables (DataAccessReplicationTeam, Resolution, Agreement.signed, JournalIssueMonth, JournalIssueYear, …)
 mutate: no changes
 select: dropped one variable (Sub.tasks)
 distinct: no rows removed
 Joining with `by = join_by(ticket)`
 anti_join: added no columns
-           > rows only in x   30,151
+           > rows only in x   26,940
            > rows only in y  (     0)
            > matched rows    (     0)
            >                 ========
-           > rows total       30,151
-select: dropped 26 variables (Agreement.signed, Resolution, Update.type, MCStatus, MCRecommendationV2, …)
-filter: removed 2,704 rows (9%), 27,447 rows remaining
-distinct: removed 26,917 rows (98%), 530 rows remaining
+           > rows total       26,940
+select: dropped 45 variables (DataAccessReplicationTeam, Resolution, Agreement.signed, JournalIssueMonth, JournalIssueYear, …)
+filter: removed 1,565 rows (6%), 25,375 rows remaining
+distinct: removed 24,822 rows (98%), 553 rows remaining
 mutate: new variable 'rand' (double) with one unique value and 0% NA
-mutate: new variable 'mc_number_anon' (integer) with 530 unique values and 0% NA
+mutate: new variable 'mc_number_anon' (integer) with 553 unique values and 0% NA
 select: dropped one variable (rand)
-select: dropped 26 variables (Agreement.signed, Resolution, Update.type, MCStatus, MCRecommendationV2, …)
-filter: removed 11,190 rows (37%), 18,961 rows remaining
+select: dropped 45 variables (DataAccessReplicationTeam, Resolution, Agreement.signed, JournalIssueMonth, JournalIssueYear, …)
+filter: removed 10,160 rows (38%), 16,780 rows remaining
 filter: no rows removed
-filter: removed 1,017 rows (5%), 17,944 rows remaining
-distinct: removed 17,884 rows (>99%), 60 rows remaining
+filter: removed 1,181 rows (7%), 15,599 rows remaining
+distinct: removed 15,540 rows (>99%), 59 rows remaining
 mutate: new variable 'rand' (double) with 2 unique values and 0% NA
-mutate: new variable 'assignee_anon' (integer) with 60 unique values and 0% NA
+mutate: new variable 'assignee_anon' (integer) with 59 unique values and 0% NA
 select: dropped one variable (rand)
 Rows: 23 Columns: 2
 ── Column specification ────────────────────────────────────────────────────────
@@ -357,40 +357,40 @@ chr (2): name, label
 filter: no rows removed
 select: dropped one variable (label)
 left_join: added one column (mc_number_anon)
-           > rows only in x    2,704
+           > rows only in x    1,565
            > rows only in y  (     0)
-           > matched rows     27,447
+           > matched rows     25,375
            >                 ========
-           > rows total       30,151
+           > rows total       26,940
 left_join: added one column (assignee_anon)
-           > rows only in x   12,207
+           > rows only in x   11,341
            > rows only in y  (     0)
-           > matched rows     17,944
+           > matched rows     15,599
            >                 ========
-           > rows total       30,151
-mutate: new variable 'date_created' (Date) with 236 unique values and 0% NA
-        new variable 'date_asof' (Date) with 415 unique values and 0% NA
+           > rows total       26,940
+mutate: new variable 'date_created' (Date) with 220 unique values and 0% NA
+        new variable 'date_asof' (Date) with 349 unique values and 0% NA
 rename: renamed one variable (reason.failure)
 rename: renamed one variable (external)
 rename: renamed one variable (subtask)
-mutate: new variable 'date_resolved' (Date) with 287 unique values and 4% NA
+mutate: new variable 'date_resolved' (Date) with 249 unique values and 6% NA
 mutate: new variable 'received' (character) with 2 unique values and 0% NA
 mutate: new variable 'has_subtask' (character) with 2 unique values and 0% NA
 rename: renamed one variable (External.party.name.conf)
-filter: removed 10,590 rows (35%), 19,561 rows remaining
-select: dropped 32 variables (Agreement.signed, Resolution, Update.type, MCStatus, MCRecommendationV2, …)
-mutate: changed 26,742 values (58%) of 'subtask' (0 new NA)
+filter: removed 7,814 rows (29%), 19,126 rows remaining
+select: dropped 51 variables (DataAccessReplicationTeam, Resolution, Agreement.signed, JournalIssueMonth, JournalIssueYear, …)
+mutate: changed 26,338 values (58%) of 'subtask' (0 new NA)
 select: dropped one variable (subtask)
-distinct: removed 45,426 rows (98%), 877 rows remaining
-filter: removed 2,704 rows (9%), 27,447 rows remaining
+distinct: removed 44,483 rows (98%), 981 rows remaining
+filter: removed 1,565 rows (6%), 25,375 rows remaining
 Joining with `by = join_by(ticket)`
 anti_join: added no columns
-           > rows only in x   27,255
-           > rows only in y  (   842)
-           > matched rows    (   192)
+           > rows only in x   25,375
+           > rows only in y  (   981)
+           > matched rows    (     0)
            >                 ========
-           > rows total       27,255
-select: dropped 7 variables (External.party.name.conf, subtask, Issue.Type, Resolved, Created, …)
+           > rows total       25,375
+select: dropped 26 variables (DataAccessReplicationTeam, JournalIssueMonth, JournalIssueYear, Original.OS, External.party.name.conf, …)
 select: dropped 4 variables (Manuscript.Central.identifier, mc_number, Assignee, openICPSR.Project.Number)
 Warning message:
 If you need to edit the names to be included,
@@ -399,4 +399,4 @@ save it in /home/rstudio/processing-jira-process-data/data/metadatawith the same
 > 
 > proc.time()
    user  system elapsed 
-  2.154   0.209   2.752 
+  2.051   1.504   1.981 

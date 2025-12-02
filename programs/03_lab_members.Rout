@@ -30,11 +30,11 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-02-05"
+> extractday <- "2025-12-02"
 
-> firstday <- "2023-12-01"
+> firstday <- "2024-12-01"
 
-> lastday <- "2024-11-30"
+> lastday <- "2025-11-30"
 
 > basepath <- here::here()
 
@@ -203,24 +203,24 @@ chr (1): Assignee
 +   mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
 +   distinct(Assignee) 
 filter: no rows removed
-filter: removed 8,661 rows (32%), 18,594 rows remaining
-filter: removed 5,856 rows (31%), 12,738 rows remaining
+filter: removed 8,806 rows (35%), 16,569 rows remaining
+filter: removed 3,581 rows (22%), 12,988 rows remaining
 Joining with `by = join_by(Assignee)`
 left_join: added one column (Name)
-           > rows only in x   12,106
-           > rows only in y  (     6)
-           > matched rows        632
+           > rows only in x   12,988
+           > rows only in y  (     9)
+           > matched rows          0
            >                 ========
-           > rows total       12,738
+           > rows total       12,988
 Joining with `by = join_by(Assignee)`
 anti_join: added no columns
-           > rows only in x   12,738
+           > rows only in x   12,988
            > rows only in y  (     2)
            > matched rows    (     0)
            >                 ========
-           > rows total       12,738
-mutate: changed 632 values (5%) of 'Assignee' (0 new NA)
-distinct: removed 12,689 rows (>99%), 49 rows remaining
+           > rows total       12,988
+mutate: no changes
+distinct: removed 12,932 rows (>99%), 56 rows remaining
 > 
 > saveRDS(lab.member,file=file.path(jiraanon,"replicationlab_members.Rds"))
 > write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
@@ -238,14 +238,14 @@ distinct: removed 12,689 rows (>99%), 49 rows remaining
 +   filter(date_created >= firstday, date_created < lastday) %>%
 +   mutate(name_external=str_replace(External.party.name,"-"," ")) %>%
 +   distinct(name_external) 
-filter: removed 26,933 rows (99%), 322 rows remaining
+filter: removed 24,865 rows (98%), 510 rows remaining
 filter: no rows removed
-mutate: new variable 'name_external' (character) with 5 unique values and 0% NA
-distinct: removed 317 rows (98%), 5 rows remaining
+mutate: new variable 'name_external' (character) with 18 unique values and 0% NA
+distinct: removed 492 rows (96%), 18 rows remaining
 > 
 > write.table(external.member, file = file.path(basepath,"data","external_replicators.txt"), sep = "\t",
 +             row.names = FALSE)
 > 
 > proc.time()
    user  system elapsed 
-  1.114   0.184   1.250 
+  1.316   1.427   1.135 

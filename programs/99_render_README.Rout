@@ -26,11 +26,11 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-02-05"
+> extractday <- "2025-12-02"
 
-> firstday <- "2023-12-01"
+> firstday <- "2024-12-01"
 
-> lastday <- "2024-11-30"
+> lastday <- "2025-11-30"
 
 > basepath <- here::here()
 
@@ -128,267 +128,11 @@ Loading required package: here
 here() starts at /home/rstudio/processing-jira-process-data
 Loading required package: splitstackshape
 Loading required package: boxr
-Installing package into ‘/usr/local/lib/R/site-library’
-(as ‘lib’ is unspecified)
-also installing the dependencies ‘R.oo’, ‘R.methodsS3’, ‘R.utils’, ‘rio’, ‘jose’, ‘sodium’
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/R.oo_1.25.0.tar.gz'
-Content type 'application/x-tar' length 383263 bytes (374 KB)
-==================================================
-downloaded 374 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/R.methodsS3_1.8.2.tar.gz'
-Content type 'application/x-tar' length 24315 bytes (23 KB)
-==================================================
-downloaded 23 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/R.utils_2.12.2.tar.gz'
-Content type 'application/x-tar' length 365152 bytes (356 KB)
-==================================================
-downloaded 356 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/rio_1.0.1.tar.gz'
-Content type 'binary/octet-stream' length 511843 bytes (499 KB)
-==================================================
-downloaded 499 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/jose_1.2.0.tar.gz'
-Content type 'binary/octet-stream' length 506189 bytes (494 KB)
-==================================================
-downloaded 494 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/sodium_1.3.0.tar.gz'
-Content type 'application/x-tar' length 465769 bytes (454 KB)
-==================================================
-downloaded 454 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/boxr_0.3.6.tar.gz'
-Content type 'application/x-tar' length 2227890 bytes (2.1 MB)
-==================================================
-downloaded 2.1 MB
-
-* installing *source* package ‘R.methodsS3’ ...
-** package ‘R.methodsS3’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (R.methodsS3)
-* installing *source* package ‘jose’ ...
-** package ‘jose’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (jose)
-* installing *source* package ‘sodium’ ...
-** package ‘sodium’ successfully unpacked and MD5 sums checked
-** using staged installation
-Found pkg-config cflags and libs!
-Using PKG_CFLAGS=
-Using PKG_LIBS=-lsodium
-** libs
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c diffie.c -o diffie.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c hashing.c -o hashing.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c helpers.c -o helpers.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c init.c -o init.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c keygen.c -o keygen.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c messaging.c -o messaging.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c password.c -o password.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c seal.c -o seal.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c secret.c -o secret.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c signing.c -o signing.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c stream.c -o stream.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c xor.c -o xor.o
-gcc -shared -L/usr/local/lib/R/lib -L/usr/local/lib -o sodium.so diffie.o hashing.o helpers.o init.o keygen.o messaging.o password.o seal.o secret.o signing.o stream.o xor.o -lsodium -L/usr/local/lib/R/lib -lR
-installing to /usr/local/lib/R/site-library/00LOCK-sodium/00new/sodium/libs
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** checking absolute paths in shared objects and dynamic libraries
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (sodium)
-* installing *source* package ‘R.oo’ ...
-** package ‘R.oo’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Warning in setGenericS3.default(name, export = exportGeneric, envir = envir,  :
-  Renamed the preexisting function getMethods to getMethods.default, which was defined in environment R.oo.
-Warning in setGenericS3.default(name, export = exportGeneric, envir = envir,  :
-  Renamed the preexisting function getClasses to getClasses.default, which was defined in environment R.oo.
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (R.oo)
-* installing *source* package ‘R.utils’ ...
-** package ‘R.utils’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-Warning in setGenericS3.default(name, export = exportGeneric, envir = envir,  :
-  Renamed the preexisting function warnings to warnings.default, which was defined in environment R.utils.
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (R.utils)
-* installing *source* package ‘rio’ ...
-** package ‘rio’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-*** copying figures
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (rio)
-* installing *source* package ‘boxr’ ...
-** package ‘boxr’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-*** copying figures
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (boxr)
-
-The downloaded source packages are in
-	‘/tmp/RtmpJXrHPy/downloaded_packages’
-Loading required package: boxr
 boxr: see `vignette("boxr")` on how to authorize to your Box account.
 Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
 Loading required package: rmarkdown
-Loading required package: tidylog
-Installing package into ‘/usr/local/lib/R/site-library’
-(as ‘lib’ is unspecified)
-also installing the dependencies ‘profmem’, ‘clisymbols’, ‘bench’
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/profmem_0.6.0.tar.gz'
-Content type 'application/x-tar' length 25814 bytes (25 KB)
-==================================================
-downloaded 25 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/clisymbols_1.2.0.tar.gz'
-Content type 'application/x-tar' length 9736 bytes
-==================================================
-downloaded 9736 bytes
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/bench_1.1.3.tar.gz'
-Content type 'binary/octet-stream' length 318502 bytes (311 KB)
-==================================================
-downloaded 311 KB
-
-trying URL 'https://packagemanager.posit.co/cran/2023-11-01/src/contrib/tidylog_1.0.2.tar.gz'
-Content type 'binary/octet-stream' length 62336 bytes (60 KB)
-==================================================
-downloaded 60 KB
-
-* installing *source* package ‘profmem’ ...
-** package ‘profmem’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (profmem)
-* installing *source* package ‘clisymbols’ ...
-** package ‘clisymbols’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (clisymbols)
-* installing *source* package ‘bench’ ...
-** package ‘bench’ successfully unpacked and MD5 sums checked
-** using staged installation
-** libs
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c load.c -o load.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c mark.c -o mark.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c nanotime.c -o nanotime.o
-gcc -I"/usr/local/lib/R/include" -DNDEBUG   -I/usr/local/include   -fpic  -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -g  -c process_memory.c -o process_memory.o
-gcc -shared -L/usr/local/lib/R/lib -L/usr/local/lib -o bench.so load.o mark.o nanotime.o process_memory.o -L/usr/local/lib/R/lib -lR
-installing to /usr/local/lib/R/site-library/00LOCK-bench/00new/bench/libs
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-*** copying figures
-** building package indices
-** testing if installed package can be loaded from temporary location
-** checking absolute paths in shared objects and dynamic libraries
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (bench)
-* installing *source* package ‘tidylog’ ...
-** package ‘tidylog’ successfully unpacked and MD5 sums checked
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** installing vignettes
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (tidylog)
-
-The downloaded source packages are in
-	‘/tmp/RtmpJXrHPy/downloaded_packages’
 Loading required package: tidylog
 
 Attaching package: ‘tidylog’
@@ -416,11 +160,6 @@ The following object is masked from ‘package:stats’:
 
     filter
 
-Warning messages:
-1: In library(package, lib.loc = lib.loc, character.only = TRUE, logical.return = TRUE,  :
-  there is no package called ‘boxr’
-2: In library(package, lib.loc = lib.loc, character.only = TRUE, logical.return = TRUE,  :
-  there is no package called ‘tidylog’
 > rmarkdown::render(here::here("README.Rmd"))
 
 
@@ -428,11 +167,11 @@ processing file: README.Rmd
   |                                                            |                                                    |   0%  |                                                            |..                                                  |   3%                    |                                                            |...                                                 |   6% (setup)            |                                                            |.....                                               |  10%                    |                                                            |.......                                             |  13% (listfiles)        |                                                            |........                                            |  16%                    |                                                            |..........                                          |  19% (anonymize)        |                                                            |............                                        |  23%                    |                                                            |.............                                       |  26% (publish)          |                                                            |...............                                     |  29%                    |                                                            |.................                                   |  32% (unnamed-chunk-1)  |                                                            |..................                                  |  35%                    |                                                            |....................                                |  39% (read)             |                                                            |......................                              |  42%                    |                                                            |.......................                             |  45% (describe)         |                                                            |.........................                           |  48%                    |                                                            |...........................                         |  52% (lab)              |                                                            |.............................                       |  55%                    |                                                            |..............................                      |  58% (labmembers)       |                                                            |................................                    |  61%                    |                                                            |..................................                  |  65% (sessionInfo)      |                                                            |...................................                 |  68%                    |                                                            |.....................................               |  71% (libs)             |                                                            |.......................................             |  74%                    |                                                            |........................................            |  77% (pylibs)           |                                                            |..........................................          |  81%                    |                                                            |............................................        |  84% (getenvs)          |                                                            |.............................................       |  87%                    |                                                            |...............................................     |  90% (unnamed-chunk-2)  |                                                            |.................................................   |  94%                    |                                                            |..................................................  |  97% (unnamed-chunk-3)  |                                                            |....................................................| 100%                                                                                                                              
 output file: README.knit.md
 
-/usr/lib/rstudio-server/bin/quarto/bin/tools/pandoc +RTS -K512m -RTS README.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output README.html --lua-filter /usr/local/lib/R/site-library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /usr/local/lib/R/site-library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /usr/local/lib/R/site-library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpJXrHPy/rmarkdown-str1985a7da4b.html 
+/usr/local/bin/pandoc +RTS -K512m -RTS README.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output README.html --lua-filter /usr/local/lib/R/site-library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /usr/local/lib/R/site-library/rmarkdown/rmarkdown/lua/latex-div.lua --embed-resources --standalone --variable bs3=TRUE --section-divs --table-of-contents --toc-depth 3 --variable toc_float=1 --variable toc_selectors=h1,h2,h3 --variable toc_collapsed=1 --variable toc_smooth_scroll=1 --variable toc_print=1 --template /usr/local/lib/R/site-library/rmarkdown/rmd/h/default.html --no-highlight --variable highlightjs=1 --variable theme=bootstrap --mathjax --variable 'mathjax-url=https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML' --include-in-header /tmp/RtmpwzFqAq/rmarkdown-str1013c20d2d6.html 
 [WARNING] Duplicate link reference '[NOTE]' at README.knit.md_chunk line 1 column 1
 
 Output created: README.html
 > 
 > proc.time()
    user  system elapsed 
- 34.804   9.754  53.842 
+  2.714   1.561   2.872 

@@ -11,6 +11,7 @@ from datetime import timedelta
 import pandas as pd
 from dotenv import load_dotenv
 from jira import JIRA
+import logging
 
 
 # find root directory based on either git or something else
@@ -27,6 +28,13 @@ def get_rootdir():
 
 
 # define the fields we are interested in
+def log_and_print(message, verbose=False, logger=None, force_print=False):
+    """Log message and optionally print to terminal"""
+    if logger:
+        logger.info(message)
+    if verbose or force_print:
+        print(message)
+
 def get_fields(fieldfile):
     """Get fields to extract from CSV file"""
 
@@ -80,52 +88,374 @@ def get_api_key():
         key = input("Enter Jira API key: ")
     return key
 
-def get_issues(jira, start_date, end_date):
-    """Get issues between two dates"""
-
-    start = 0
-    batch_size = 100
-    jql = f"createdDate>='{start_date}' AND createdDate<='{end_date}' ORDER BY createdDate DESC"
-
-    all_issues = []
-
-    while True:
-        print(f"Fetching batch {start}/{batch_size}")
-        # For JIRA Cloud, enhanced_search_issues requires different parameters
-        # Let's try different parameter combinations
+def get_issues(jira, start_date, end_date, verbose=False, logger=None):
+    """Get issues between two dates using simple count query approach"""
+    
+    # Convert date strings to datetime objects for CSV filename
+    start_dt = datetime.strptime(start_date, '%Y-%m-%d')
+    end_dt = datetime.strptime(end_date, '%Y-%m-%d')
+    
+    # Build the JQL query
+    base_jql = f"project = AEAREP AND createdDate>='{start_date}' AND createdDate<='{end_date}' AND issuetype = Task ORDER BY createdDate DESC"
+    
+    print(f"Query: {base_jql}")
+    
+    try:
+        # First, get the expected total count for comparison
+        print("Getting expected total count for comparison...")
         try:
-            # Try with snake_case parameters
-            issues = jira.enhanced_search_issues(jql, start_at=start, max_results=batch_size)
-        except Exception:
+            # Try to get count using enhanced_search_issues 
+            temp_issues = jira.enhanced_search_issues(base_jql.replace('ORDER BY createdDate DESC', ''))
+            expected_count = len(temp_issues)
+            print(f"Expected total issues (from enhanced_search_issues): {expected_count}")
+        except Exception as e:
+            print(f"Could not get expected count: {e}")
+            expected_count = "Unknown"
+        
+        # Also try using search_issues for count comparison
+        try:
+            import warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                count_result = jira.search_issues(base_jql.replace('ORDER BY createdDate DESC', ''), startAt=0, maxResults=0)
+                api_total_count = count_result.total
+                print(f"Expected total issues (from search_issues API): {api_total_count}")
+        except Exception as e:
+            print(f"Could not get API count: {e}")
+            api_total_count = "Unknown"
+        
+        print("=" * 60)
+        print("Now using daily chunked retrieval to get EXACT count...")
+        print("=" * 60)
+        
+        # Process day by day to ensure we get every single issue
+        all_issues = []
+        current_date = datetime.fromisoformat(start_date).date()
+        final_date = datetime.fromisoformat(end_date).date()
+        
+        total_days = (final_date - current_date).days + 1
+        day_count = 0
+        
+        while current_date <= final_date:
+            day_count += 1
+            day_str = current_date.isoformat()
+            
+            progress_msg = f"Processing day {day_count}/{total_days}: {day_str}"
+            if not verbose:
+                print(f"\r{progress_msg}", end="", flush=True)
+            log_and_print(progress_msg, verbose, logger)
+            
+            # Build JQL for this single day using range (>= and <)
+            next_day_str = (current_date + timedelta(days=1)).isoformat()
+            day_jql = f"project = AEAREP AND createdDate>='{day_str}' AND createdDate<'{next_day_str}' AND issuetype = Task ORDER BY createdDate DESC"
+            
             try:
-                # Try with positional parameters
-                issues = jira.enhanced_search_issues(jql, start, batch_size)
-            except Exception:
-                # Try with just the JQL and handle pagination differently
-                issues = jira.enhanced_search_issues(jql)
-                # If we get all results, slice them manually
-                if len(issues) > start:
-                    end_index = min(start + batch_size, len(issues))
-                    issues = issues[start:end_index]
+                # Use enhanced_search_issues for this day
+                day_issues = jira.enhanced_search_issues(day_jql)
+                if len(day_issues) > 0:
+                    detail_msg = f"  Retrieved {len(day_issues)} issues on {day_str}"
+                    log_and_print(detail_msg, verbose, logger)
+                    all_issues.extend(day_issues)
+                
+                # If we still hit limits on a single day, fall back to smaller batches
+                if len(day_issues) >= 100:
+                    warn_msg = f"  Warning: Single day {day_str} has {len(day_issues)} issues - may have hit limit"
+                    fallback_msg = "  Trying fallback pagination for this day..."
+                    log_and_print(warn_msg, verbose, logger)
+                    log_and_print(fallback_msg, verbose, logger)
+                    
+                    # Clear the day's issues and re-fetch with pagination
+                    # Remove the issues we just added
+                    all_issues = all_issues[:-len(day_issues)]
+                    
+                    # Use deprecated API with small batches for this problematic day
+                    import warnings
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        batch_size = 25  # Very small batch size
+                        start_at = 0
+                        day_issues_paginated = []
+                        
+                        while True:
+                            try:
+                                batch = jira.search_issues(day_jql, startAt=start_at, maxResults=batch_size)
+                                if len(batch) == 0:
+                                    break
+                                day_issues_paginated.extend(batch)
+                                start_at += len(batch)
+                                batch_msg = f"    Batch: retrieved {len(batch)} more issues (total for day: {len(day_issues_paginated)})"
+                                log_and_print(batch_msg, verbose, logger)
+                                
+                                if len(batch) < batch_size:
+                                    break
+                            except Exception as batch_error:
+                                print(f"    Batch failed: {batch_error}")
+                                break
+                        
+                        fallback_result_msg = f"  Fallback pagination retrieved {len(day_issues_paginated)} issues for {day_str}"
+                        log_and_print(fallback_result_msg, verbose, logger)
+                        all_issues.extend(day_issues_paginated)
+                
+            except Exception as e:
+                error_msg = f"  Day {day_str} failed: {e}"
+                fallback_try_msg = f"  Trying fallback for {day_str}..."
+                log_and_print(error_msg, verbose, logger)
+                log_and_print(fallback_try_msg, verbose, logger)
+                try:
+                    import warnings
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        fallback_issues = jira.search_issues(day_jql, startAt=0, maxResults=100)
+                        if len(fallback_issues) > 0:
+                            print(f"    Fallback retrieved {len(fallback_issues)} issues for {day_str}")
+                            all_issues.extend(fallback_issues)
+                except Exception as fallback_error:
+                    print(f"    Fallback also failed for {day_str}: {fallback_error}")
+            
+            # Move to next day
+            current_date += timedelta(days=1)
+            
+            # Add a tiny delay to be respectful to the API
+            import time
+            time.sleep(0.1)
+        
+        if not verbose:
+            print()  # New line after progress counter
+        
+        total_msg = f"Total issues retrieved across all days: {len(all_issues)}"
+        log_and_print(total_msg, verbose, logger, force_print=True)
+        
+        # Remove any duplicates (shouldn't be any with daily chunks, but safety check)
+        seen_keys = set()
+        unique_issues = []
+        for issue in all_issues:
+            if issue.key not in seen_keys:
+                seen_keys.add(issue.key)
+                unique_issues.append(issue)
+            else:
+                dup_msg = f"  Removed duplicate: {issue.key}"
+                log_and_print(dup_msg, verbose, logger)
+        
+        all_issues = unique_issues
+        actual_count = len(all_issues)
+        print(f"Final count after duplicate removal: {actual_count} unique issues")
+        
+        print("=" * 60)
+        print("COMPARISON SUMMARY:")
+        print("=" * 60)
+        if 'expected_count' in locals():
+            print(f"Expected count (enhanced_search_issues): {expected_count}")
+        if 'api_total_count' in locals():
+            print(f"Expected count (search_issues API):      {api_total_count}")
+        print(f"Actual count (daily chunking):           {actual_count}")
+        
+        # Calculate differences
+        if 'expected_count' in locals() and isinstance(expected_count, int):
+            diff1 = actual_count - expected_count
+            print(f"Difference from enhanced_search_issues:  {diff1:+d}")
+        if 'api_total_count' in locals() and isinstance(api_total_count, int):
+            diff2 = actual_count - api_total_count
+            print(f"Difference from search_issues API:      {diff2:+d}")
+        print("=" * 60)
+        
+        # NOW write the complete authoritative CSV with ALL issues
+        print("Writing COMPLETE authoritative query results to CSV...")
+        complete_issues_data = []
+        for issue in all_issues:
+            complete_issues_data.append({
+                'key': issue.key,
+                'created': getattr(issue.fields, 'created', ''),
+                'updated': getattr(issue.fields, 'updated', ''),
+                'status': getattr(issue.fields.status, 'name', '') if hasattr(issue.fields, 'status') else '',
+                'issuetype': getattr(issue.fields.issuetype, 'name', '') if hasattr(issue.fields, 'issuetype') else ''
+            })
+        
+        complete_df = pd.DataFrame(complete_issues_data)
+        complete_csv_path = f"complete_count_query_results_{start_dt.strftime('%Y%m%d')}_{end_dt.strftime('%Y%m%d')}.csv"
+        complete_df.to_csv(complete_csv_path, index=False)
+        print(f"✅ COMPLETE Authoritative results written to: {complete_csv_path} ({len(all_issues)} issues)")
+        print(f"Now proceeding to fetch individual issue histories...")
+        
+        # Write out debug file
+        with open("issues.json", "w", encoding="utf-8") as f:
+            issues_as_dicts = [issue.raw for issue in all_issues]
+            json.dump(issues_as_dicts, f)
+
+        # Return list of issue keys
+        issue_keys = [issue.key for issue in all_issues]
+        return issue_keys
+        
+    except Exception as e:
+        print(f"Query failed: {e}")
+        return []
+
+# Chunking functions no longer needed - keeping for reference
+def get_issues_by_chunks_OLD(jira, start_dt, end_dt, expected_total=None):
+    """Get issues by breaking date range into smaller chunks with validation"""
+    
+    all_issues = []
+    issue_keys_seen = set()  # Track unique issue keys to avoid duplicates
+    current_start = start_dt
+    chunk_days = 7  # Start with weekly chunks
+    
+    while current_start <= end_dt:
+        current_end = min(current_start + timedelta(days=chunk_days), end_dt)
+        
+        chunk_start_str = current_start.strftime('%Y-%m-%d')
+        chunk_end_str = current_end.strftime('%Y-%m-%d')
+        
+        jql = f"project = AEAREP AND createdDate>='{chunk_start_str}' AND createdDate<='{chunk_end_str}' AND issuetype = Task ORDER BY createdDate DESC"
+        
+        print(f"Fetching issues from {chunk_start_str} to {chunk_end_str}")
+        
+        try:
+            chunk_issues = jira.enhanced_search_issues(jql)
+            print(f"  Got {len(chunk_issues)} issues in this chunk")
+            
+            # Check for duplicates and add unique issues
+            new_issues = []
+            for issue in chunk_issues:
+                if issue.key not in issue_keys_seen:
+                    issue_keys_seen.add(issue.key)
+                    new_issues.append(issue)
+            
+            if len(new_issues) != len(chunk_issues):
+                print(f"  Filtered out {len(chunk_issues) - len(new_issues)} duplicate issues")
+            
+            all_issues.extend(new_issues)
+            
+            # If we get the maximum (50), the chunk might be too large
+            if len(chunk_issues) >= 50:
+                print(f"  Chunk may be truncated (got {len(chunk_issues)}), reducing chunk size")
+                # Reduce chunk size and retry this period
+                if chunk_days > 1:
+                    chunk_days = max(1, chunk_days // 2)
+                    continue
                 else:
-                    issues = []
-        # Store batch 
-        all_issues.extend(issues)  
+                    print(f"  Warning: Even daily chunks are hitting the 50-result limit")
+            
+            # If chunk was small, we can increase chunk size for efficiency
+            if len(chunk_issues) < 10 and chunk_days < 30:
+                chunk_days = min(30, chunk_days * 2)
+                
+        except Exception as e:
+            print(f"  Failed to fetch chunk {chunk_start_str} to {chunk_end_str}: {e}")
+            
+        current_start = current_end + timedelta(days=1)
+    
+    # Validate against expected total if provided
+    if expected_total is not None:
+        actual_count = len(all_issues)
+        if actual_count != expected_total:
+            print(f"WARNING: Expected {expected_total} issues but got {actual_count}")
+            print(f"This may indicate issues are being missed due to API limitations")
+            
+            # Save initial results to CSV for analysis
+            initial_issues_data = []
+            for issue in all_issues:
+                initial_issues_data.append({
+                    'key': issue.key,
+                    'created': getattr(issue.fields, 'created', ''),
+                    'updated': getattr(issue.fields, 'updated', ''),
+                    'status': getattr(issue.fields.status, 'name', '') if hasattr(issue.fields, 'status') else '',
+                    'issuetype': getattr(issue.fields.issuetype, 'name', '') if hasattr(issue.fields, 'issuetype') else ''
+                })
+            
+            initial_df = pd.DataFrame(initial_issues_data)
+            initial_csv_path = f"initial_search_results_{start_dt.strftime('%Y%m%d')}_{end_dt.strftime('%Y%m%d')}.csv"
+            initial_df.to_csv(initial_csv_path, index=False)
+            print(f"Initial search results saved to: {initial_csv_path}")
+            
+            # Try a more aggressive search if we're missing any issues
+            if actual_count < expected_total:  # If missing any issues at all
+                print("Attempting more comprehensive search...")
+                # Try different ordering and search approaches
+                additional_issues = get_missing_issues_OLD(jira, start_dt, end_dt, issue_keys_seen)
+                
+                # Save missed issues to CSV for analysis
+                if additional_issues:
+                    missed_issues_data = []
+                    for issue in additional_issues:
+                        missed_issues_data.append({
+                            'key': issue.key,
+                            'created': getattr(issue.fields, 'created', ''),
+                            'updated': getattr(issue.fields, 'updated', ''),
+                            'status': getattr(issue.fields.status, 'name', '') if hasattr(issue.fields, 'status') else '',
+                            'issuetype': getattr(issue.fields.issuetype, 'name', '') if hasattr(issue.fields, 'issuetype') else ''
+                        })
+                    
+                    missed_df = pd.DataFrame(missed_issues_data)
+                    missed_csv_path = f"missed_issues_{start_dt.strftime('%Y%m%d')}_{end_dt.strftime('%Y%m%d')}.csv"
+                    missed_df.to_csv(missed_csv_path, index=False)
+                    print(f"Missed issues saved to: {missed_csv_path}")
+                
+                all_issues.extend(additional_issues)
+                print(f"After comprehensive search: {len(all_issues)} total issues")
+    
+    return all_issues
 
-        start += batch_size
-        if len(issues) < batch_size:
-            break
+def get_issues_daily_fallback_OLD(jira, start_dt, end_dt):
+    """Fallback method using daily chunks when weekly chunks miss issues"""
+    
+    all_issues = []
+    issue_keys_seen = set()
+    current_date = start_dt
+    
+    while current_date <= end_dt:
+        date_str = current_date.strftime('%Y-%m-%d')
+        jql = f"project = AEAREP AND createdDate>='{date_str}' AND createdDate<='{date_str}' AND issuetype = Task ORDER BY createdDate DESC"
+        
+        try:
+            daily_issues = jira.enhanced_search_issues(jql)
+            print(f"  Daily fallback {date_str}: {len(daily_issues)} issues")
+            
+            # Add unique issues
+            for issue in daily_issues:
+                if issue.key not in issue_keys_seen:
+                    issue_keys_seen.add(issue.key)
+                    all_issues.append(issue)
+            
+            if len(daily_issues) >= 50:
+                print(f"  WARNING: Daily limit hit on {date_str} - some issues may be missing")
+                
+        except Exception as e:
+            print(f"  Daily fallback failed for {date_str}: {e}")
+            
+        current_date = current_date + timedelta(days=1)
+    
+    return all_issues
 
-    # write out debug file
-    with open(f"issues.json", "w") as f:
-        issues_as_dicts = [issue.raw for issue in all_issues]
-        json.dump(issues_as_dicts, f)
-
-    # return list of issue keys
-    # Extract issue keys    
-    issue_keys = [issue.key for issue in all_issues]
-    print(f"Total issues fetched: {len(issue_keys)}")
-    return issue_keys
+def get_missing_issues_OLD(jira, start_dt, end_dt, existing_keys):
+    """Try alternative search strategies to find missing issues"""
+    
+    additional_issues = []
+    start_str = start_dt.strftime('%Y-%m-%d')
+    end_str = end_dt.strftime('%Y-%m-%d')
+    
+    print(f"  Searching for missing issues with alternative methods...")
+    
+    # Try different orderings that might reveal different issues
+    alternative_queries = [
+        f"project = AEAREP AND createdDate>='{start_str}' AND createdDate<='{end_str}' AND issuetype = Task ORDER BY key ASC",
+        f"project = AEAREP AND createdDate>='{start_str}' AND createdDate<='{end_str}' AND issuetype = Task ORDER BY updated DESC",
+        f"project = AEAREP AND createdDate>='{start_str}' AND createdDate<='{end_str}' AND issuetype = Task ORDER BY created ASC",
+    ]
+    
+    for i, alt_jql in enumerate(alternative_queries):
+        try:
+            print(f"    Trying alternative query {i+1}...")
+            alt_issues = jira.enhanced_search_issues(alt_jql)
+            new_count = 0
+            for issue in alt_issues:
+                if issue.key not in existing_keys:
+                    additional_issues.append(issue)
+                    existing_keys.add(issue.key)
+                    new_count += 1
+            print(f"    Found {new_count} new issues with alternative query {i+1}")
+        except Exception as e:
+            print(f"    Alternative query {i+1} failed: {e}")
+    
+    return additional_issues
 
 def get_issue_history(jira, issue_key, fields):
     """Get full changelog for issue"""
@@ -312,6 +642,7 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--domain", required=False, default="https://aeadataeditors.atlassian.net", help="Jira domain")
     parser.add_argument("-f", "--fieldfile", required=False, default="jira-fields.csv", help="CSV file with fields to extract")
     parser.add_argument("-o", "--outfile", required=False, default="issue_history.csv", help="Output file. Date will be appended to the filename.")
+    parser.add_argument("--verbose", action="store_true", help="Display detailed progress information on terminal (also logged to file)")
 
     args = parser.parse_args()
 
@@ -319,6 +650,7 @@ if __name__ == "__main__":
     end_date = args.end
     jiradomain = args.domain
     fieldfile = args.fieldfile
+    verbose = args.verbose
     fieldfiledir = os.path.join(get_rootdir(), "data","metadata")
     fieldfile = os.path.join(fieldfiledir, fieldfile)
 
@@ -331,6 +663,24 @@ if __name__ == "__main__":
     # check that it exists
     if not os.path.exists(outdir):
         os.makedirs(outdir)
+    
+    # Create logs directory
+    logdir = os.path.join(get_rootdir(), "logs")
+    if not os.path.exists(logdir):
+        os.makedirs(logdir)
+    
+    # Setup logging
+    log_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_filename = os.path.join(logdir, f"jira_download_{start_date}_{end_date}_{log_timestamp}.log")
+    
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_filename),
+        ]
+    )
+    logger = logging.getLogger(__name__)
 
     # now create the full path name for the output file 
     fulloutfile = os.path.join(outdir, outfile)
@@ -362,14 +712,23 @@ if __name__ == "__main__":
     # Initialize JIRA connection with v3 API
     jira = JIRA(server=jiradomain, basic_auth=(jira_username(), get_api_key()))
 
-    issue_keys = get_issues(jira, start_date, end_date)
+    issue_keys = get_issues(jira, start_date, end_date, verbose, logger)
 
     all_states = []
-
-    for key in issue_keys:
-        print(f"Fetching history for {key}")
+    
+    log_and_print(f"Starting individual history fetch for {len(issue_keys)} issues", verbose, logger, force_print=True)
+    total_issues = len(issue_keys)
+    
+    for i, key in enumerate(issue_keys, 1):
+        progress_msg = f"Fetching history for {key} ({i}/{total_issues})"
+        if not verbose:
+            print(f"\r{progress_msg}", end="", flush=True)
+        log_and_print(progress_msg, verbose, logger)
         histories = get_issue_history(jira, key,fields)
         all_states.append(histories)
+    
+    if not verbose:
+        print()  # New line after progress counter
     for i in range(len(all_states)):
         for j in range(len(all_states[i])):
             # For each state in all_states, create a new dictionary where the keys are replaced according to the mapping

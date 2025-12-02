@@ -1,7 +1,7 @@
 ---
 title: "Process Data from Reproducibility Service"
 author: "Lars Vilhuber"
-date: '2025-02-19'
+date: '2025-12-02'
 output:
   html_document:
     keep_md: yes
@@ -21,29 +21,34 @@ contributors:
 > Note: The [PDF version](https://aeadataeditor.github.io/processing-jira-process-data/README.pdf) of this document is transformed by manually printing from a browser.
 
 ## Overview
-This README describes how to process data for the AEA Pre-publication Verification Service. The code constructs the analysis file from raw process data extracted from Jira using an API. The replicator should expect the code to run for approximately ZZ hours.
+
+This README describes how to process data for the AEA Pre-publication Verification Service. The code constructs the analysis file from raw process data extracted from Jira using an API. The replicator should expect the code to run for approximately 2 hours.
 
 ## Data Availability and Provenance Statements
+
 Data used originates from Jira system used by the AEA data editor and the members of his replication lab.
 
 ### Statement about Rights
+
 - [x] I certify that the author(s) of the manuscript have legitimate access to and permission to use the data used in this manuscript.
 - [x] I certify that the author(s) of the manuscript have documented permission to redistribute/publish the data contained within this replication package.
 
 ### Summary of Availability
+
 - [x] Some data **cannot be made** publicly available.
 - [x] Confidential data used are not provided as part of the public replication package.
 
 ## Details on the Data
 
 ### Raw process data
-![Workflow stages](images/AEADataEditorWorkflow-20191028.png)
+
+![Workflow stages](images/AEADataEditorWorkflow-20251128.png)
 
 Raw process data from each step of the workflow is extracted from Jira using API (see Instructions to Replicators for details), and saved as `issue_history_MM-DD-YYYY.csv` (for detailed transaction-level data)
 
 The data is not made available outside of the organization, as it contains names of replicators, manuscript numbers, and verbatim email correspondence. An anonymized version without identifying information is made available instead.
 
-To obtain, run `programs/01_download_issues.py`. This will use the fields as specified in `data/metadata/jira-fields.xlsx`. If fields need to be updated (they are keyed on names), run `programs/00_jira_fields.py` to obtain a new Excel file, and mark the to-be-included fields with "True".
+To obtain, run `programs/01_download_issues.py`. This will use the fields as specified in `data/metadata/jira-fields.xlsx`. If fields need to be updated (they are keyed on names), run `programs/00_jira_fields.py` to obtain a new CSV file, and mark the to-be-included fields with "True".
 
 A full download of JIRA issues as of 2025 would be
 
@@ -59,7 +64,7 @@ Summary:
 
 
 
-At this time, the latest extract was made 2025-01-26. 
+At this time, the latest extract was made 2025-12-02. 
 
 #### Anonymized data
 We subset the raw data to variables of interest, and substitute random numbers for sensitive strings. This is done by running `02_jira_anonymize.R`. The programs saves both the confidential version and the anonymized version.
@@ -77,11 +82,11 @@ source(file.path(programs,"02_jira_anonymize.R"),echo=TRUE)
 ## 
 ## > download_raw <- TRUE
 ## 
-## > extractday <- "2025-02-05"
+## > extractday <- "2025-12-02"
 ## 
-## > firstday <- "2023-12-01"
+## > firstday <- "2024-12-01"
 ## 
-## > lastday <- "2024-11-30"
+## > lastday <- "2025-11-30"
 ## 
 ## > basepath <- here::here()
 ## 
@@ -140,7 +145,14 @@ source(file.path(programs,"02_jira_anonymize.R"),echo=TRUE)
 ## 
 ## > if (file.exists(here::here("programs", "confidential-config.R"))) {
 ## +     source(here::here("programs", "confidential-config.R"))
-## +     message("Con ..." ... [TRUNCATED] 
+## +     message("Con ..." ... [TRUNCATED]
+```
+
+```
+## Confidential config found.
+```
+
+```
 ## 
 ## > source(here::here("global-libraries.R"), echo = TRUE)
 ## 
@@ -171,12 +183,129 @@ source(file.path(programs,"02_jira_anonymize.R"),echo=TRUE)
 ## > if (!file.exists(file.path(jiraconf, exportfile))) {
 ## +     process_raw = FALSE
 ## +     print("Input file for anonymization not found - setting global  ..." ... [TRUNCATED] 
-## [1] "Input file for anonymization not found - setting global parameter to FALSE"
 ## 
 ## > if (process_raw == TRUE) {
 ## +     jira.conf.raw <- read.csv(file.path(jiraconf, exportfile), 
-## +         stringsAsFactors = FALSE) %>% rename(ticket = .... [TRUNCATED] 
-## [1] "Not processing anonymization due to global parameter."
+## +         stringsAsFactors = FALSE) %>% rename(ticket = .... [TRUNCATED]
+```
+
+```
+## rename: renamed one variable (ticket)
+```
+
+```
+## mutate: new variable 'mc_number' (character) with 552 unique values and 0% NA
+```
+
+```
+## mutate: changed 87 values (<1%) of 'mc_number' (0 new NA)
+```
+
+```
+## filter: no rows removed
+## filter: no rows removed
+```
+
+```
+## select: dropped one variable (Key.1)
+```
+
+```
+## filter: no rows removed
+```
+
+```
+## filter: removed all rows (100%)
+```
+
+```
+## select: dropped 43 variables (DataAccessReplicationTeam, Resolution, Agreement.signed, JournalIssueMonth, JournalIssueYear, …)
+```
+
+```
+## mutate: no changes
+```
+
+```
+## select: dropped one variable (Sub.tasks)
+```
+
+```
+## distinct: no rows removed
+```
+
+```
+## Joining with `by = join_by(ticket)`
+## anti_join: added no columns
+## > rows only in x 26,940
+## > rows only in y ( 0)
+## > matched rows ( 0)
+## > ========
+## > rows total 26,940
+## select: dropped 45 variables (DataAccessReplicationTeam, Resolution,
+## Agreement.signed, JournalIssueMonth, JournalIssueYear, …)
+## filter: removed 1,565 rows (6%), 25,375 rows remaining
+## distinct: removed 24,822 rows (98%), 553 rows remaining
+## mutate: new variable 'rand' (double) with one unique value and 0% NA
+## mutate: new variable 'mc_number_anon' (integer) with 553 unique values and 0%
+## NA
+## select: dropped one variable (rand)
+## select: dropped 45 variables (DataAccessReplicationTeam, Resolution,
+## Agreement.signed, JournalIssueMonth, JournalIssueYear, …)
+## filter: removed 10,160 rows (38%), 16,780 rows remaining
+## filter: no rows removed
+## filter: removed 1,181 rows (7%), 15,599 rows remaining
+## distinct: removed 15,540 rows (>99%), 59 rows remaining
+## mutate: new variable 'rand' (double) with 2 unique values and 0% NA
+## mutate: new variable 'assignee_anon' (integer) with 59 unique values and 0% NA
+## select: dropped one variable (rand)
+## Rows: 23 Columns: 2
+## ── Column specification
+## ──────────────────────────────────────────────────────── Delimiter: "," chr
+## (2): name, label
+## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+## Specify the column types or set `show_col_types = FALSE` to quiet this message.
+## filter: no rows removed
+## select: dropped one variable (label)
+## left_join: added one column (mc_number_anon)
+## > rows only in x 1,565
+## > rows only in y ( 0)
+## > matched rows 25,375
+## > ========
+## > rows total 26,940
+## left_join: added one column (assignee_anon)
+## > rows only in x 11,341
+## > rows only in y ( 0)
+## > matched rows 15,599
+## > ========
+## > rows total 26,940
+## mutate: new variable 'date_created' (Date) with 220 unique values and 0% NA
+## new variable 'date_asof' (Date) with 349 unique values and 0% NA
+## rename: renamed one variable (reason.failure)
+## rename: renamed one variable (external)
+## rename: renamed one variable (subtask)
+## mutate: new variable 'date_resolved' (Date) with 249 unique values and 6% NA
+## mutate: new variable 'received' (character) with 2 unique values and 0% NA
+## mutate: new variable 'has_subtask' (character) with 2 unique values and 0% NA
+## rename: renamed one variable (External.party.name.conf)
+## filter: removed 7,814 rows (29%), 19,126 rows remaining
+## select: dropped 51 variables (DataAccessReplicationTeam, Resolution,
+## Agreement.signed, JournalIssueMonth, JournalIssueYear, …)
+## mutate: changed 26,338 values (58%) of 'subtask' (0 new NA)
+## select: dropped one variable (subtask)
+## distinct: removed 44,483 rows (98%), 981 rows remaining
+## filter: removed 1,565 rows (6%), 25,375 rows remaining
+## Joining with `by = join_by(ticket)`
+## anti_join: added no columns
+## > rows only in x 25,375
+## > rows only in y ( 981)
+## > matched rows ( 0)
+## > ========
+## > rows total 25,375
+## select: dropped 26 variables (DataAccessReplicationTeam, JournalIssueMonth,
+## JournalIssueYear, Original.OS, External.party.name.conf, …)
+## select: dropped 4 variables (Manuscript.Central.identifier, mc_number,
+## Assignee, openICPSR.Project.Number)
 ```
 
 ### Publishing data
@@ -238,7 +367,7 @@ We list the lab members active at some point during this period. This still requ
 
 
 
-There were a total of 49 lab members over the course of the 12 month period.
+There were a total of 56 lab members over the course of the 12 month period.
 
 ### R session info
 
@@ -277,14 +406,14 @@ sessionInfo()
 ##  [1] bslib_0.4.2       jquerylib_0.1.4   pillar_1.9.0      compiler_4.2.3   
 ##  [5] tools_4.2.3       bit_4.0.5         digest_0.6.31     jsonlite_1.8.4   
 ##  [9] evaluate_0.20     lifecycle_1.0.3   tibble_3.2.1      pkgconfig_2.0.3  
-## [13] rlang_1.1.0       cli_3.6.1         rstudioapi_0.14   parallel_4.2.3   
-## [17] yaml_2.3.7        xfun_0.38         fastmap_1.1.1     withr_2.5.0      
-## [21] sass_0.4.5        generics_0.1.3    vctrs_0.6.2       askpass_1.1      
-## [25] hms_1.1.3         bit64_4.0.5       rprojroot_2.0.3   tidyselect_1.2.0 
-## [29] glue_1.6.2        data.table_1.14.8 R6_2.5.1          fansi_1.0.4      
-## [33] vroom_1.6.1       tzdb_0.3.0        purrr_1.0.1       magrittr_2.0.3   
-## [37] clisymbols_1.2.0  htmltools_0.5.5   utf8_1.2.3        stringi_1.7.12   
-## [41] cachem_1.0.7      crayon_1.5.2
+## [13] rlang_1.1.0       cli_3.6.1         parallel_4.2.3    yaml_2.3.7       
+## [17] xfun_0.38         fastmap_1.1.1     withr_2.5.0       sass_0.4.5       
+## [21] generics_0.1.3    vctrs_0.6.2       askpass_1.1       hms_1.1.3        
+## [25] bit64_4.0.5       rprojroot_2.0.3   tidyselect_1.2.0  glue_1.6.2       
+## [29] data.table_1.14.8 R6_2.5.1          fansi_1.0.4       vroom_1.6.1      
+## [33] tzdb_0.3.0        purrr_1.0.1       magrittr_2.0.3    clisymbols_1.2.0 
+## [37] htmltools_0.5.5   utf8_1.2.3        stringi_1.7.12    cachem_1.0.7     
+## [41] crayon_1.5.2
 ```
 
 ## Software Requirements
@@ -316,11 +445,10 @@ R (last run with R r paste0(R.Version()$major, ".", R.Version()$minor))
 
 |Modules       |
 |:-------------|
-|jira          |
+|jira>=3.8.0   |
 |requests      |
 |python-dotenv |
 |pandas        |
-|argparse      |
 
 ### Docker
 These requirements are satisfied in the Docker image created by `Dockerfile`, see [description below](#setup---1.-docker)
@@ -450,7 +578,7 @@ BOX_ENTERPRISE_ID=
 ### Obtain Extract
 
 - `cd programs`
-- To obtain extract **run `python3 01_download_issues.py -s ` 2023-12-01 ` -e ` 2024-11-30** with the relevant dates.
+- To obtain extract **run `python3 01_download_issues.py -s ` 2024-12-01 ` -e ` 2025-11-30** with the relevant dates.
   - This will get the fields as specified in `data/metadata/jira-fields.xlsx`.
   - If fields need to be updated (they are keyed on names), edit `programs/00_jira_fields.py` to obtain the full list of fields, open the resulting Excel file (`data/metadata/jira-fields.xlsx`) and  mark the to-be-included fields with "True"
   - Otherwise running `programs/00_jira_fields.py` is not required.
@@ -476,7 +604,7 @@ R CMD BATCH 99_push_box.R
   - Manually print the .html file to obtain a PDF.
 
 ## Citation
-> Vilhuber, Lars. 2025. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2025-02-19. [https://doi.org/10.3886/E117876V6](https://doi.org/10.3886/E117876V6)
+> Vilhuber, Lars. 2025. "Process data for the AEA Pre-publication Verification Service." *American Economic Association [publisher]*. Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributor], 2025-12-02. [https://doi.org/10.3886/E117876V6](https://doi.org/10.3886/E117876V6)
 
 ```
 @techreport{10.3886/e117876V6,

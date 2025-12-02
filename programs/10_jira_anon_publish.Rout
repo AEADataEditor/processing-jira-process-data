@@ -36,11 +36,11 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-02-05"
+> extractday <- "2025-12-02"
 
-> firstday <- "2023-12-01"
+> firstday <- "2024-12-01"
 
-> lastday <- "2024-11-30"
+> lastday <- "2025-11-30"
 
 > basepath <- here::here()
 
@@ -205,4 +205,4 @@ select: no changes
 > 
 > proc.time()
    user  system elapsed 
-  1.555   0.285   1.752 
+  1.508   1.439   1.439 

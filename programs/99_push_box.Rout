@@ -26,11 +26,11 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-02-05"
+> extractday <- "2025-12-02"
 
-> firstday <- "2023-12-01"
+> firstday <- "2024-12-01"
 
-> lastday <- "2024-11-30"
+> lastday <- "2025-11-30"
 
 > basepath <- here::here()
 
@@ -167,9 +167,6 @@ The following object is masked from ‘package:stats’:
 > # Read the key variables from the common .env file
 > 
 > readRenviron(file.path(basepath,".env"))
-Warning message:
-In readRenviron(file.path(basepath, ".env")) :
-  file '/home/rstudio/processing-jira-process-data/.env' cannot be opened for reading
 > 
 > # Now load credentials
 > client_folder <- Sys.getenv("BOX_FOLDER_ID")
@@ -191,7 +188,7 @@ box.com working directory changed to 'jira_exports'
       id: 235801403908
     tree: All Files/InternalData/jira_exports
    owner: ga.ldilab@cornell.edu
-contents: 7 files, 0 folders
+contents: 24 files, 0 folders
 
 > 
 > 
@@ -200,17 +197,15 @@ contents: 7 files, 0 folders
 > 
 > box_ul(file=issue_history.csv)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'issue_history_2025-02-05.csv' aleady exists. Attempting to upload new version (V9).
-  |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
- name        : issue_history_2025-02-05.csv 
- file id     : 1769593533357 
- version     : V9 
- size        : 13 MB 
- modified at : 2025-02-05 12:14:34 
- created at  : 2025-02-05 12:14:34 
+ name        : issue_history_2025-12-02.csv 
+ file id     : 2062989196583 
+ version     : V1 
+ size        : 12 MB 
+ modified at : 2025-12-02 06:56:31 
+ created at  : 2025-12-02 06:56:31 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -219,17 +214,17 @@ box.com remote file reference
  parent folder id   :  235801403908 
 > box_ul(file=jira.conf.plus.rds)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'jira.conf.plus.RDS' aleady exists. Attempting to upload new version (V12).
+File 'jira.conf.plus.RDS' aleady exists. Attempting to upload new version (V13).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : jira.conf.plus.RDS 
  file id     : 1365599255567 
- version     : V12 
- size        : 330 kB 
- modified at : 2025-02-05 12:14:36 
- created at  : 2025-02-05 12:14:36 
+ version     : V13 
+ size        : 300 kB 
+ modified at : 2025-12-02 06:56:33 
+ created at  : 2025-12-02 06:56:33 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -238,17 +233,17 @@ box.com remote file reference
  parent folder id   :  235801403908 
 > box_ul(file=assignee.lookup.rds)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'assignee-lookup.RDS' aleady exists. Attempting to upload new version (V12).
+File 'assignee-lookup.RDS' aleady exists. Attempting to upload new version (V13).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : assignee-lookup.RDS 
  file id     : 1365598266362 
- version     : V12 
- size        : 877 B 
- modified at : 2025-02-05 12:14:38 
- created at  : 2025-02-05 12:14:38 
+ version     : V13 
+ size        : 915 B 
+ modified at : 2025-12-02 06:56:35 
+ created at  : 2025-12-02 06:56:35 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -257,17 +252,17 @@ box.com remote file reference
  parent folder id   :  235801403908 
 > box_ul(file=manuscript.lookup.rds)
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'mc-lookup.RDS' aleady exists. Attempting to upload new version (V11).
+File 'mc-lookup.RDS' aleady exists. Attempting to upload new version (V12).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : mc-lookup.RDS 
  file id     : 1384485085553 
- version     : V11 
+ version     : V12 
  size        : 3.5 kB 
- modified at : 2025-02-05 12:14:40 
- created at  : 2025-02-05 12:14:40 
+ modified at : 2025-12-02 06:56:36 
+ created at  : 2025-12-02 06:56:36 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -276,17 +271,17 @@ box.com remote file reference
  parent folder id   :  235801403908 
 > box_ul(file=file.path(programs,"confidential-config.R"))
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
-File 'confidential-config.R' aleady exists. Attempting to upload new version (V6).
+File 'confidential-config.R' aleady exists. Attempting to upload new version (V7).
   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%
 
 box.com remote file reference
 
  name        : confidential-config.R 
  file id     : 1769587521527 
- version     : V6 
+ version     : V7 
  size        : 66 B 
- modified at : 2025-02-05 12:14:42 
- created at  : 2025-02-05 12:14:42 
+ modified at : 2025-12-02 06:56:38 
+ created at  : 2025-12-02 06:56:38 
  uploaded by : AutomationUser_1590771_MVrO3FR5Tj@boxdevedition.com 
  owned by    : ga.ldilab@cornell.edu 
  shared link : None 
@@ -296,4 +291,4 @@ box.com remote file reference
 > 
 > proc.time()
    user  system elapsed 
-  1.168   0.231  13.266 
+  1.255   1.462  11.355 

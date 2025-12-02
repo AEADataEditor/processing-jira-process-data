@@ -30,29 +30,34 @@ ICPSR_DOI <- paste0("https://doi.org/10.3886/E", ICPSR_PROJECT, VERSION)
 > Note: The [PDF version](https://aeadataeditor.github.io/processing-jira-process-data/README.pdf) of this document is transformed by manually printing from a browser.
 
 ## Overview
-This README describes how to process data for the AEA Pre-publication Verification Service. The code constructs the analysis file from raw process data extracted from Jira using an API. The replicator should expect the code to run for approximately ZZ hours.
+
+This README describes how to process data for the AEA Pre-publication Verification Service. The code constructs the analysis file from raw process data extracted from Jira using an API. The replicator should expect the code to run for approximately 2 hours.
 
 ## Data Availability and Provenance Statements
+
 Data used originates from Jira system used by the AEA data editor and the members of his replication lab.
 
 ### Statement about Rights
+
 - [x] I certify that the author(s) of the manuscript have legitimate access to and permission to use the data used in this manuscript.
 - [x] I certify that the author(s) of the manuscript have documented permission to redistribute/publish the data contained within this replication package.
 
 ### Summary of Availability
+
 - [x] Some data **cannot be made** publicly available.
 - [x] Confidential data used are not provided as part of the public replication package.
 
 ## Details on the Data
 
 ### Raw process data
-![Workflow stages](images/AEADataEditorWorkflow-20191028.png)
+
+![Workflow stages](images/AEADataEditorWorkflow-20251128.png)
 
 Raw process data from each step of the workflow is extracted from Jira using API (see Instructions to Replicators for details), and saved as `issue_history_MM-DD-YYYY.csv` (for detailed transaction-level data)
 
 The data is not made available outside of the organization, as it contains names of replicators, manuscript numbers, and verbatim email correspondence. An anonymized version without identifying information is made available instead.
 
-To obtain, run `programs/01_download_issues.py`. This will use the fields as specified in `data/metadata/jira-fields.xlsx`. If fields need to be updated (they are keyed on names), run `programs/00_jira_fields.py` to obtain a new Excel file, and mark the to-be-included fields with "True".
+To obtain, run `programs/01_download_issues.py`. This will use the fields as specified in `data/metadata/jira-fields.xlsx`. If fields need to be updated (they are keyed on names), run `programs/00_jira_fields.py` to obtain a new CSV file, and mark the to-be-included fields with "True".
 
 A full download of JIRA issues as of `r YEAR` would be
 
