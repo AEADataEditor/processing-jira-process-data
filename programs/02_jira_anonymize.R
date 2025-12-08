@@ -74,7 +74,7 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
 
   warning(paste0("If you need to edit the names to be included,\n",
                  "edit the file ",file.path(temp,jira.conf.names.csv),"\n",
-                 "save it in ",jirameta, "with the same name, ran run again."))
+                 "save it in ",jirameta, " as \"description_anon.csv\", then run again."))
   
   # anonymize mc_number
   jira.manuscripts <- jira.conf.cleaned %>% 
@@ -102,8 +102,11 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
     arrange(Assignee)
     
   # Save files
+  message("=============================================")
+  message("Saving lookup tables for JIRA anonymization.")
   saveRDS(jira.manuscripts,file=manuscript.lookup.rds)
   saveRDS(jira.assignees,  file=assignee.lookup.rds)
+  message("=============================================")
   # Read in `description_anon.csv`, and from the `name`column, construct code that will keep only those variables listed in the `name` column
 
   # Read in the anonymization file
@@ -111,7 +114,7 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
     filter(name!="") %>%
     select(name) %>%
     pull()
-  extra_conf <- c("Manuscript.Central.identifier", "mc_number", "Assignee", "openICPSR.Project.Number")
+  extra_conf <- c("Manuscript.Central.identifier", "mc_number", "Assignee", "openICPSR.Project.Number","RepositoryDOI")
 
   # Now merge the anonymized data on, keep & rename relevant variables
   jira.conf.all <- jira.conf.cleaned %>% 
@@ -145,14 +148,23 @@ jira.conf.plus <- jira.conf.all %>%
 
   
   # save anonymized and confidential data
-  
+  message("=============================================")
+  message("Saving anonymized and confidential JIRA data.")
   saveRDS(jira.conf.plus,
           file=jira.conf.plus.rds)
 
   saveRDS(jira.conf.plus %>% 
             select(all_of(public_names)),
     file=file.path(jiraconf,"temp.jira.anon.RDS"))
-  
+  message("=============================================")
+  message("Reading back in anonymized JIRA data for checking.")
+  jira.anon <- readRDS(file.path(jiraconf,"temp.jira.anon.RDS"))
+
+  print(skim(jira.anon))
+  message("=============================================")
+
+
+
 } else { 
   print("Not processing anonymization due to global parameter.")
 }

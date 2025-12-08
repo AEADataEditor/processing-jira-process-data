@@ -30,7 +30,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-12-02"
+> extractday <- "2025-12-07"
 
 > firstday <- "2024-12-01"
 
@@ -103,7 +103,7 @@ Type 'q()' to quit R.
 
 > global.libraries <- c("dplyr", "stringr", "tidyr", 
 +     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
-+     "rmarkdown", "tidylog" .... [TRUNCATED] 
++     "rmarkdown", "skimr",  .... [TRUNCATED] 
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -141,6 +141,7 @@ Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
 Loading required package: rmarkdown
+Loading required package: skimr
 Loading required package: tidylog
 
 Attaching package: ‘tidylog’
@@ -171,7 +172,7 @@ The following object is masked from ‘package:stats’:
 > 
 > exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
 +                 "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
-+                 "LV (Data Editor)")
++                 "LV (Data Editor)","Ilanith Nizard","Julia Hewitt")
 > 
 > # This contains unmapped IDs that need to be cleaned up
 > 
@@ -192,6 +193,12 @@ chr (1): Assignee
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 > 
+> 
+> if (! file.exists(jira.conf.plus.rds)) {
++   process_raw = FALSE
++   error("Input file with confidential information not found - exiting")
++ }
+> 
 > jira.conf.plus <- readRDS(jira.conf.plus.rds)
 > 
 > lab.member <- jira.conf.plus %>%
@@ -203,33 +210,29 @@ chr (1): Assignee
 +   mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
 +   distinct(Assignee) 
 filter: no rows removed
-filter: removed 8,806 rows (35%), 16,569 rows remaining
-filter: removed 3,581 rows (22%), 12,988 rows remaining
+filter: removed 8,809 rows (34%), 16,827 rows remaining
+filter: removed 7,123 rows (42%), 9,704 rows remaining
 Joining with `by = join_by(Assignee)`
 left_join: added one column (Name)
-           > rows only in x   12,988
-           > rows only in y  (     9)
-           > matched rows          0
-           >                 ========
-           > rows total       12,988
+           > rows only in x   9,704
+           > rows only in y  (    9)
+           > matched rows         0
+           >                 =======
+           > rows total       9,704
 Joining with `by = join_by(Assignee)`
 anti_join: added no columns
-           > rows only in x   12,988
-           > rows only in y  (     2)
-           > matched rows    (     0)
-           >                 ========
-           > rows total       12,988
+           > rows only in x   9,704
+           > rows only in y  (    2)
+           > matched rows    (    0)
+           >                 =======
+           > rows total       9,704
 mutate: no changes
-distinct: removed 12,932 rows (>99%), 56 rows remaining
+distinct: removed 9,650 rows (99%), 54 rows remaining
 > 
 > saveRDS(lab.member,file=file.path(jiraanon,"replicationlab_members.Rds"))
 > write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
 +             row.names = FALSE)
 > 
-> if (! file.exists(jira.conf.plus.rds)) {
-+   process_raw = FALSE
-+   warning("Input file with confidential information not found - setting global parameter to FALSE")
-+ }
 > 
 > ### Repeat process for external replicators
 > 
@@ -238,14 +241,14 @@ distinct: removed 12,932 rows (>99%), 56 rows remaining
 +   filter(date_created >= firstday, date_created < lastday) %>%
 +   mutate(name_external=str_replace(External.party.name,"-"," ")) %>%
 +   distinct(name_external) 
-filter: removed 24,865 rows (98%), 510 rows remaining
+filter: removed 25,117 rows (98%), 519 rows remaining
 filter: no rows removed
 mutate: new variable 'name_external' (character) with 18 unique values and 0% NA
-distinct: removed 492 rows (96%), 18 rows remaining
+distinct: removed 501 rows (97%), 18 rows remaining
 > 
 > write.table(external.member, file = file.path(basepath,"data","external_replicators.txt"), sep = "\t",
 +             row.names = FALSE)
 > 
 > proc.time()
    user  system elapsed 
-  1.316   1.427   1.135 
+  1.344   1.460   1.257 

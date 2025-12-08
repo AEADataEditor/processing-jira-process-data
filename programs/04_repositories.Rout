@@ -1,0 +1,256 @@
+
+R version 4.2.3 (2023-03-15) -- "Shortstop Beagle"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Export primary Repository usage
+> # Lars Vilhuber
+> # 2025-12-07
+> 
+> ## Inputs: jira.conf.plus.RDS
+> ## Outputs: file.path(basepath,"data","repository-usage.csv")
+> 
+> source(here::here("programs","config.R"),echo=TRUE)
+
+> process_raw <- TRUE
+
+> download_raw <- TRUE
+
+> extractday <- "2025-12-07"
+
+> firstday <- "2024-12-01"
+
+> lastday <- "2025-11-30"
+
+> basepath <- here::here()
+
+> setwd(basepath)
+
+> jiraconf <- file.path(basepath, "data", "confidential")
+
+> jiraanon <- file.path(basepath, "data", "anon")
+
+> jirameta <- file.path(basepath, "data", "metadata")
+
+> images <- file.path(basepath, "images")
+
+> tables <- file.path(basepath, "tables")
+
+> programs <- file.path(basepath, "programs")
+
+> temp <- file.path(basepath, "data", "temp")
+
+> for (dir in list(images, tables, programs, temp)) {
++     if (file.exists(dir)) {
++     }
++     else {
++         dir.create(file.path(dir))
++     }
+ .... [TRUNCATED] 
+
+> issue_history.prefix <- "issue_history_"
+
+> manuscript.lookup <- "mc-lookup"
+
+> manuscript.lookup.rds <- file.path(jiraconf, paste0(manuscript.lookup, 
++     ".RDS"))
+
+> assignee.lookup <- "assignee-lookup"
+
+> assignee.lookup.rds <- file.path(jiraconf, paste0(assignee.lookup, 
++     ".RDS"))
+
+> jira.conf.plus.base <- "jira.conf.plus"
+
+> jira.conf.plus.rds <- file.path(jiraconf, paste0(jira.conf.plus.base, 
++     ".RDS"))
+
+> jira.conf.names.csv <- "jira_conf_names.csv"
+
+> members.txt <- file.path(jiraanon, "replicationlab_members.txt")
+
+> jira.anon.base <- "jira.anon"
+
+> jira.anon.rds <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".RDS"))
+
+> jira.anon.csv <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".csv"))
+> if ( file.exists(here::here("programs","confidential-config.R"))) {
++   source(here::here("programs","confidential-config.R"))
++   # if not sourced, randomness will ensue
++ }
+> source(here::here("global-libraries.R"),echo=TRUE)
+
+> ppm.date <- "2023-11-01"
+
+> options(repos = paste0("https://packagemanager.posit.co/cran/", 
++     ppm.date, "/"))
+
+> global.libraries <- c("dplyr", "stringr", "tidyr", 
++     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
++     "rmarkdown", "skimr",  .... [TRUNCATED] 
+
+> pkgTest <- function(x) {
++     if (!require(x, character.only = TRUE)) {
++         install.packages(x, dep = TRUE)
++         if (!require(x, charact .... [TRUNCATED] 
+
+> pkgTest.github <- function(x, source) {
++     if (!require(x, character.only = TRUE)) {
++         install_github(paste(source, x, sep = "/"))
++      .... [TRUNCATED] 
+
+> results <- sapply(as.list(global.libraries), pkgTest)
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: knitr
+Loading required package: readr
+Loading required package: here
+here() starts at /home/rstudio/processing-jira-process-data
+Loading required package: splitstackshape
+Loading required package: boxr
+boxr: see `vignette("boxr")` on how to authorize to your Box account.
+Loading required package: jose
+Loading required package: openssl
+Linking to: OpenSSL 3.0.2 15 Mar 2022
+Loading required package: rmarkdown
+Loading required package: skimr
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+> 
+> 
+> if (! file.exists(jira.conf.plus.rds)) {
++   process_raw = FALSE
++   error("Input file with confidential information not found - exiting")
++ }
+> 
+> repo.conf.plus <- readRDS(jira.conf.plus.rds) %>%
++   filter(Status == "Done" & RepositoryDOI != "") %>%
++   select(RepositoryDOI,ticket,Status,As.Of.Date)
+filter: removed 24,987 rows (97%), 649 rows remaining
+select: dropped 34 variables (Agreement.signed, assignee_anon, Computing.Environment, DataAccessReplicationTeam, DataAnonymous, …)
+>   
+> repo.distinct <- repo.conf.plus %>%
++   # keep the latest by As.Of.Date
++   arrange(ticket, desc(As.Of.Date)) %>%
++   group_by(ticket) %>%
++   slice_head(n = 1) %>%
++   ungroup() %>%
++   distinct(RepositoryDOI,ticket)
+group_by: one grouping variable (ticket)
+slice_head (grouped): removed 314 rows (48%), 335 rows remaining
+ungroup: no grouping variables
+distinct: no rows removed
+> 
+> # Check if there are duplicates for same ticket - should not be
+> dups <- repo.distinct %>%
++   group_by(ticket) %>%
++   filter(n()>1)
+group_by: one grouping variable (ticket)
+filter (grouped): removed all rows (100%)
+> 
+> if ( nrow(dups) > 0 ) {
++   error("There are multiple tickets entries for the same ticket. Will keep latest.")
++ }
+> 
+> # drop the ticket number
+> 
+> repo.distinct.anon <- repo.distinct %>%
++   distinct(RepositoryDOI)
+distinct: removed 22 rows (7%), 313 rows remaining
+> 
+> # While this is only the public Repository DOI, it is still
+> # for some as-of-yet unpublished cases, since we have not filtered for history here. For now, we keep this private.
+> 
+> # parse the repository DOIs
+> repo.use <- repo.distinct.anon %>%
++   # strip out the doi.org part, keep the prefix
++   mutate(DOI = str_remove(RepositoryDOI,"^https://doi.org/")) %>%
++   separate(DOI, into=c("doi_prefix","doi_suffix"), sep="/", extra="merge") 
+mutate: new variable 'DOI' (character) with 313 unique values and 0% NA
+> 
+> repo.use.table <- repo.use %>%
++   group_by(doi_prefix) %>%
++   mutate(usage_count = n()) 
+group_by: one grouping variable (doi_prefix)
+mutate (grouped): new variable 'usage_count' (integer) with 3 unique values and 0% NA
+> 
+> # List DOIs for those not at openICPSR
+> repo.use.table %>% 
++   filter(doi_prefix != "10.3886")
+filter (grouped): removed 309 rows (99%), 4 rows remaining
+# A tibble: 4 × 4
+# Groups:   doi_prefix [3]
+  RepositoryDOI                           doi_prefix doi_suffix      usage_count
+  <chr>                                   <chr>      <chr>                 <int>
+1 https://doi.org/10.60572/6hva-fr94      10.60572   6hva-fr94                 1
+2 https://doi.org/10.5281/zenodo.15230440 10.5281    zenodo.15230440           1
+3 https://doi.org/10.7910/DVN/AQHDD6      10.7910    DVN/AQHDD6                2
+4 https://doi.org/10.7910/DVN/GRIU8D      10.7910    DVN/GRIU8D                2
+> 
+> # Save the summary table
+> repo.use.releasable <- repo.use %>%
++   group_by(doi_prefix) %>%
++   summarize(usage_count = n()) 
+group_by: one grouping variable (doi_prefix)
+summarize: now 4 rows and 2 columns, ungrouped
+> 
+> saveRDS(repo.use.releasable,file=file.path(jiraanon,"repository-usage.Rds"))
+> write.csv(repo.use.releasable, file = file.path(basepath,"data","repository-usage.csv"), 
++             row.names = FALSE)
+> 
+> proc.time()
+   user  system elapsed 
+  1.164   1.461   1.034 

@@ -14,12 +14,18 @@ source(here::here("global-libraries.R"),echo=TRUE)
 
 exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
                 "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
-                "LV (Data Editor)")
+                "LV (Data Editor)","Ilanith Nizard","Julia Hewitt")
 
 # This contains unmapped IDs that need to be cleaned up
 
 lookup <- read_csv(file.path(jirameta,"assignee-name-lookup.csv"))
 removal <- read_csv(file.path(jirameta,"assignee-remove.csv"))
+
+
+if (! file.exists(jira.conf.plus.rds)) {
+  process_raw = FALSE
+  error("Input file with confidential information not found - exiting")
+}
 
 jira.conf.plus <- readRDS(jira.conf.plus.rds)
 
@@ -36,10 +42,6 @@ saveRDS(lab.member,file=file.path(jiraanon,"replicationlab_members.Rds"))
 write.table(lab.member, file = file.path(basepath,"data","replicationlab_members.txt"), sep = "\t",
             row.names = FALSE)
 
-if (! file.exists(jira.conf.plus.rds)) {
-  process_raw = FALSE
-  warning("Input file with confidential information not found - setting global parameter to FALSE")
-}
 
 ### Repeat process for external replicators
 

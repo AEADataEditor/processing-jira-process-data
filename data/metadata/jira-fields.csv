@@ -1,6 +1,6 @@
 Name,Id,Include
 Status Category Changed,statuscategorychangedate,False
-RepositoryDOI,customfield_10070,False
+RepositoryDOI,customfield_10070,True
 openICPSRversion,customfield_10071,False
 Report URL PDF,customfield_10072,False
 openICPSR alternate URL,customfield_10073,False

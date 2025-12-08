@@ -20,3 +20,4 @@ processing
 issues.json
 __pycache__
 venv*
+data/temp

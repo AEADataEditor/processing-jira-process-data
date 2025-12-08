@@ -36,7 +36,7 @@ Type 'q()' to quit R.
 
 > download_raw <- TRUE
 
-> extractday <- "2025-12-02"
+> extractday <- "2025-12-07"
 
 > firstday <- "2024-12-01"
 
@@ -105,7 +105,7 @@ Type 'q()' to quit R.
 
 > global.libraries <- c("dplyr", "stringr", "tidyr", 
 +     "knitr", "readr", "here", "splitstackshape", "boxr", "jose", 
-+     "rmarkdown", "tidylog" .... [TRUNCATED] 
++     "rmarkdown", "skimr",  .... [TRUNCATED] 
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -143,6 +143,7 @@ Loading required package: jose
 Loading required package: openssl
 Linking to: OpenSSL 3.0.2 15 Mar 2022
 Loading required package: rmarkdown
+Loading required package: skimr
 Loading required package: tidylog
 
 Attaching package: ‘tidylog’
@@ -178,7 +179,7 @@ The following object is masked from ‘package:stats’:
 +     filter(name!="") %>%
 +     select(name) %>%
 +     pull()
-Rows: 23 Columns: 2
+Rows: 33 Columns: 2
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
 chr (2): name, label
@@ -205,4 +206,4 @@ select: no changes
 > 
 > proc.time()
    user  system elapsed 
-  1.508   1.439   1.439 
+  1.592   1.550   1.528 
