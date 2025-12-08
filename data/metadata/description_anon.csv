@@ -2,6 +2,7 @@
 "Agreement.signed","Type of agreements signed by Data Editor to obtain private data"
 "As.Of.Date","Date and time stamp of the issue transaction"
 "assignee_anon","Anonymized assignee name (time-varying)"
+"Changed.Fields","Fields that were changed in the issue transaction"
 "Computing.Environment","Choose the computing environment that most closely matches your replication environment"
 "DataAccessReplicationTeam","Did the replication team have or obtain access to the restricted-access data?"
 "DataAnonymous","Are some or all of the data from an anonymous source?"

@@ -179,7 +179,7 @@ The following object is masked from ‘package:stats’:
 +     filter(name!="") %>%
 +     select(name) %>%
 +     pull()
-Rows: 33 Columns: 2
+Rows: 34 Columns: 2
 ── Column specification ────────────────────────────────────────────────────────
 Delimiter: ","
 chr (2): name, label
@@ -206,4 +206,4 @@ select: no changes
 > 
 > proc.time()
    user  system elapsed 
-  1.592   1.550   1.528 
+  1.664   1.502   1.589 
