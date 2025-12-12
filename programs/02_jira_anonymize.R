@@ -44,6 +44,11 @@ if ( process_raw == TRUE ) {
     # Possibly temporary issue?
     filter(ticket == Key.1) %>%
     select(-Key.1) %>%
+    # filter out dates for the main report
+    mutate(date_created = as.Date(substr(Created, 1,10), "%Y-%m-%d"),
+           date_asof    = as.Date(substr(As.Of.Date, 1,10), "%Y-%m-%d")) %>%
+    filter(date_created >= firstday & date_created <= lastday) %>%
+    # Only get tickets for the main project
     filter(str_detect(ticket,"AEAREP"))
   
   # We need to remove all sub-tasks of AEAREP-1407
@@ -120,8 +125,6 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
   jira.conf.all <- jira.conf.cleaned %>% 
     left_join(jira.manuscripts,by="mc_number") %>%
     left_join(jira.assignees,by="Assignee") %>%
-    mutate(date_created = as.Date(substr(Created, 1,10), "%Y-%m-%d"),
-           date_asof    = as.Date(substr(As.Of.Date, 1,10), "%Y-%m-%d")) %>%
     rename(reason.failure=Reason.for.Failure.to.be.Fully.Reproduced) %>%
     rename(external=External.validation) %>%
     rename(subtask=Sub.tasks) %>%
@@ -168,3 +171,4 @@ jira.conf.plus <- jira.conf.all %>%
 } else { 
   print("Not processing anonymization due to global parameter.")
 }
+
