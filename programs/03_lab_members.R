@@ -12,9 +12,10 @@ if ( file.exists(here::here("programs","confidential-config.R"))) {
 }
 source(here::here("global-libraries.R"),echo=TRUE)
 
-exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
-                "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
-                "LV (Data Editor)","Ilanith Nizard","Julia Hewitt")
+# This contains exclusions - non-RA members
+exclusions <- read_csv(file.path(jirameta,"non-ra-members.csv")) %>%
+  pull(Assignee)
+
 
 # This contains unmapped IDs that need to be cleaned up
 
