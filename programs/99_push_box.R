@@ -7,9 +7,27 @@ source(here::here("global-libraries.R"),echo=TRUE)
 # Load boxr package
 library(boxr)
 
-# Read the key variables from the common .env file
+# Read the key variables from the common .env file (if present; otherwise
+# they are expected to already be set in the environment, e.g. Codespaces secrets)
 
-readRenviron(file.path(basepath,".env"))
+if (file.exists(file.path(basepath,".env"))) readRenviron(file.path(basepath,".env"))
+
+# Files to push. All must exist before we authenticate - in particular the
+# confidential seed, without which the anonymization cannot be reproduced.
+
+issue_history.csv <- file.path(jiraconf,paste0(issue_history.prefix,extractday,".csv"))
+confidential.config <- file.path(programs,"confidential-config.R")
+
+push.files <- c(issue_history.csv,
+                jira.conf.plus.rds,
+                assignee.lookup.rds,
+                manuscript.lookup.rds,
+                confidential.config)
+
+missing.files <- push.files[!file.exists(push.files)]
+if (length(missing.files) > 0) {
+  stop("Not pushing to Box - missing file(s):\n  ", paste(missing.files, collapse="\n  "))
+}
 
 # Now load credentials
 client_folder <- Sys.getenv("BOX_FOLDER_ID")
@@ -26,12 +44,7 @@ box_auth_service(json.config.file)
 #files <- box_ls(client_folder)
 box_setwd(client_folder)
 
-
-issue_history.csv <- file.path(jiraconf,paste0(issue_history.prefix,extractday,".csv"))
-
-
-box_ul(file=issue_history.csv)
-box_ul(file=jira.conf.plus.rds)
-box_ul(file=assignee.lookup.rds)
-box_ul(file=manuscript.lookup.rds)
-box_ul(file=file.path(programs,"confidential-config.R"))
+for (f in push.files) {
+  message("Uploading ", f)
+  box_ul(file=f)
+}
