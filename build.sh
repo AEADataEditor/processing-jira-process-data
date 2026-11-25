@@ -32,7 +32,11 @@ case $? in
 esac
 
 if [[ "$BUILD" == "yes" ]]; then
-docker build . -t $space/$repo:$tag
+if ! docker build . -t $space/$repo:$tag
+then
+	echo "ERROR: docker build failed for $space/$repo:$tag" >&2
+	exit 1
+fi
 fi
 
 echo "Push? type the following:"
