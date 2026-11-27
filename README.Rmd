@@ -21,8 +21,8 @@ knitr::opts_chunk$set(echo = TRUE)
 source(here::here("global-libraries.R"), echo = TRUE)
 source(here::here("programs", "config.R"), echo = TRUE)
 
-VERSION <- "V6"
-YEAR <- "2025"
+VERSION <- "V7"
+YEAR <- "2026"
 ICPSR_PROJECT <- "117876"
 ICPSR_DOI <- paste0("https://doi.org/10.3886/E", ICPSR_PROJECT, VERSION)
 ```
@@ -180,6 +180,7 @@ The code was last run successfully on GitHub Codespaces on a 2-core machine with
 - 01_download_issues.py: Extracts raw process data from Jira using API
 - 02_jira_anonymize.R: Subsets the raw data to variables of interest, and substitute random numbers for sensitive strings
 - 03_lab_members.R: Outputs list of lab members active at some point during extracted period
+- 04_repositories.R: Tabulates the repositories (by DOI prefix) used for deposits of completed cases
 - 10_jira_anon_publish.R: Does final cleaning and matching and writes out the anonymized file
 - 99_push_box.R: Uploads extracted data to secure Box folder
 - 99_render_README.R: Renders Rmd README file

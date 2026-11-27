@@ -21,3 +21,5 @@ issues.json
 __pycache__
 venv*
 data/temp
+logs
+programs/complete_count_query_results_*.csv

@@ -86,7 +86,7 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
     select(mc_number) %>% 
     filter(mc_number!="") %>%
     distinct()   %>%
-    mutate(rand = runif(1)) %>%
+    mutate(rand = runif(n())) %>%
     arrange(rand) %>%
     mutate(mc_number_anon = row_number()) %>%
     select(-rand) %>%
@@ -99,7 +99,7 @@ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
     filter(Assignee!="Automation for Jira") %>%
     filter(Assignee!="LV (Data Editor)") %>%
     distinct() %>%
-    mutate(rand = runif(1),
+    mutate(rand = runif(n()),
            rand = if_else(Assignee=="Lars Vilhuber",0,rand)) %>%
     arrange(rand) %>%
     mutate(assignee_anon = row_number()) %>%

@@ -1,4 +1,4 @@
-repo=report-aea-data-editor-2024
+repo=report-aea-data-editor-2026
 space=aeadataeditor
 dockerrepo=$(echo $space/$repo | tr [A-Z] [a-z] | sed 's/-internal//')
 case $USER in
@@ -10,4 +10,4 @@ case $USER in
   WORKSPACE=/workspaces
   ;;
 esac
-tag=2025-02-05
+tag=2026-11-25

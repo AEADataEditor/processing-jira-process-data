@@ -32,7 +32,7 @@ then
 	zip -rp "$zipfile" README.md 
 	zip -rp "$zipfile" LICENSE.txt
 	zip -rp "$zipfile" README.pdf 
-	zip -rp "$zipfile" programs/
+	zip -rp "$zipfile" programs/ -x "programs/confidential-config.R" "programs/complete_count_query_results_*.csv"
 	zip -rp "$zipfile" images/
 	zip -rp "$zipfile" data/anon/
 	zip -rp "$zipfile" data/metadata

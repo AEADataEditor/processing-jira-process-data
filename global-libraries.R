@@ -3,7 +3,7 @@
 # global libraries used everywhere #
 ####################################
 
-ppm.date <- "2023-11-01"
+ppm.date <- "2026-11-20"
 options(repos=paste0("https://packagemanager.posit.co/cran/",ppm.date,"/"))
 
 global.libraries <- c("dplyr","stringr","tidyr","knitr","readr","here","splitstackshape","boxr","jose","rmarkdown","skimr","tidylog")
